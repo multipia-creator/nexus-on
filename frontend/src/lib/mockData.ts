@@ -257,24 +257,18 @@ export const createMockChatMessage = (
   rationale: `데모 모드: ${role} 메시지`,
   undo: [],
   ui_hint: {
-    renderer: 'chat.message',
-    surface: 'assistant_stage',
+    surface: 'chat',
     cards: [
       {
         type: 'chat',
-        role,
+        title: role === 'user' ? 'User' : 'Assistant',
         body: text
       }
     ],
     actions: []
   },
   persona_id: 'seria.istj',
-  skin_id: 'seria.default',
-  data: {
-    role,
-    text,
-    session_id: sessionId
-  }
+  skin_id: 'seria.default'
 })
 
 // Mock SSE 이벤트 생성기

@@ -117,20 +117,35 @@ class NaiveRAG:
         out = []
         for score, j in scored[: int(top_k)]:
             text = j.get("text", "") or ""
+            meta = j.get("meta", {})
             qlower = q.lower()
             idx = text.lower().find(qlower)
             if idx < 0:
                 # best-effort snippet: first 240 chars
                 snippet = text[:240]
+                offset = 0
             else:
                 lo = max(0, idx - 80)
                 hi = min(len(text), idx + 160)
                 snippet = text[lo:hi]
+                offset = idx
+            
+            # Evidence: doc_id, chunk_id, page, offset
+            evidence = {
+                "doc_id": j.get("doc_id", ""),
+                "chunk_id": meta.get("chunk_id", ""),
+                "page": meta.get("page"),  # PDF page number
+                "offset": offset,  # Character offset in text
+                "source_path": meta.get("source_path", ""),
+                "source_rel": meta.get("source_rel", ""),
+            }
+            
             out.append({
                 "doc_id": j.get("doc_id", ""),
                 "score": int(score),
                 "snippet": snippet.replace("\n", " ").strip(),
-                "meta": j.get("meta", {}),
+                "evidence": evidence,
+                "meta": meta,
                 "ingested_at": j.get("ingested_at", ""),
             })
         return out

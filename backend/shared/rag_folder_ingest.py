@@ -28,6 +28,7 @@ class FolderIngestResult:
     skipped: int
     errors: List[Dict[str, Any]]
     pending_hwp: int
+    failed_files: List[str]  # 실패 파일 경로 리스트
     started_at: str
     finished_at: str
     folder: str
@@ -51,6 +52,14 @@ class RagFolderIngestor:
     def _k_last(self, tenant: str) -> str:
         return f"nexus:rag:{tenant}:last_ingest"
 
+    def _k_failed(self, tenant: str) -> str:
+        """Redis key for failed files queue (sorted set with retry_count)."""
+        return f"nexus:rag:{tenant}:failed_files"
+
+    def _k_retry_count(self, tenant: str) -> str:
+        """Redis hash for retry counts per file."""
+        return f"nexus:rag:{tenant}:retry_counts"
+
     @staticmethod
     def _find_hwp_fallback(path: str) -> str | None:
         base = os.path.splitext(path)[0]
@@ -70,10 +79,12 @@ class RagFolderIngestor:
         max_file_mb: int = 50,
         max_chars_per_chunk: int = 12000,
         xlsx_cell_limit: int = 20000,
+        max_retries: int = 3,
     ) -> FolderIngestResult:
         started = _utc_iso()
         folder = os.path.abspath(folder)
         errors: List[Dict[str, Any]] = []
+        failed_files: List[str] = []
 
         if not os.path.isdir(folder):
             res = FolderIngestResult(
@@ -84,6 +95,7 @@ class RagFolderIngestor:
                 skipped=0,
                 errors=[{"path": folder, "error": "FOLDER_NOT_FOUND"}],
                 pending_hwp=0,
+                failed_files=[],
                 started_at=started,
                 finished_at=_utc_iso(),
                 folder=folder,
@@ -99,6 +111,8 @@ class RagFolderIngestor:
         pending_hwp = 0
 
         idx_key = self._k_index(tenant)
+        failed_key = self._k_failed(tenant)
+        retry_key = self._k_retry_count(tenant)
         limit_bytes = max_file_mb * 1024 * 1024
 
         for root, _, files in os.walk(folder):
@@ -151,11 +165,25 @@ class RagFolderIngestor:
                     skipped += 1
                     self.r.hset(idx_key, path, str(mtime))
                     errors.append({"path": path, "error": "HWP_CONVERSION_REQUIRED", "detail": str(e)})
+                    
+                    # Add to failed queue for retry
+                    retry_count = int(self.r.hget(retry_key, path) or 0)
+                    if retry_count < max_retries:
+                        self.r.zadd(failed_key, {path: retry_count + 1})
+                        self.r.hset(retry_key, path, str(retry_count + 1))
+                        failed_files.append(path)
                     continue
                 except Exception as e:
                     skipped += 1
                     self.r.hset(idx_key, path, str(mtime))
                     errors.append({"path": path_use, "error": "EXTRACT_FAILED", "detail": str(e)})
+                    
+                    # Add to failed queue for retry
+                    retry_count = int(self.r.hget(retry_key, path) or 0)
+                    if retry_count < max_retries:
+                        self.r.zadd(failed_key, {path: retry_count + 1})
+                        self.r.hset(retry_key, path, str(retry_count + 1))
+                        failed_files.append(path)
                     continue
 
                 if not chunks:
@@ -188,6 +216,7 @@ class RagFolderIngestor:
             skipped=skipped,
             errors=errors[:20],
             pending_hwp=pending_hwp,
+            failed_files=failed_files[:50],
             started_at=started,
             finished_at=finished,
             folder=folder,
@@ -197,3 +226,125 @@ class RagFolderIngestor:
 
     def last_result_raw(self, tenant: str) -> str | None:
         return self.r.get(self._k_last(tenant))
+
+    def get_failed_files(self, tenant: str, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get list of failed files with retry counts."""
+        failed_key = self._k_failed(tenant)
+        retry_key = self._k_retry_count(tenant)
+        
+        # Get files from sorted set (score = retry_count)
+        files_with_scores = self.r.zrange(failed_key, 0, limit - 1, withscores=True)
+        
+        result = []
+        for path, score in files_with_scores:
+            retry_count = int(self.r.hget(retry_key, path) or 0)
+            result.append({
+                "path": path,
+                "retry_count": retry_count,
+                "score": int(score)
+            })
+        return result
+
+    def retry_failed_files(self, tenant: str, max_retries: int = 3) -> FolderIngestResult:
+        """Retry ingestion for failed files."""
+        failed_files_info = self.get_failed_files(tenant, limit=50)
+        if not failed_files_info:
+            return FolderIngestResult(
+                ok=True,
+                scanned=0,
+                candidates=0,
+                ingested_chunks=0,
+                skipped=0,
+                errors=[],
+                pending_hwp=0,
+                failed_files=[],
+                started_at=_utc_iso(),
+                finished_at=_utc_iso(),
+                folder="(retry)"
+            )
+
+        started = _utc_iso()
+        errors: List[Dict[str, Any]] = []
+        failed_files: List[str] = []
+        ingested = 0
+        skipped = 0
+        pending_hwp = 0
+
+        idx_key = self._k_index(tenant)
+        failed_key = self._k_failed(tenant)
+        retry_key = self._k_retry_count(tenant)
+
+        for file_info in failed_files_info:
+            path = file_info["path"]
+            retry_count = file_info["retry_count"]
+
+            if retry_count >= max_retries:
+                # Max retries reached, remove from queue
+                self.r.zrem(failed_key, path)
+                errors.append({"path": path, "error": "MAX_RETRIES_EXCEEDED", "detail": f"Failed after {retry_count} attempts"})
+                continue
+
+            # Retry extraction
+            try:
+                ext = os.path.splitext(path)[1].lower().lstrip(".")
+                if ext == "hwp":
+                    fb = self._find_hwp_fallback(path)
+                    if not fb:
+                        pending_hwp += 1
+                        skipped += 1
+                        continue
+                    path_use = fb
+                else:
+                    path_use = path
+
+                chunks = extract_chunks(path_use, max_chars=12000, xlsx_cell_limit=20000)
+                
+                if not chunks:
+                    skipped += 1
+                    continue
+
+                # Success: ingest and remove from failed queue
+                base_doc_id = f"{path}::{_sha1(path_use)}"
+                st = os.stat(path)
+                for ch in chunks:
+                    doc_id = f"{base_doc_id}::{ch.chunk_id}"
+                    meta = {
+                        "source_path": path_use,
+                        "source_rel": path,
+                        "source_ext": os.path.splitext(path_use)[1].lower().lstrip("."),
+                        "source_mtime": int(st.st_mtime),
+                        "source_size": int(st.st_size),
+                        "chunk_id": ch.chunk_id,
+                    }
+                    meta.update(ch.meta or {})
+                    self.rag.ingest(tenant=tenant, doc_id=doc_id, text=ch.text, meta=meta)
+                    ingested += 1
+
+                # Remove from failed queue
+                self.r.zrem(failed_key, path)
+                self.r.hdel(retry_key, path)
+                self.r.hset(idx_key, path, str(int(st.st_mtime)))
+
+            except Exception as e:
+                errors.append({"path": path, "error": "RETRY_FAILED", "detail": str(e)})
+                # Update retry count
+                new_count = retry_count + 1
+                self.r.zadd(failed_key, {path: new_count})
+                self.r.hset(retry_key, path, str(new_count))
+                failed_files.append(path)
+                skipped += 1
+
+        finished = _utc_iso()
+        return FolderIngestResult(
+            ok=True,
+            scanned=len(failed_files_info),
+            candidates=len(failed_files_info),
+            ingested_chunks=ingested,
+            skipped=skipped,
+            errors=errors[:20],
+            pending_hwp=pending_hwp,
+            failed_files=failed_files[:50],
+            started_at=started,
+            finished_at=finished,
+            folder="(retry)"
+        )

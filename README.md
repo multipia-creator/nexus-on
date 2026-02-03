@@ -12,15 +12,21 @@
 - ✅ Git 저장소 설정
 - ✅ PM2 설정 완료
 - ✅ Cloudflare Pages 배포 준비
+- ✅ **API 키 설정 및 환경 변수 구성 완료**
+- ✅ **기본 API 엔드포인트 구현**
 
 ## 현재 기능별 URI 요약
-- `GET /` - 메인 페이지 (기본 템플릿)
+- `GET /` - 메인 페이지
+- `GET /api/status` - 시스템 상태 체크
+- `GET /api/keys/check` - API 키 설정 확인
+- `POST /api/chat/openai` - OpenAI API 프록시
+- `POST /api/chat/openrouter` - OpenRouter API 프록시
 
 ## 미구현 기능
 - 🔲 AI 에이전트 핵심 로직
 - 🔲 데이터베이스 연동
-- 🔲 API 엔드포인트 구축
 - 🔲 프론트엔드 UI/UX 개발
+- 🔲 설계 문서 기반 시스템 구현
 
 ## 개발 추천 순서
 1. 요구사항 및 기능 명세 정의
@@ -82,10 +88,20 @@ npm run git:log  # 로그 확인
 nexus/
 ├── src/
 │   ├── index.tsx      # 메인 애플리케이션 진입점
+│   ├── types.ts       # TypeScript 타입 정의
 │   └── renderer.tsx   # JSX 렌더러
+├── docs/              # 프로젝트 문서
+│   ├── design/        # 설계 문서
+│   ├── architecture/  # 아키텍처 문서
+│   ├── api/           # API 문서
+│   ├── python/        # Python 코드 및 문서
+│   ├── API_KEYS.md    # API 키 관리 (git-ignored)
+│   └── API_SETUP_COMPLETE.md  # API 설정 완료 문서
 ├── public/            # 정적 파일
 ├── .git/              # Git 저장소
 ├── .gitignore         # Git 제외 파일
+├── .dev.vars          # 환경 변수 (git-ignored)
+├── .dev.vars.example  # 환경 변수 템플릿
 ├── ecosystem.config.cjs  # PM2 설정
 ├── wrangler.jsonc     # Cloudflare 설정
 ├── package.json       # 의존성 및 스크립트
@@ -93,3 +109,41 @@ nexus/
 ├── vite.config.ts     # Vite 빌드 설정
 └── README.md          # 프로젝트 문서
 ```
+
+## API 설정 정보
+
+### 설정된 API 키
+- ✅ Cloudflare API Token
+- ✅ GitHub Token
+- ✅ Google API Key
+- ✅ OpenAI API Key
+- ✅ OpenRouter API Key
+
+### API 키 확인
+```bash
+curl http://localhost:3000/api/keys/check
+```
+
+### API 사용 예제
+
+#### OpenAI API 호출
+```bash
+curl -X POST http://localhost:3000/api/chat/openai \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4",
+    "messages": [{"role": "user", "content": "안녕하세요"}]
+  }'
+```
+
+#### OpenRouter API 호출
+```bash
+curl -X POST http://localhost:3000/api/chat/openrouter \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "anthropic/claude-3-opus",
+    "messages": [{"role": "user", "content": "안녕하세요"}]
+  }'
+```
+
+자세한 API 문서는 `docs/API_SETUP_COMPLETE.md`를 참조하세요.

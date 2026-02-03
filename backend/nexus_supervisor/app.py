@@ -2296,6 +2296,23 @@ def agent_reports_stream(
     return StreamingResponse(gen(), media_type="text/event-stream")
 
 
+# RED Command Types Registry (불변 계약)
+RED_COMMAND_TYPES = {
+    "external_share.execute",
+    "external_share.prepare",
+    "email.send",
+    "slack.post",
+    "github.create_issue",
+    "system.sudo",
+    "system.delete_production_data",
+}
+
+
+def _is_red_command(cmd_type: str) -> bool:
+    """Check if command requires RED approval."""
+    return cmd_type in RED_COMMAND_TYPES
+
+
 @app.post("/sidecar/command", response_model=SidecarCommandAccepted, status_code=202)
 def sidecar_command(
     body: SidecarCommandRequest,
@@ -2307,6 +2324,10 @@ def sidecar_command(
     require_api_key(x_api_key, authorization)
     tenant = _tenant_from_headers(x_org_id, x_project_id)
     tenant_id = _tenant_key(tenant)
+
+    # Validate command_id (required for idempotency)
+    if not body.command_id or not body.command_id.strip():
+        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "command_id is required"}})
 
     correlation_id = (body.client_context or {}).get("correlation_id") or f"corr-{uuid.uuid4().hex}"
 
@@ -2330,9 +2351,54 @@ def sidecar_command(
     stream_store.append_event(tenant_id, "report", started)
     stream_store.add_worklog(tenant_id, {"title": "Command accepted", "body": f"{body.type}", "ts": _utc_now()})
 
+    # Check RED approval requirement BEFORE execution
+    if _is_red_command(body.type):
+        snap = stream_store.snapshot(tenant_id)
+        asks = snap.get("asks", [])
+        approved = any(
+            ask.get("meta", {}).get("command_id") == body.command_id
+            and ask.get("decision") == "approve"
+            for ask in asks
+        )
+        
+        if not approved:
+            # Create RED Ask and return 202 (execution blocked)
+            ask_id = f"ask-{uuid.uuid4().hex[:10]}"
+            ask = {
+                "ask_id": ask_id,
+                "risk": "RED",
+                "title": f"승인 필요: {body.type}",
+                "body": "이 작업은 외부 전송/공유를 포함하며, 승인 없이는 실행되지 않습니다.",
+                "meta": {"command_id": body.command_id, "type": body.type, "correlation_id": correlation_id},
+            }
+            stream_store.add_ask(tenant_id, ask)
+            stream_store.set_autopilot(tenant_id, {"state": "blocked", "blocked_by_red": True})
+            
+            blocked_report = _mk_report(
+                status="blocked",
+                summary=f"RED approval required: {body.type}",
+                risk="RED",
+                causality=causality,
+                ui_hint={"renderer": "approval.ask.created"},
+                data={"ask": ask, "reason": "RED command requires approval", "snapshot": stream_store.snapshot(tenant_id)},
+            )
+            stream_store.append_event(tenant_id, "report", blocked_report)
+            logger.info(json.dumps({"event": "RED_BLOCKED", "command_id": body.command_id, "ask_id": ask_id}, ensure_ascii=False))
+            
+            # Return 202 immediately (execution will wait for approval)
+            return SidecarCommandAccepted(
+                command_id=body.command_id,
+                first_followup_report_id=started["report_id"],
+                correlation_id=correlation_id,
+            )
+
     # execute (P0: in-process)
     try:
         if body.type == "external_share.prepare":
+            # Already handled by RED check above
+            pass
+        elif body.type == "external_share.execute":
+            # This would only run if approved
             ask_id = f"ask-{uuid.uuid4().hex[:10]}"
             ask = {
                 "ask_id": ask_id,

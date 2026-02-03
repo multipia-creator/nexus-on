@@ -11,8 +11,15 @@
 
 NEXUS v2는 **웹 기반 AI 에이전트 시스템**으로, SSE(Server-Sent Events)를 통한 실시간 상태 동기화와 디바이스 연동을 지원합니다.
 
+### 🎭 **데모 모드 지원**
+Frontend는 **백엔드 없이도 동작하는 데모 모드**를 지원합니다!
+- `.env.local`에서 `VITE_DEMO_MODE=true` 설정만으로 활성화
+- Mock SSE 스트림, Devices API, UI 완전 동작
+- SaaS 데모, 오프라인 개발, 프레젠테이션에 최적
+- 👉 **상세 가이드**: [NEXUS_DEMO_MODE_GUIDE.md](docs/NEXUS_DEMO_MODE_GUIDE.md)
+
 ### 핵심 아키텍처
-- **Frontend**: React + TypeScript + Vite (포트 5173)
+- **Frontend**: React + TypeScript + Vite (포트 5173) + **데모 모드 지원**
 - **Backend**: FastAPI + SSE + Device API (포트 8000)
 - **Windows Companion**: Python 기반 로컬 디바이스 에이전트
 - **계약 준수**: SSE 단일 소스, 202 Accepted 패턴, Two-Phase Commit
@@ -76,12 +83,37 @@ nexus/
 
 ### **사전 요구사항**
 - **Node.js**: v18 이상 (Frontend)
-- **Python**: 3.9 이상 (Backend + Windows Companion)
+- **Python**: 3.9 이상 (Backend + Windows Companion) - **데모 모드 시 불필요**
 - **Windows 11**: Windows Companion 실행 시 필요
 
 ---
 
-### **1. Backend 실행** (포트 8000)
+### **🎭 데모 모드 (백엔드 불필요)**
+
+**가장 빠른 실행 방법!** Backend 없이 Frontend만 실행:
+
+```bash
+cd frontend
+cp .env.local.example .env.local
+# .env.local 파일에서 VITE_DEMO_MODE=true 설정
+npm install
+npm run dev
+```
+
+**접속**: http://localhost:5173
+
+**데모 모드 특징**:
+- ✅ Mock SSE 스트림 (Snapshot → 5개 Report)
+- ✅ Mock Devices (3개 디바이스)
+- ✅ 페어링 시뮬레이션
+- ✅ UI 100% 동작
+- 👉 상세: [NEXUS_DEMO_MODE_GUIDE.md](docs/NEXUS_DEMO_MODE_GUIDE.md)
+
+---
+
+### **🔌 실제 백엔드 모드**
+
+#### **1. Backend 실행** (포트 8000)
 
 #### Windows:
 ```cmd
@@ -113,6 +145,7 @@ uvicorn app.main:app --reload --port 8000
 ```bash
 cd frontend
 cp .env.local.example .env.local
+# .env.local 파일에서 VITE_DEMO_MODE=false 또는 삭제
 npm install
 npm run dev
 ```
@@ -120,6 +153,7 @@ npm run dev
 **환경 변수** (`.env.local`):
 ```env
 VITE_API_BASE=http://localhost:8000
+VITE_DEMO_MODE=false  # 실제 백엔드 모드 (또는 삭제)
 ```
 
 **접속**: http://localhost:5173
@@ -153,6 +187,11 @@ cd frontend
 npm run build
 # 빌드 결과: frontend/dist/
 ```
+
+**데모 모드 배포**:
+- Netlify, Vercel, Cloudflare Pages에 `dist/` 디렉토리 배포
+- 환경 변수 `VITE_DEMO_MODE=true` 설정
+- 백엔드 불필요 → 순수 정적 사이트로 배포 가능
 
 ### **Frontend 프리뷰**
 ```bash
@@ -189,9 +228,14 @@ npm run preview
 ## 🔑 환경 변수 목록
 
 ### **Frontend** (`.env.local`)
-| 변수 | 설명 | 예시 |
-|------|------|------|
-| `VITE_API_BASE` | Backend API URL | `http://localhost:8000` |
+| 변수 | 설명 | 예시 | 기본값 |
+|------|------|------|--------|
+| `VITE_API_BASE` | Backend API URL | `http://localhost:8000` | (없음) |
+| `VITE_DEMO_MODE` | **데모 모드 활성화** | `true` / `false` | `false` |
+
+**데모 모드**:
+- `VITE_DEMO_MODE=true` → 백엔드 없이 Mock 데이터로 동작
+- `VITE_DEMO_MODE=false` → 실제 백엔드 호출 (기본값)
 
 ### **Backend** (환경 변수)
 | 변수 | 설명 | 예시 |
@@ -218,6 +262,8 @@ npm run preview
 - ✅ **빌드 스크립트 존재**: `npm run build`
 - ✅ **Vite 프록시 설정**: `/agent`, `/sidecar`, `/approvals` → Backend로 프록시
 - ✅ **SSE 스트림 구현**: `useAgentReportStream.ts`
+- ✅ **데모 모드 지원**: Mock SSE, Mock Devices API
+- ✅ **코드 라인 수**: 393줄 (간결한 구조)
 - ✅ **코드 라인 수**: 393줄 (간결한 구조)
 
 ### **Backend 점검**
@@ -306,14 +352,23 @@ npm run preview
 - **Backend 로그**: 터미널에서 Uvicorn 로그 확인
 - **Frontend 로그**: 브라우저 개발자 도구 → Console
 - **SSE 스트림**: 브라우저 개발자 도구 → Network → `stream` 요청 확인
+- **데모 모드**: 콘솔에서 `[Demo Mode]` 메시지 확인
 
 ### **테스트**
+- **데모 모드 테스트**: [NEXUS_DEMO_MODE_GUIDE.md](docs/NEXUS_DEMO_MODE_GUIDE.md) 시나리오 참고
 - **Smoke Test**: `docs/NEXUS_SMOKE_TEST_SCENARIOS.md` 참고
 - **SSE 재생 테스트**: 브라우저 새로고침 → `Last-Event-ID` 헤더로 이벤트 재생 확인
 
 ---
 
 ## 🎯 다음 단계
+
+### **Phase 0: 데모 모드 (즉시 실행 가능)** ✅
+1. ✅ Frontend만 실행 (Backend 불필요)
+2. ✅ Mock SSE 스트림 동작
+3. ✅ Mock Devices API 동작
+4. ✅ UI 100% 동작
+5. 👉 가이드: [NEXUS_DEMO_MODE_GUIDE.md](docs/NEXUS_DEMO_MODE_GUIDE.md)
 
 ### **Phase 1: 기본 기능 완성** (우선순위 높음)
 1. ✅ Frontend/Backend 실행 환경 구축
@@ -349,4 +404,4 @@ npm run preview
 
 **최종 업데이트**: 2026-02-03  
 **버전**: v2.0  
-**상태**: 개발 중 (실행 가능 상태)
+**상태**: 개발 중 (실행 가능 상태) + **데모 모드 지원** 🎭

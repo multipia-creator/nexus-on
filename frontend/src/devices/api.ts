@@ -1,3 +1,5 @@
+import { mockDevices, mockPairingResponse } from '../lib/mockData'
+
 export type PairingConfirmByCodeResp = { device_id: string }
 
 export type DeviceInfo = {
@@ -15,7 +17,22 @@ export function apiBase(): string {
   return (v?.VITE_API_BASE as string) ?? ''
 }
 
-export async function pairingConfirmByCode(pairingCode: string) : Promise<PairingConfirmByCodeResp> {
+export function isDemoMode(): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const v: any = (import.meta as any).env
+  const mode = v?.VITE_DEMO_MODE as string | undefined
+  return mode === 'true' || mode === '1'
+}
+
+export async function pairingConfirmByCode(pairingCode: string): Promise<PairingConfirmByCodeResp> {
+  // 🎭 데모 모드
+  if (isDemoMode()) {
+    console.log('[Demo Mode] Pairing confirmed:', pairingCode)
+    await new Promise(resolve => setTimeout(resolve, 500)) // 네트워크 지연 시뮬레이션
+    return mockPairingResponse
+  }
+
+  // 🔌 실제 백엔드
   const res = await fetch(`${apiBase()}/devices/pairing/confirm_by_code`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -25,7 +42,22 @@ export async function pairingConfirmByCode(pairingCode: string) : Promise<Pairin
   return await res.json()
 }
 
-export async function listDevices(orgId: string, projectId: string) : Promise<DeviceInfo[]> {
+export async function listDevices(orgId: string, projectId: string): Promise<DeviceInfo[]> {
+  // 🎭 데모 모드
+  if (isDemoMode()) {
+    console.log('[Demo Mode] Listing devices:', { orgId, projectId })
+    await new Promise(resolve => setTimeout(resolve, 300)) // 네트워크 지연 시뮬레이션
+    return mockDevices.map(d => ({
+      device_id: d.device_id,
+      device_name: d.device_name,
+      device_type: d.device_type,
+      status: d.status,
+      last_seen_epoch: new Date(d.last_seen).getTime(),
+      capabilities: d.capabilities
+    }))
+  }
+
+  // 🔌 실제 백엔드
   const res = await fetch(`${apiBase()}/devtools/devices`, {
     headers: { 'x-org-id': orgId, 'x-project-id': projectId }
   })

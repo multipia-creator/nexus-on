@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { AgentReport, StreamEvent } from '../types'
+import { createMockSSEStream } from '../lib/mockData'
 
 type Params = {
   sessionId: string
   orgId: string
   projectId: string
   baseUrl?: string
+  demoMode?: boolean
 }
 
 export function useAgentReportStream(p: Params) {
@@ -29,6 +31,69 @@ export function useAgentReportStream(p: Params) {
     const abort = new AbortController()
     abortRef.current = abort
 
+    // 🎭 데모 모드: Mock SSE 스트림
+    if (p.demoMode) {
+      async function runDemo() {
+        setConnected(true)
+
+        const pushEvent = (ev: StreamEvent) => {
+          if (ev.event === 'ping') {
+            setLastPingTs(ev.data.ts)
+            return
+          }
+          setReports(prev => {
+            const map = new Map(prev.map(r => [r.meta.report_id, r]))
+            map.set(ev.data.meta.report_id, ev.data)
+            return Array.from(map.values()).sort((a, b) => a.meta.event_id - b.meta.event_id)
+          })
+          setLastEventId(ev.id)
+          localStorage.setItem(key, String(ev.id))
+        }
+
+        const parseBlock = (block: string): StreamEvent | null => {
+          const lines = block.split('\n').map(l => l.trimEnd()).filter(Boolean)
+          let id: number | null = null
+          let event: string | null = null
+          let data: string | null = null
+          for (const ln of lines) {
+            if (ln.startsWith('id:')) id = Number(ln.slice(3).trim())
+            if (ln.startsWith('event:')) event = ln.slice(6).trim()
+            if (ln.startsWith('data:')) data = ln.slice(5).trim()
+          }
+          if (!event || !data) return null
+          const obj = JSON.parse(data)
+          if (event === 'ping') return { event: 'ping', data: obj }
+          if (id == null) return null
+          return { event: event as any, id, data: obj }
+        }
+
+        // Mock SSE 스트림 생성기
+        const stream = createMockSSEStream(p.sessionId)
+
+        for (const chunk of stream) {
+          if (abort.signal.aborted) break
+
+          // SSE 형식 파싱
+          const blocks = chunk.split('\n\n').filter(Boolean)
+          for (const block of blocks) {
+            const ev = parseBlock(block)
+            if (ev) pushEvent(ev)
+          }
+
+          // 각 이벤트 사이에 1초 지연 (실제 스트리밍 시뮬레이션)
+          await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+      }
+
+      runDemo().catch(err => {
+        console.error('[Demo Mode] SSE stream error:', err)
+        setConnected(false)
+      })
+
+      return () => abort.abort()
+    }
+
+    // 🔌 실제 백엔드 모드
     async function run() {
       setConnected(false)
 
@@ -95,12 +160,12 @@ export function useAgentReportStream(p: Params) {
     }
 
     run().catch(err => {
-      console.error(err)
+      console.error('[Real Backend] SSE stream error:', err)
       setConnected(false)
     })
 
     return () => abort.abort()
-  }, [p.orgId, p.projectId, p.sessionId, baseUrl, key, lastEventId])
+  }, [p.orgId, p.projectId, p.sessionId, p.demoMode, baseUrl, key, lastEventId])
 
   const latest = useMemo(() => (reports.length ? reports[reports.length - 1] : null), [reports])
 

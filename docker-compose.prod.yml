@@ -1,0 +1,55 @@
+# Docker Compose - Production Environment
+# Usage: docker-compose -f docker-compose.prod.yml up -d
+
+version: '3.8'
+
+services:
+  # Backend Service (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexus-backend-prod
+    # Backend는 외부 노출하지 않음 (frontend를 통해서만 접근)
+    expose:
+      - "8000"
+    environment:
+      - CORS_ORIGINS=http://localhost,http://frontend
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - nexus-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Frontend Service (Nginx + React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Production: Backend URL through Docker network
+        VITE_API_BASE: http://backend:8000
+        VITE_DEMO_MODE: "false"
+    container_name: nexus-frontend-prod
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - nexus-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  nexus-network:
+    driver: bridge

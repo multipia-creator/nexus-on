@@ -21,6 +21,17 @@ from .sse import broadcaster
 app = FastAPI(title="NEXUS v2 Backend", version="1.2.0")
 
 
+# Health check endpoint for Docker
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Docker healthcheck and monitoring."""
+    return {
+        "status": "healthy",
+        "service": "NEXUS v2 Backend",
+        "version": "1.2.0"
+    }
+
+
 def get_tenant(x_org_id: Optional[str], x_project_id: Optional[str]) -> str:
     org = x_org_id or "o"
     proj = x_project_id or "p"

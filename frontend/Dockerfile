@@ -3,6 +3,14 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Build arguments for environment variables
+ARG VITE_API_BASE=http://localhost:8000
+ARG VITE_DEMO_MODE=false
+
+# Set as environment variables for Vite
+ENV VITE_API_BASE=$VITE_API_BASE
+ENV VITE_DEMO_MODE=$VITE_DEMO_MODE
+
 # Copy package files
 COPY package*.json ./
 
@@ -12,7 +20,7 @@ RUN npm ci --only=production
 # Copy source code
 COPY . .
 
-# Build the app
+# Build the app (environment variables are embedded during build)
 RUN npm run build
 
 # Stage 2: Production

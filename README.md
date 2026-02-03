@@ -181,6 +181,41 @@ RUN_WINDOWS.cmd
 
 ## 🏗️ 빌드 및 배포
 
+### **🐳 Docker Compose (권장 - Full-stack)**
+
+**가장 쉬운 방법!** Frontend + Backend를 한 번에 실행:
+
+```bash
+# 프로젝트 루트에서 실행
+docker-compose up -d
+
+# 접속
+# Frontend: http://localhost:8080
+# Backend: http://localhost:8000
+
+# 종료
+docker-compose down
+```
+
+**환경별 실행**:
+- **개발 환경** (Hot Reload 지원):
+  ```bash
+  docker-compose -f docker-compose.dev.yml up
+  # Frontend: http://localhost:3000
+  # Backend: http://localhost:8000 (Hot Reload)
+  ```
+
+- **운영 환경** (Backend 외부 노출 안 됨):
+  ```bash
+  docker-compose -f docker-compose.prod.yml up -d
+  # Frontend: http://localhost (포트 80)
+  # Backend: 내부 네트워크만
+  ```
+
+👉 **상세 가이드**: [NEXUS_DOCKER_COMPOSE_GUIDE.md](docs/NEXUS_DOCKER_COMPOSE_GUIDE.md)
+
+---
+
 ### **Frontend 빌드**
 ```bash
 cd frontend

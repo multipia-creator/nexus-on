@@ -201,6 +201,200 @@ npm run preview
 
 ---
 
+## 🚀 배포 가이드 (웹앱 전용)
+
+NEXUS Frontend는 **3가지 배포 방식**을 지원합니다:
+
+### **🎯 1. Cloudflare Pages 배포 (권장)**
+
+**장점**: 무료, 빠른 글로벌 CDN, SPA 라우팅 자동 지원, 환경변수 관리 용이
+
+#### **배포 단계**:
+
+1. **빌드 준비**:
+```bash
+cd /home/user/webapp/frontend
+npm run build
+```
+
+2. **Cloudflare 배포**:
+```bash
+# Wrangler CLI 설치 (전역)
+npm install -g wrangler
+
+# Cloudflare 로그인
+wrangler login
+
+# Pages 프로젝트 생성
+wrangler pages project create nexus-frontend --production-branch main
+
+# 배포 (데모 모드)
+wrangler pages deploy dist --project-name nexus-frontend
+
+# 배포 (실제 백엔드 모드)
+wrangler pages deploy dist --project-name nexus-frontend --env production
+```
+
+3. **환경 변수 설정**:
+```bash
+# 데모 모드 환경 변수
+wrangler pages secret put VITE_DEMO_MODE --project-name nexus-frontend
+# 입력: true
+
+# 실제 백엔드 URL (프로덕션 시)
+wrangler pages secret put VITE_API_BASE --project-name nexus-frontend
+# 입력: https://api.yourdomain.com
+```
+
+4. **접속**:
+- Production: `https://nexus-frontend.pages.dev`
+- Branch: `https://main.nexus-frontend.pages.dev`
+
+**장점 요약**:
+- ✅ 무료 무제한 대역폭
+- ✅ 글로벌 CDN (빠른 로딩)
+- ✅ 자동 HTTPS
+- ✅ Git 연동 가능 (CI/CD)
+- ✅ 환경 변수 관리 (데모 모드 전환 용이)
+
+---
+
+### **🎯 2. Docker + Nginx 배포**
+
+**장점**: 자체 서버 배포, 환경 완전 제어, K8s/EC2 호환
+
+#### **배포 단계**:
+
+1. **Docker 이미지 빌드**:
+```bash
+cd /home/user/webapp/frontend
+docker build -t nexus-frontend:latest .
+```
+
+2. **로컬 테스트**:
+```bash
+# 데모 모드
+docker run -p 8080:80 -e VITE_DEMO_MODE=true nexus-frontend:latest
+
+# 실제 백엔드 모드
+docker run -p 8080:80 -e VITE_API_BASE=http://localhost:8000 nexus-frontend:latest
+```
+
+3. **접속**: http://localhost:8080
+
+4. **프로덕션 배포 (Docker Compose)**:
+
+`docker-compose.yml`:
+```yaml
+version: '3.8'
+services:
+  frontend:
+    image: nexus-frontend:latest
+    ports:
+      - "80:80"
+    environment:
+      - VITE_DEMO_MODE=true  # 데모 모드
+      # - VITE_API_BASE=https://api.yourdomain.com  # 실제 백엔드
+    restart: unless-stopped
+```
+
+실행:
+```bash
+docker-compose up -d
+```
+
+**장점 요약**:
+- ✅ 완전한 환경 제어
+- ✅ K8s/ECS 호환
+- ✅ 멀티 스테이지 빌드로 용량 최적화
+- ✅ Nginx 기반 SPA 라우팅
+
+---
+
+### **🎯 3. Vercel/Netlify 배포**
+
+**장점**: GitHub 연동 자동 배포, 무료 티어, Zero Config
+
+#### **Vercel 배포**:
+
+1. **Vercel CLI 설치**:
+```bash
+npm install -g vercel
+```
+
+2. **배포**:
+```bash
+cd /home/user/webapp/frontend
+vercel --prod
+```
+
+3. **환경 변수 설정** (Vercel Dashboard):
+- `VITE_DEMO_MODE=true` (데모 모드)
+- `VITE_API_BASE=https://api.yourdomain.com` (프로덕션)
+
+4. **접속**: `https://nexus-frontend.vercel.app`
+
+#### **Netlify 배포**:
+
+1. **Netlify CLI 설치**:
+```bash
+npm install -g netlify-cli
+```
+
+2. **배포**:
+```bash
+cd /home/user/webapp/frontend
+npm run build
+netlify deploy --prod --dir=dist
+```
+
+3. **환경 변수 설정** (Netlify Dashboard):
+- `VITE_DEMO_MODE=true`
+- `VITE_API_BASE=https://api.yourdomain.com`
+
+**장점 요약**:
+- ✅ GitHub 연동 자동 배포
+- ✅ 무료 티어 (월 100GB 대역폭)
+- ✅ 환경 변수 Dashboard 관리
+- ✅ SPA 리디렉션 자동 처리
+
+---
+
+## 🔐 배포 시 주의사항
+
+### **데모 모드 배포 체크리스트**:
+- [x] `VITE_DEMO_MODE=true` 환경 변수 설정
+- [x] `npm run build` 성공 확인
+- [x] 백엔드 API 호출 없음 확인 (브라우저 DevTools Network 탭)
+- [x] SSE Mock 스트림 동작 확인
+- [x] Devices Mock 데이터 표시 확인
+
+### **프로덕션 모드 배포 체크리스트**:
+- [x] Backend API 배포 완료
+- [x] CORS 설정 (`CORS_ORIGINS`에 프론트엔드 도메인 추가)
+- [x] `VITE_API_BASE` 환경 변수에 Backend URL 설정
+- [x] HTTPS 사용 (Cloudflare/Vercel/Netlify는 자동)
+- [x] SSE 연결 테스트 (`/agent/reports/stream`)
+- [x] Device Pairing 흐름 테스트
+
+---
+
+## 📊 배포 방식 비교
+
+| 항목 | Cloudflare Pages | Docker + Nginx | Vercel/Netlify |
+|------|------------------|----------------|----------------|
+| **비용** | 무료 | 서버 비용 | 무료 (제한적) |
+| **속도** | 🚀🚀🚀 (글로벌 CDN) | 🚀 (서버 위치 의존) | 🚀🚀 (CDN) |
+| **제어** | 🔧 (제한적) | 🔧🔧🔧 (완전) | 🔧 (제한적) |
+| **배포** | CLI / Git | Docker | CLI / Git |
+| **환경변수** | ✅ Secrets | ✅ 컨테이너 | ✅ Dashboard |
+| **SPA 라우팅** | ✅ 자동 | ✅ Nginx 설정 | ✅ 자동 |
+| **권장 용도** | 데모, 프로덕션 | 자체 서버 | 데모, MVP |
+
+**교수님 추천**: Cloudflare Pages (데모 모드 + 빠른 글로벌 배포)
+
+---
+
 ## 📡 API 엔드포인트
 
 ### **SSE (Server-Sent Events)**

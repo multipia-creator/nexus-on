@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite --port 5173",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --port 5173"
+    "preview": "vite preview --port 5173",
+    "docker:build": "docker build -t nexus-frontend .",
+    "docker:run": "docker run -p 8080:80 nexus-frontend",
+    "docker:run:demo": "docker run -p 8080:80 -e VITE_DEMO_MODE=true nexus-frontend"
   },
   "dependencies": {
     "react": "^18.3.1",

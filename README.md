@@ -2,14 +2,15 @@
 
 ## 🎯 프로젝트 개요
 
-NEXUS는 **Web-first AI Agent System**으로, 최신 v7.7 Backend와 React Frontend를 결합한 Full-stack 솔루션입니다.
+NEXUS는 **SaaS + Windows Node E2E 통합 시스템**으로, 웹앱 본체와 Windows Node 확장을 연결한 Full-stack 솔루션입니다.
 
 ### **주요 특징**
 - ✅ **Frontend**: React + TypeScript + Vite + Tailwind CSS
 - ✅ **Backend**: FastAPI + v7.7 NEXUS Supervisor
+- ✅ **Windows Node**: Python Agent (페어링, Poll, 로컬 인제스트)
 - ✅ **LLM 통합**: Claude Sonnet 4.5, Gemini, OpenAI, Z.ai
-- ✅ **RAG**: 로컬 파일 인덱싱 + 검색
-- ✅ **YouTube**: 검색, 큐, 재생
+- ✅ **RAG**: 로컬 파일 인덱싱 + 검색 + Evidence 추적
+- ✅ **YouTube**: 검색, 큐, Embed Player
 - ✅ **인프라**: Redis (상태 저장) + RabbitMQ (메시지 큐)
 - ✅ **관측성**: Prometheus metrics
 - ✅ **배포**: Docker Compose + Cloudflare Pages
@@ -62,7 +63,9 @@ nexus/
 │   │   ├── lib/          # HTTP 클라이언트
 │   │   ├── stream/       # SSE 스트림
 │   │   ├── shell/        # UI 컴포넌트
-│   │   └── devices/      # 디바이스 API
+│   │   ├── devices/      # 디바이스 API
+│   │   ├── youtube/      # YouTube 패널
+│   │   └── nodes/        # Windows Node 관리
 │   ├── public/           # 정적 자산
 │   ├── Dockerfile        # Frontend 빌드
 │   └── package.json
@@ -72,9 +75,11 @@ nexus/
 │   │   ├── app.py        # FastAPI 앱
 │   │   ├── Dockerfile    # Backend 빌드
 │   │   └── requirements.txt
-│   ├── shared/           # 공유 모듈 (67개 파일)
+│   ├── shared/           # 공유 모듈 (68개 파일)
 │   │   ├── llm_client.py # LLM 통합
 │   │   ├── rag_naive.py  # RAG 엔진
+│   │   ├── rag_folder_ingest.py # RAG 폴더 인제스트
+│   │   ├── node_store.py # Windows Node 상태 관리
 │   │   ├── youtube_client.py
 │   │   └── ...
 │   ├── agents/           # 에이전트 워커
@@ -82,11 +87,16 @@ nexus/
 │   ├── docs/             # 문서
 │   └── .env.example      # 환경 변수 템플릿
 │
+├── node_agent/           # Windows Node Agent
+│   ├── node_agent.py     # Python 프로토타입
+│   └── node_config.json  # 노드 설정 (자동 생성)
+│
 ├── docs/                 # 통합 문서
 │   ├── NEXUS_V7_INTEGRATION.md  # 통합 가이드
 │   ├── API_COMPATIBILITY.md      # API 호환성
 │   └── ...
 │
+├── DEPLOYMENT_GUIDE.md   # 배포 가이드
 ├── docker-compose.yml    # 기본 설정
 ├── docker-compose.dev.yml   # 개발 환경
 ├── docker-compose.prod.yml  # 프로덕션 환경
@@ -303,21 +313,87 @@ curl http://localhost:15672/api/overview
 
 ---
 
-## 🔄 v7.7 통합 히스토리
+## 🔄 프로젝트 히스토리
 
-### **통합 작업 (2026-02-03)**
+### **최신 구현 (2026-02-03)**
 
-1. ✅ v7.7 Backend 코드 분석
-2. ✅ 기존 backend를 v7.7로 교체
-3. ✅ Docker Compose에 Redis + RabbitMQ 추가
-4. ✅ 환경 변수 설정 (.env.example)
-5. ✅ Dockerfile 수정 (Build context 최적화)
-6. ⏳ Frontend API 호환성 검증 (진행 중)
-7. ⏳ 통합 테스트
+1. ✅ **SaaS + Windows Node E2E 통합**
+   - Node 페어링 (6자리 코드, 5분 TTL)
+   - Poll 기반 명령 수신 (Outbound Only)
+   - 로컬 폴더 스캔 + 텍스트 추출
+   - 리포트 업로드 (SSE 실시간 UI 반영)
+   - RAG 자동 인제스트
 
-### **백업된 파일**
+2. ✅ **RAG 인제스트/정규화 파이프라인 개선**
+   - Evidence 정보 추가 (doc_id, chunk_id, page, offset)
+   - HWP 무조건 변환 정책 (fallback 검색)
+   - 실패 파일 격리 + 재시도 메커니즘
 
-기존 Backend는 `backend_backup_YYYYMMDD_HHMMSS/`로 백업되었습니다.
+3. ✅ **YouTube 기능 구현**
+   - 검색 (YouTube Data API v3 + 1시간 캐시)
+   - 큐 관리 (Redis 기반, tenant+session 격리)
+   - Embed Player (iframe)
+
+4. ✅ **Orchestrator 개선**
+   - RED 강제 검증 (7개 명령 타입)
+   - command_id 검증 (Idempotency)
+   - 202 Accepted + SSE 스트리밍
+
+5. ✅ **Frontend 채팅 UI**
+   - 입력창 + Enter 전송
+   - /chat 엔드포인트 연동
+   - Demo 모드 지원
+
+### **백업**
+
+- **최신 백업**: https://www.genspark.ai/api/files/s/ji1pPLeA
+- **크기**: 1.39 MB
+- **내용**: SaaS + Windows Node E2E 구현 완료
+
+---
+
+## 🚀 배포 가이드
+
+상세한 배포 가이드는 `DEPLOYMENT_GUIDE.md`를 참조하세요.
+
+### **빠른 배포 (Cloudflare Pages)**
+
+```bash
+cd frontend
+npm run build
+npx wrangler pages deploy dist --project-name webapp
+```
+
+**배포 URL**: https://webapp.pages.dev
+
+---
+
+## 🖥️ Windows Node Agent
+
+### **설치**
+
+```bash
+cd node_agent
+pip install requests
+```
+
+### **사용법**
+
+```bash
+# 1. 페어링
+python node_agent.py --enroll ABC123 --base-url https://your-backend.com
+
+# 2. 에이전트 실행 (Poll 모드)
+python node_agent.py --run --base-url https://your-backend.com
+```
+
+### **기능**
+
+- ✅ Enrollment (페어링 코드)
+- ✅ Poll Commands (HTTP Long Polling, 30초)
+- ✅ Execute: `local.folder.ingest` (로컬 폴더 스캔)
+- ✅ Report Upload (진행 상황 + 최종 결과)
+- ✅ Config 저장 (`node_config.json`)
 
 ---
 
@@ -337,5 +413,6 @@ curl http://localhost:15672/api/overview
 ---
 
 **최종 업데이트**: 2026-02-03  
-**버전**: v7.7 통합  
-**상태**: 통합 테스트 진행 중
+**버전**: v7.7 + SaaS + Windows Node E2E  
+**상태**: 빌드 완료, 배포 대기  
+**백업 URL**: https://www.genspark.ai/api/files/s/ji1pPLeA

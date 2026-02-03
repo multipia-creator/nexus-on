@@ -57,3 +57,4 @@ coverage/
 docs/**/*.tmp
 docs/**/*.draft
 docs/**/.DS_Store
+docs/API_KEYS.md

@@ -14,6 +14,8 @@
 - ✅ Cloudflare Pages 배포 준비
 - ✅ **API 키 설정 및 환경 변수 구성 완료**
 - ✅ **기본 API 엔드포인트 구현**
+- ✅ **NEXUS v7.7 아카이브 분석 완료 (80MB, 202개 파일)**
+- ✅ **불변 계약 및 작업 컨텍스트 정리 완료**
 
 ## 현재 기능별 URI 요약
 - `GET /` - 메인 페이지
@@ -23,17 +25,40 @@
 - `POST /api/chat/openrouter` - OpenRouter API 프록시
 
 ## 미구현 기능
-- 🔲 AI 에이전트 핵심 로직
-- 🔲 데이터베이스 연동
-- 🔲 프론트엔드 UI/UX 개발
-- 🔲 설계 문서 기반 시스템 구현
+- 🔲 SSE 스트림 기반 UI 업데이트 (`/agent/reports/stream`)
+- 🔲 Two-Phase Commit (승인 프로세스)
+- 🔲 사이드카 명령 처리 (`/sidecar/command`)
+- 🔲 멀티 LLM 게이트웨이 통합
+- 🔲 YouTube 통합
+- 🔲 RAG 기능
+- 🔲 프론트엔드 UI (Worklog, Asks, Autopilot)
+
+## NEXUS 불변 계약 (절대 변경 금지)
+1. **SSE 스트림 = UI 갱신의 단일 소스** (`/agent/reports/stream`)
+2. **202 Accepted 패턴**: `/approvals/*`, `/sidecar/command`는 202만 반환
+3. **Two-Phase Commit**: RED 작업은 승인 없이 실행 불가
+4. **멀티테넌트**: `x-org-id`, `x-project-id` 헤더 필수
+5. **RAG**: 로컬 미러 폴더 → 인덱싱 구조
+
+자세한 내용: `docs/NEXUS_WORK_CONTEXT.md`
 
 ## 개발 추천 순서
-1. 요구사항 및 기능 명세 정의
-2. 데이터 모델 설계
-3. API 엔드포인트 개발
-4. 프론트엔드 UI 개발
-5. AI 에이전트 로직 구현
+1. ✅ NEXUS 아카이브 분석 및 불변 계약 이해 완료
+2. 🔄 통합 전략 선택 (교수님 의사결정 필요):
+   - **전략 A**: 하이브리드 (Cloudflare Pages + 외부 Python 백엔드) 🌟 추천
+   - **전략 B**: Cloudflare 네이티브 재구현 (TypeScript 포팅)
+   - **전략 C**: 최소 MVP (핵심 기능만)
+3. ⏳ SSE 스트림 엔드포인트 구현
+4. ⏳ 202 Accepted 패턴 적용
+5. ⏳ 프론트엔드 UI (Worklog, Asks, Autopilot)
+6. ⏳ 멀티 LLM 게이트웨이 통합
+7. ⏳ YouTube 및 RAG 통합
+
+## 핵심 문서
+- **📊 분석 보고서**: `docs/NEXUS_ANALYSIS_REPORT.md` - 3가지 통합 전략 제안
+- **⚙️ 작업 컨텍스트**: `docs/NEXUS_WORK_CONTEXT.md` - 불변 계약, 아키텍처
+- **🔧 백엔드 레퍼런스**: `docs/backend_reference/` - Python FastAPI v7.7 (1.4MB)
+- **📝 설계 문서**: `docs/design/` - Claude Sonnet 4.5 프롬프트 가이드
 
 ## URL 정보
 - **로컬 개발**: http://localhost:3000

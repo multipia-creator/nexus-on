@@ -101,3 +101,39 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
 .tr.th { opacity: 0.85; font-weight: 800; }
 .badge.ok { border-color: #2e8b57; }
 .badge.bad { border-color: #8b2e2e; }
+
+/* --- YouTube Panel --- */
+.ytPanel { display: flex; flex-direction: column; gap: 12px; }
+.ytSearch { display: flex; gap: 8px; }
+.ytSearch input { flex: 1; padding: 10px 12px; border-radius: 12px; border: 1px solid #333; background: #0b0d10; color: #e7eaf0; font-size: 13px; }
+.ytSearch input:focus { outline: none; border-color: #3a7bd5; background: #0f1217; }
+.ytSearch button { padding: 10px 14px; border-radius: 12px; border: 1px solid #3a7bd5; background: #122033; color: #e7eaf0; cursor: pointer; font-size: 13px; font-weight: 600; }
+.ytSearch button:hover:not(:disabled) { background: #1a2e4a; }
+.ytSearch button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.ytPlayer { border: 1px solid #222; border-radius: 18px; background: #0f1217; padding: 12px; }
+.ytPlayer h3 { font-size: 14px; font-weight: 900; margin: 0 0 8px 0; opacity: 0.95; }
+.ytPlayerTitle { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.ytPlayerChannel { font-size: 12px; opacity: 0.7; margin-bottom: 10px; }
+.ytPlayer iframe { width: 100%; height: 360px; border-radius: 12px; background: #000; }
+
+.ytResults { border: 1px solid #222; border-radius: 18px; background: #0f1217; padding: 12px; }
+.ytResults h3 { font-size: 14px; font-weight: 900; margin: 0 0 10px 0; opacity: 0.95; }
+.ytList { display: flex; flex-direction: column; gap: 10px; }
+.ytItem { display: grid; grid-template-columns: 160px 1fr auto; gap: 12px; align-items: center; padding: 10px; border: 1px solid #2a2f38; border-radius: 14px; background: #10151d; }
+.ytItem img { width: 160px; height: 90px; border-radius: 10px; object-fit: cover; background: #0b0d10; }
+.ytItemBody { display: flex; flex-direction: column; gap: 4px; }
+.ytItemTitle { font-size: 13px; font-weight: 700; line-height: 1.35; }
+.ytItemMeta { display: flex; gap: 10px; font-size: 11px; opacity: 0.7; flex-wrap: wrap; }
+.ytItemMeta span { padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.06); }
+
+.ytQueue { border: 1px solid #222; border-radius: 18px; background: #0f1217; padding: 12px; }
+.ytQueueHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.ytQueueHeader h3 { font-size: 14px; font-weight: 900; margin: 0; opacity: 0.95; }
+.ytQueueActions { display: flex; gap: 8px; }
+.ytQueueItem { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: center; padding: 10px; border: 1px solid #2a2f38; border-radius: 14px; background: #10151d; }
+.ytQueueNum { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: rgba(255,255,255,0.06); font-weight: 700; font-size: 13px; }
+.ytQueueBody { display: flex; flex-direction: column; gap: 2px; }
+.ytQueueTitle { font-size: 13px; font-weight: 700; }
+.ytQueueChannel { font-size: 11px; opacity: 0.7; }
+

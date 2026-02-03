@@ -10,8 +10,9 @@ import { postJSON } from '../lib/http'
 import { DevicesModal } from '../devices/DevicesModal'
 import { isDemoMode } from '../devices/api'
 import { createMockChatMessage } from '../lib/mockData'
+import { YouTubePanel } from '../youtube/YouTubePanel'
 
-type View = 'stage' | 'dashboard'
+type View = 'stage' | 'dashboard' | 'youtube'
 
 export function Shell() {
   const [orgId, setOrgId] = useState('o')
@@ -131,6 +132,7 @@ export function Shell() {
           <button onClick={emitSidecarRed}>Emit RED</button>
           <button onClick={approveYes}>Approvals yes</button>
           <button onClick={() => setDevicesOpen(true)}>Devices</button>
+          <button onClick={() => setView('youtube')} className={view === 'youtube' ? 'active' : ''}>YouTube</button>
         </div>
       </header>
 
@@ -141,6 +143,15 @@ export function Shell() {
             counts={counts}
             onOpenDashboard={() => setView('dashboard')}
             onSendMessage={sendChatMessage}
+          />
+        ) : view === 'youtube' ? (
+          <YouTubePanel
+            baseUrl={baseUrl}
+            orgId={orgId}
+            projectId={projectId}
+            sessionId={sessionId}
+            apiKey="dev-api-key-change-in-production"
+            demoMode={demoMode}
           />
         ) : (
           <div className="dashWrap">

@@ -1,43 +1,97 @@
-# Docker Compose - Default Configuration
+# Docker Compose - Full-stack NEXUS with v7.7 Backend
 # Usage: docker-compose up -d
 # 
-# This is the default compose file for quick start.
+# This compose file includes:
+# - Frontend (React + Nginx)
+# - Backend (v7.7 NEXUS Supervisor with LLM, RAG, YouTube)
+# - Redis (State storage)
+# - RabbitMQ (Message queue)
+#
 # For development: docker-compose -f docker-compose.dev.yml up
 # For production: docker-compose -f docker-compose.prod.yml up -d
 
-version: '3.8'
+version: '3.9'
 
 services:
-  # Backend Service (FastAPI)
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: nexus-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP protocol
+      - "15672:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - nexus-network
+    restart: unless-stopped
+
+  # Redis State Storage
+  redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - redis_data:/data
+    networks:
+      - nexus-network
+    restart: unless-stopped
+
+  # Backend Service (v7.7 NEXUS Supervisor)
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: nexus_supervisor/Dockerfile
     container_name: nexus-backend
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/.env
     environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - REDIS_URL=redis://redis:6379/0
+      - TASK_QUEUE=nexus.tasks
       - CORS_ORIGINS=http://localhost:8080,http://frontend
       - PYTHONUNBUFFERED=1
-    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; print(urllib.request.urlopen('http://localhost:8000/health').read().decode())"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ./backend/data:/data
     networks:
       - nexus-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+    restart: unless-stopped
 
-  # Frontend Service (Nginx + React)
+  # Frontend Service (React + Nginx)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        # Backend URL: Use 'backend' for internal Docker network
-        # For external access: Use 'localhost:8000'
-        VITE_API_BASE: http://localhost:8000
+        # Backend URL for Docker internal network
+        VITE_API_BASE: http://backend:8000
         VITE_DEMO_MODE: "false"
     container_name: nexus-frontend
     ports:
@@ -45,14 +99,20 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - nexus-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - nexus-network
+    restart: unless-stopped
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  redis_data:
+    driver: local
 
 networks:
   nexus-network:

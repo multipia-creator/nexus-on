@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "issue_summary",
+    "probable_root_cause",
+    "proposed_changes",
+    "risk",
+    "verification"
+  ],
+  "properties": {
+    "issue_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "probable_root_cause": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proposed_changes": {
+      "type": "object",
+      "required": [
+        "prompt_patch",
+        "schema_patch",
+        "code_patch"
+      ],
+      "properties": {
+        "prompt_patch": {
+          "type": "string"
+        },
+        "schema_patch": {
+          "type": "string"
+        },
+        "code_patch": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "risk": {
+      "type": "string"
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "tests",
+        "dry_run_steps"
+      ],
+      "properties": {
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "dry_run_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

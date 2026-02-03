@@ -1,33 +1,19 @@
-# Backend — Device API + AgentReport SSE (v1.2) for Web-first + Windows Companion
+# NEXUS (Local Always-on Assistant) — P0 Fullstack
 
-Improvements over v1.1:
-- Device pairing is now **web-confirmed** without leaking device token to the web UI.
-  - Device: `start` -> gets `pairing_code` + `pairing_id` + `device_nonce`
-  - Web: `confirm_by_code(pairing_code)` -> returns `device_id` only (no token)
-  - Device: `complete(pairing_id, device_nonce)` -> receives `device_id` + `device_token`
+이 패키지는 로컬 PC에 상주하는 **캐릭터 비서 UI + 자율 에이전트** 데모(P0)입니다.
 
-SSE:
-- `/agent/reports/stream?session_id=...` emits SSE events (`snapshot|report|ping`)
-- `data:` payload is a contract-aligned `AgentReport` object
-- `meta.event_id` is monotonic per tenant (tenant = `x-org-id:x-project-id`)
+- UI: `http://localhost:8000/ui`
+- Backend: FastAPI + SSE + Approvals + Sidecar Commands
+- LLM: Claude Sonnet 4.5(Anthropic) 포함 멀티 게이트웨이
+- YouTube: 검색 + 큐 + 재생
+- RAG: `/data/gdrive_mirror` 폴더 ingest + HWP 외부 변환 계약
 
-## Run
-```bash
-cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
+## Quickstart
+1) `.env.example` → `.env` 복사 후 키 설정
+2) 실행:
+   - macOS/Linux: `bash scripts/bootstrap_local.sh`
+   - Windows: `powershell -ExecutionPolicy Bypass -File scripts\bootstrap_local.ps1`
+3) 문서: `docs/RUNBOOK_LOCALSERVER_CLAUDE45.md`
 
-Optional:
-- `CORS_ORIGINS=http://localhost:5173`
-
-## Endpoints (core)
-- Device pairing: `POST /devices/pairing/start`, `POST /devices/pairing/confirm_by_code`, `POST /devices/pairing/complete`
-- Device sync: `POST /devices/{device_id}/heartbeat`, `GET /devices/{device_id}/commands`, `POST /devices/{device_id}/commands/{command_id}/ack`, `POST /devices/{device_id}/reports`
-- SSE: `GET /agent/reports/stream?session_id=...`
-
-## Devtools
-- `GET /devtools/devices` (tenant-scoped list)
-- `POST /devtools/emit_report` (push synthetic report to SSE)
+## Claude Code 작업 규칙
+- `CLAUDE.md`를 먼저 읽고, 변경 시 업데이트하세요.

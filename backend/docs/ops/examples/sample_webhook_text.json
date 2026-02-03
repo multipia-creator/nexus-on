@@ -1,0 +1,3 @@
+{
+  "text": "[NEXUS] comment+issue fallback failed (status 403)\nPR: https://github.com/org/repo/pull/123\nChecks: https://github.com/org/repo/pull/123/checks\nRun: https://github.com/org/repo/actions/runs/999999999\nTop failing check: CI / unit (failure) https://github.com/org/repo/actions/runs/999999999"
+}

@@ -1,0 +1,27 @@
+name: baseline-candidate-character
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 18 * * 1" # Mondays 03:00 Asia/Seoul (UTC 18:00)
+
+jobs:
+  generate_candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+      - name: Generate candidate (no promote)
+        run: |
+          python tools/character_rehearsal_autoscore.py --write_baseline
+      - name: Upload candidate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: character_rehearsal_baseline_candidate
+          path: logs/character_rehearsal_baseline_candidate.json

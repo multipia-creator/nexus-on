@@ -1,0 +1,14 @@
+{
+  "backend_base_url": "http://localhost:8000",
+  "org_id": "o",
+  "project_id": "p",
+  "session_id": "s1",
+  "device_name": "HW-PC",
+  "capabilities": [
+    "os_control",
+    "audio",
+    "vision"
+  ],
+  "poll_interval_sec": 2.0,
+  "heartbeat_interval_sec": 10.0
+}

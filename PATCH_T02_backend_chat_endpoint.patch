@@ -1,0 +1,36 @@
+--- a/backend/nexus_supervisor/app.py
++++ b/backend/nexus_supervisor/app.py
+@@ -1396,6 +1396,32 @@ class ChatSendAccepted(BaseModel):
+     correlation_id: str
+ 
+ 
++@app.post("/chat", status_code=202)
++def chat_shorthand(
++    body: Dict[str, Any] = Body(...),
++    x_api_key: Optional[str] = Header(None),
++    authorization: Optional[str] = Header(None),
++    x_org_id: Optional[str] = Header(None),
++    x_project_id: Optional[str] = Header(None),
++):
++    """
++    Frontend shorthand: POST /chat → forwards to /chat/send logic.
++    Accepts: {"text": "...", "session_id": "..."}
++    Returns: 202 Accepted (UI update via SSE)
++    """
++    require_api_key(x_api_key, authorization)
++    
++    # Map frontend body to ChatSendRequest
++    message = body.get("text", "").strip()
++    session_id = body.get("session_id", "")
++    
++    request = ChatSendRequest(
++        message=message,
++        session_id=session_id
++    )
++    
++    return chat_send(request, x_api_key, authorization, x_org_id, x_project_id)
++
++
+ @app.post("/chat/send", status_code=202, response_model=ChatSendAccepted)
+ def chat_send(
+     body: ChatSendRequest,

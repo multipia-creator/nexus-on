@@ -1,0 +1,44 @@
+--- a/frontend/src/shell/Shell.tsx
++++ b/frontend/src/shell/Shell.tsx
+@@ -40,17 +40,16 @@ export function Shell() {
+   const headers = useMemo(() => ({ 'x-org-id': orgId, 'x-project-id': projectId }), [orgId, projectId])
+ 
+-  async function emitChat() {
++  async function sendChatMessage(text: string) {
+     if (demoMode) {
+-      console.log('[Demo Mode] Skipping /chat API call')
++      console.log('[Demo Mode] Mock chat message:', text)
+       return
+     }
+     
+-    // v7.7 Backend: /sidecar/command 사용 (chat는 별도 구현 필요)
++    // POST /chat API 호출
+     await postJSON(
+-      `${baseUrl}/sidecar/command`,
++      `${baseUrl}/chat`,
+       {
+-        command_id: corr('cmd-ui-chat'),
+-        type: 'chat.message',
+-        data: { text: 'ui probe' },
+-        client_context: { correlation_id: corr('corr-ui-chat'), session_id: sessionId }
++        session_id: sessionId,
++        text
+       },
+       { ...headers, 'x-api-key': 'dev-api-key-change-in-production' }
+     )
+@@ -95,7 +94,6 @@ export function Shell() {
+           <label>project <input value={projectId} onChange={e => setProjectId(e.target.value)} /></label>
+           <label>session <input value={sessionId} onChange={e => setSessionId(e.target.value)} /></label>
+           <button onClick={() => { localStorage.clear(); window.location.reload() }}>Clear cursor</button>
+-          <button onClick={emitChat}>Emit /chat</button>
+           <button onClick={emitSidecarRed}>Emit RED</button>
+           <button onClick={approveYes}>Approvals yes</button>
+           <button onClick={() => setDevicesOpen(true)}>Devices</button>
+@@ -109,7 +107,7 @@ export function Shell() {
+         report={latest}
+         counts={counts}
+         onOpenDashboard={() => setView('dashboard')}
++        onSendMessage={sendChatMessage}
+       />
+     ) : (
+       <Dashboard report={latest} />

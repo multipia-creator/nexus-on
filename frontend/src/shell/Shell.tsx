@@ -9,6 +9,7 @@ import { corr } from '../lib/correlation'
 import { postJSON } from '../lib/http'
 import { DevicesModal } from '../devices/DevicesModal'
 import { isDemoMode } from '../devices/api'
+import { createMockChatMessage } from '../lib/mockData'
 
 type View = 'stage' | 'dashboard'
 
@@ -39,20 +40,35 @@ export function Shell() {
 
   const headers = useMemo(() => ({ 'x-org-id': orgId, 'x-project-id': projectId }), [orgId, projectId])
 
-  async function emitChat() {
+  async function sendChatMessage(text: string) {
     if (demoMode) {
-      console.log('[Demo Mode] Skipping /chat API call')
+      console.log('[Demo Mode] Mock chat message:', text)
+      
+      // Demo 모드: Mock user + assistant 메시지 추가
+      const userMsg = createMockChatMessage(sessionId, Date.now(), 'user', text)
+      // @ts-ignore (reports is read-only, but we're mocking)
+      reports.push(userMsg)
+      
+      setTimeout(() => {
+        const assistantMsg = createMockChatMessage(
+          sessionId,
+          Date.now() + 1,
+          'assistant',
+          `[데모 모드 응답] "${text}"에 대한 답변입니다. 실제 LLM 연동은 백엔드 실행 시 작동합니다.`
+        )
+        // @ts-ignore
+        reports.push(assistantMsg)
+      }, 500)
+      
       return
     }
     
-    // v7.7 Backend: /sidecar/command 사용 (chat는 별도 구현 필요)
+    // POST /chat API 호출
     await postJSON(
-      `${baseUrl}/sidecar/command`,
+      `${baseUrl}/chat`,
       {
-        command_id: corr('cmd-ui-chat'),
-        type: 'chat.message',
-        data: { text: 'ui probe' },
-        client_context: { correlation_id: corr('corr-ui-chat'), session_id: sessionId }
+        session_id: sessionId,
+        text
       },
       { ...headers, 'x-api-key': 'dev-api-key-change-in-production' }
     )
@@ -112,7 +128,6 @@ export function Shell() {
           <label>project <input value={projectId} onChange={e => setProjectId(e.target.value)} /></label>
           <label>session <input value={sessionId} onChange={e => setSessionId(e.target.value)} /></label>
           <button onClick={() => { localStorage.clear(); window.location.reload() }}>Clear cursor</button>
-          <button onClick={emitChat}>Emit /chat</button>
           <button onClick={emitSidecarRed}>Emit RED</button>
           <button onClick={approveYes}>Approvals yes</button>
           <button onClick={() => setDevicesOpen(true)}>Devices</button>
@@ -125,6 +140,7 @@ export function Shell() {
             report={latest}
             counts={counts}
             onOpenDashboard={() => setView('dashboard')}
+            onSendMessage={sendChatMessage}
           />
         ) : (
           <div className="dashWrap">

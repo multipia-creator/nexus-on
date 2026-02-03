@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import type { AgentReport } from '../../types'
 
 type Props = {
   report: AgentReport | null
   counts: { asks: number; redAsks: number; blocked: number }
   onOpenDashboard: () => void
+  onSendMessage: (text: string) => Promise<void>
 }
 
 function pickSummary(report: AgentReport | null) {
@@ -27,6 +29,22 @@ function computeStageCards(report: AgentReport | null) {
 
 export function AssistantStage(p: Props) {
   const stage = computeStageCards(p.report)
+  const [chatInput, setChatInput] = useState('')
+  const [sending, setSending] = useState(false)
+
+  async function handleSend() {
+    if (!chatInput.trim() || sending) return
+    setSending(true)
+    try {
+      await p.onSendMessage(chatInput.trim())
+      setChatInput('')
+    } catch (err) {
+      console.error('[AssistantStage] Send failed:', err)
+      alert('메시지 전송 실패. 다시 시도해주세요.')
+    } finally {
+      setSending(false)
+    }
+  }
 
   return (
     <div className="stage">
@@ -63,6 +81,26 @@ export function AssistantStage(p: Props) {
         <div className="stageActions">
           <button className="btn primary" onClick={p.onOpenDashboard}>대시보드로 이동</button>
           <button className="btn" onClick={() => alert('Dock로 축소: 화면 하단 Dock를 클릭하세요.')}>Dock로 축소</button>
+        </div>
+
+        {/* 채팅 입력창 */}
+        <div className="chatInput">
+          <input
+            type="text"
+            value={chatInput}
+            onChange={e => setChatInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSend()
+              }
+            }}
+            placeholder="메시지를 입력하세요..."
+            disabled={sending}
+          />
+          <button className="btn primary" onClick={handleSend} disabled={sending || !chatInput.trim()}>
+            {sending ? '전송 중...' : '전송'}
+          </button>
         </div>
 
         <div className="stageNote">

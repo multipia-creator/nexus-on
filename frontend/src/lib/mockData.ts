@@ -224,6 +224,59 @@ export const createMockReport = (
   }
 }
 
+// Mock Chat Message Report
+export const createMockChatMessage = (
+  sessionId: string,
+  eventId: number,
+  role: 'user' | 'assistant',
+  text: string
+): AgentReport => ({
+  meta: {
+    mode: 'focused',
+    approval_level: 'green',
+    confidence: 0.95,
+    report_id: `chat_${sessionId}_${eventId}_${Date.now()}`,
+    created_at: new Date().toISOString(),
+    event_id: eventId,
+    tenant: 'demo:demo',
+    session_id: sessionId,
+    user_id: 'demo-user',
+    json_repaired: false,
+    causality: {
+      correlation_id: `corr_chat_${Date.now()}`,
+      command_id: null,
+      ask_id: null,
+      type: 'chat.message'
+    }
+  },
+  done: [],
+  next: [],
+  blocked: [],
+  ask: [],
+  risk: [],
+  rationale: `데모 모드: ${role} 메시지`,
+  undo: [],
+  ui_hint: {
+    renderer: 'chat.message',
+    surface: 'assistant_stage',
+    cards: [
+      {
+        type: 'chat',
+        role,
+        body: text
+      }
+    ],
+    actions: []
+  },
+  persona_id: 'seria.istj',
+  skin_id: 'seria.default',
+  data: {
+    role,
+    text,
+    session_id: sessionId
+  }
+})
+
 // Mock SSE 이벤트 생성기
 export function* createMockSSEStream(sessionId: string): Generator<string, void, unknown> {
   // 1. Snapshot 전송

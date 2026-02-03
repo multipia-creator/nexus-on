@@ -1,0 +1,19 @@
+--- a/frontend/src/styles.css
++++ b/frontend/src/styles.css
+@@ -32,6 +32,17 @@
+ .stageActions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+ .stageNote { font-size: 11px; opacity: 0.65; border-top: 1px dashed #2a2f38; padding-top: 10px; }
++
++/* 채팅 입력창 */
++.chatInput { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #2a2f38; }
++.chatInput input { flex: 1; padding: 10px 12px; border-radius: 12px; border: 1px solid #333; background: #0b0d10; color: #e7eaf0; font-size: 13px; }
++.chatInput input:focus { outline: none; border-color: #3a7bd5; background: #0f1217; }
++.chatInput input:disabled { opacity: 0.5; cursor: not-allowed; }
++.chatInput button { padding: 10px 14px; border-radius: 12px; border: 1px solid #333; background: #161b22; color: #e7eaf0; cursor: pointer; font-size: 13px; font-weight: 600; }
++.chatInput button.primary { border-color: #3a7bd5; background: #122033; }
++.chatInput button.primary:hover:not(:disabled) { background: #1a2e4a; }
++.chatInput button:disabled { opacity: 0.5; cursor: not-allowed; }
++
+ .dashWrap { display: grid; grid-template-columns: 1fr 0.42fr; gap: 12px; align-items: start; }
+ .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+ .dashCol { border: 1px solid #222; border-radius: 18px; background: #0f1217; padding: 12px; min-height: 260px; }

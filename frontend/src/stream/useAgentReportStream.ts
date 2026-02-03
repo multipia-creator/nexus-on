@@ -97,14 +97,22 @@ export function useAgentReportStream(p: Params) {
     async function run() {
       setConnected(false)
 
-      const headers: Record<string, string> = {
-        'x-org-id': p.orgId,
-        'x-project-id': p.projectId
+      // v7.7 Backend: query string으로 인증 정보 전달 (EventSource는 헤더 설정 불가)
+      const params = new URLSearchParams({
+        session_id: p.sessionId,
+        org_id: p.orgId,
+        project_id: p.projectId,
+        // API 키는 환경 변수에서 가져오거나 하드코딩 (개발용)
+        api_key: 'dev-api-key-change-in-production'
+      })
+      
+      // cursor 파라미터로 재연결 지원
+      if (lastEventId > 0) {
+        params.set('cursor', String(lastEventId))
       }
-      if (lastEventId > 0) headers['Last-Event-ID'] = String(lastEventId)
 
-      const url = `${baseUrl}/agent/reports/stream?session_id=${encodeURIComponent(p.sessionId)}`
-      const res = await fetch(url, { headers, signal: abort.signal })
+      const url = `${baseUrl}/agent/reports/stream?${params.toString()}`
+      const res = await fetch(url, { signal: abort.signal })
       if (!res.ok || !res.body) throw new Error(`SSE failed: ${res.status}`)
 
       setConnected(true)

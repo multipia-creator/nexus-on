@@ -44,7 +44,18 @@ export function Shell() {
       console.log('[Demo Mode] Skipping /chat API call')
       return
     }
-    await postJSON('/chat', { session_id: sessionId, correlation_id: corr('corr-ui-chat'), text: 'ui probe' }, headers)
+    
+    // v7.7 Backend: /sidecar/command 사용 (chat는 별도 구현 필요)
+    await postJSON(
+      `${baseUrl}/sidecar/command`,
+      {
+        command_id: corr('cmd-ui-chat'),
+        type: 'chat.message',
+        data: { text: 'ui probe' },
+        client_context: { correlation_id: corr('corr-ui-chat'), session_id: sessionId }
+      },
+      { ...headers, 'x-api-key': 'dev-api-key-change-in-production' }
+    )
   }
 
   async function emitSidecarRed() {
@@ -53,13 +64,13 @@ export function Shell() {
       return
     }
     await postJSON(
-      '/sidecar/command',
+      `${baseUrl}/sidecar/command`,
       {
         command_id: 'cmd-ui-red',
         type: 'external_share.execute',
         client_context: { correlation_id: corr('corr-ui-sidecar'), session_id: sessionId }
       },
-      headers
+      { ...headers, 'x-api-key': 'dev-api-key-change-in-production' }
     )
   }
 
@@ -68,7 +79,14 @@ export function Shell() {
       console.log('[Demo Mode] Skipping /approvals API call')
       return
     }
-    await postJSON(`/approvals/ask-demo/decide`, { session_id: sessionId, correlation_id: corr('corr-ui-approve'), decision: 'yes' }, headers)
+    
+    // v7.7 Backend: /approvals 엔드포인트 미구현
+    // 임시로 /sidecar/command 사용
+    console.warn('[Frontend] /approvals API not implemented in v7.7 Backend')
+    console.log('[Frontend] Would approve ask with correlation_id:', corr('corr-ui-approve'))
+    
+    // TODO: v7.7 Backend에 /approvals/*/decide 엔드포인트 추가 필요
+    // await postJSON(`${baseUrl}/approvals/ask-demo/decide`, { session_id: sessionId, correlation_id: corr('corr-ui-approve'), decision: 'yes' }, { ...headers, 'x-api-key': 'dev-api-key-change-in-production' })
   }
 
   return (

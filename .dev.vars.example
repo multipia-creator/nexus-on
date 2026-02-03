@@ -1,0 +1,15 @@
+# Local Development Environment Variables
+# Copy this file to .dev.vars and fill in your actual values
+# .dev.vars is git-ignored and used by wrangler for local development
+
+# API Keys
+# API_KEY=your_api_key_here
+
+# Database Connection (if using external services)
+# DATABASE_URL=your_database_url_here
+
+# Third-party Service API Keys
+# OPENAI_API_KEY=your_openai_key_here
+# ANTHROPIC_API_KEY=your_anthropic_key_here
+
+# Add your environment variables below

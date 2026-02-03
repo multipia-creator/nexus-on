@@ -52,3 +52,8 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output/
+
+# Documentation temporary files
+docs/**/*.tmp
+docs/**/*.draft
+docs/**/.DS_Store

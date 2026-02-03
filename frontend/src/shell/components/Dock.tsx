@@ -1,5 +1,5 @@
 type Props = {
-  view: 'stage' | 'dashboard' | 'youtube'
+  view: 'stage' | 'dashboard' | 'youtube' | 'nodes'
   counts: { asks: number; redAsks: number; blocked: number }
   personaId: string
   skinId: string
@@ -8,7 +8,7 @@ type Props = {
 }
 
 export function Dock(p: Props) {
-  const viewLabel = p.view === 'stage' ? 'stage' : p.view === 'youtube' ? 'youtube' : 'dashboard'
+  const viewLabel = p.view === 'stage' ? 'stage' : p.view === 'youtube' ? 'youtube' : p.view === 'nodes' ? 'nodes' : 'dashboard'
   
   return (
     <div className="dock" onClick={p.onToggle} role="button" aria-label="dock">

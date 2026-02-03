@@ -11,8 +11,9 @@ import { DevicesModal } from '../devices/DevicesModal'
 import { isDemoMode } from '../devices/api'
 import { createMockChatMessage } from '../lib/mockData'
 import { YouTubePanel } from '../youtube/YouTubePanel'
+import { NodesManager } from '../nodes/NodesManager'
 
-type View = 'stage' | 'dashboard' | 'youtube'
+type View = 'stage' | 'dashboard' | 'youtube' | 'nodes'
 
 export function Shell() {
   const [orgId, setOrgId] = useState('o')
@@ -152,6 +153,14 @@ export function Shell() {
             sessionId={sessionId}
             apiKey="dev-api-key-change-in-production"
             demoMode={demoMode}
+          />
+        ) : view === 'nodes' ? (
+          <NodesManager
+            baseUrl={baseUrl}
+            orgId={orgId}
+            projectId={projectId}
+            apiKey="dev-api-key-change-in-production"
+            onError={(err) => console.error('[Nodes Error]', err)}
           />
         ) : (
           <div className="dashWrap">

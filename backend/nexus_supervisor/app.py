@@ -32,6 +32,7 @@ from shared.callback_rotation import load_callback_secrets, load_rotatable_secre
 from shared.nonce_store import NonceStore
 from shared.metrics import TASK_CREATE, TASK_GET, CALLBACK, LLM_GEN, QUEUE_PUBLISH_FAIL, TASK_DURATION
 from shared.mq_utils import declare_queues, publish_json
+from shared.node_store import NodeStore
 
 setup_logging()
 logger = logging.getLogger("nexus_supervisor")
@@ -46,6 +47,7 @@ rag_engine = NaiveRAG(settings.redis_url)
 rag_folder_ingestor = RagFolderIngestor(settings.redis_url, rag_engine)
 youtube_queue_store = YouTubeQueueStore(settings.redis_url)
 play_engine = PlayEngine(settings.redis_url, ttl_seconds=int(os.getenv('PLAY_SESSION_TTL_SECONDS', '86400')))
+node_store = NodeStore(settings.redis_url)
 callback_secrets = load_callback_secrets(getattr(settings, 'callback_secret_rotation_source', 'env'), getattr(settings, 'callback_signature_secrets_json', '') or '', getattr(settings, 'callback_signature_secrets_path', '') or '')
 
 # Tenant-scoped credential vault + LLM client (KEY03)
@@ -2720,3 +2722,392 @@ def _startup_rag_scheduler() -> None:
         t = threading.Thread(target=_rag_auto_ingest_loop, daemon=True)
         t.start()
         logger.info("RAG auto ingest scheduler enabled: %s @ %02d:%02d KST", settings.rag_auto_ingest_path, settings.rag_auto_ingest_hour, settings.rag_auto_ingest_minute)
+
+
+# ============================================================
+# Windows Node Management Endpoints
+# ============================================================
+
+class NodePairingCreateResponse(BaseModel):
+    """페어링 코드 생성 응답"""
+    pairing_code: str
+    expires_in: int  # seconds
+
+
+class NodePairingClaimRequest(BaseModel):
+    """페어링 코드 사용 요청"""
+    pairing_code: str
+    node_id: str
+    hostname: str
+    os_version: Optional[str] = None
+    agent_version: Optional[str] = None
+
+
+class NodePairingClaimResponse(BaseModel):
+    """페어링 코드 사용 응답"""
+    node_token: str  # JWT (미래 구현)
+    node_id: str
+    tenant_id: str
+
+
+class NodeCommandRequest(BaseModel):
+    """노드 명령 전송 요청"""
+    node_id: str
+    command_type: str  # "local.folder.ingest" 등
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+
+class NodeCommandResponse(BaseModel):
+    """노드 명령 전송 응답 (202 Accepted)"""
+    command_id: str
+    node_id: str
+    accepted: bool = True
+
+
+class NodeReportRequest(BaseModel):
+    """노드 리포트 업로드 요청"""
+    node_id: str
+    command_id: str
+    status: str  # "in_progress" | "completed" | "failed"
+    progress: Optional[Dict[str, Any]] = None
+    result: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+
+
+class NodeReportResponse(BaseModel):
+    """노드 리포트 업로드 응답"""
+    received: bool = True
+    report_id: str
+
+
+class NodeStateResponse(BaseModel):
+    """노드 상태 조회 응답"""
+    node_id: str
+    status: str  # "online" | "offline" | "enrolled"
+    last_seen: Optional[str] = None
+    connection_type: Optional[str] = None
+    info: Optional[Dict[str, Any]] = None
+
+
+@app.post("/node/pairing/create", status_code=200, response_model=NodePairingCreateResponse)
+def node_pairing_create(
+    x_api_key: Optional[str] = Header(None),
+    authorization: Optional[str] = Header(None),
+    x_org_id: str = Header(...),
+    x_project_id: str = Header(...)
+):
+    """
+    페어링 코드 생성 (6자리, 5분 TTL)
+    
+    User → Dashboard: "새 노드 추가" 클릭
+    Backend: 페어링 코드 생성
+    """
+    require_api_key(x_api_key, authorization)
+    tenant_id = f"{x_org_id}:{x_project_id}"
+    
+    pairing_code = node_store.create_pairing_code(tenant_id, ttl_seconds=300)
+    
+    logger.info(f"[Node Pairing] Created code={pairing_code} tenant={tenant_id}")
+    
+    # SSE로 페어링 코드 생성 알림
+    report = _mk_report(
+        status="done",
+        summary=f"페어링 코드 생성: {pairing_code}",
+        risk="GREEN",
+        causality={
+            "correlation_id": f"pairing-create-{pairing_code}",
+            "command_id": None,
+            "ask_id": None,
+            "type": "node.pairing.create"
+        },
+        ui_hint={
+            "surface": "dashboard",
+            "cards": [{
+                "type": "node_pairing",
+                "title": "노드 페어링 코드",
+                "body": f"페어링 코드: **{pairing_code}**\n\nWindows Node에서 다음 명령을 실행하세요:\n```\nnode_agent.exe --enroll {pairing_code}\n```\n\n유효 시간: 5분"
+            }]
+        },
+        data={"pairing_code": pairing_code, "expires_in": 300}
+    )
+    stream_store.append_event(tenant_id, "report", report)
+    
+    return NodePairingCreateResponse(pairing_code=pairing_code, expires_in=300)
+
+
+@app.post("/node/pairing/claim", status_code=200, response_model=NodePairingClaimResponse)
+def node_pairing_claim(body: NodePairingClaimRequest):
+    """
+    페어링 코드 사용 (일회용)
+    
+    Node → Backend: 페어링 요청
+    Backend: 노드 등록 + 토큰 발급
+    """
+    node_info = {
+        "hostname": body.hostname,
+        "os_version": body.os_version,
+        "agent_version": body.agent_version
+    }
+    
+    tenant_id = node_store.claim_pairing_code(
+        pairing_code=body.pairing_code,
+        node_id=body.node_id,
+        node_info=node_info
+    )
+    
+    if not tenant_id:
+        raise HTTPException(status_code=404, detail="Invalid or expired pairing code")
+    
+    logger.info(f"[Node Pairing] Claimed code={body.pairing_code} node={body.node_id} tenant={tenant_id}")
+    
+    # TODO: JWT 토큰 발급 (미래 구현)
+    node_token = f"node-token-{body.node_id}-{uuid.uuid4().hex[:8]}"
+    
+    # SSE로 노드 등록 알림
+    report = _mk_report(
+        status="done",
+        summary=f"노드 등록 완료: {body.node_id}",
+        risk="GREEN",
+        causality={
+            "correlation_id": f"pairing-claim-{body.node_id}",
+            "command_id": None,
+            "ask_id": None,
+            "type": "node.pairing.claim"
+        },
+        ui_hint={
+            "surface": "dashboard",
+            "cards": [{
+                "type": "node_enrolled",
+                "title": "노드 등록 완료",
+                "body": f"**{body.node_id}** (hostname: {body.hostname})\n\n노드가 성공적으로 등록되었습니다."
+            }]
+        },
+        data={"node_id": body.node_id, "hostname": body.hostname}
+    )
+    stream_store.append_event(tenant_id, "report", report)
+    
+    return NodePairingClaimResponse(
+        node_token=node_token,
+        node_id=body.node_id,
+        tenant_id=tenant_id
+    )
+
+
+@app.get("/node/poll", status_code=200)
+def node_poll(
+    node_id: str = Query(...),
+    node_token: str = Query(...)
+):
+    """
+    노드 Poll 엔드포인트 (Fallback for WSS failure)
+    
+    Node → Backend: HTTP Long Polling (30초 타임아웃)
+    Backend: 큐에 있는 명령 반환
+    """
+    # TODO: JWT 검증 (미래 구현)
+    # 현재는 node_token이 "node-token-{node_id}-*" 형식인지만 확인
+    if not node_token.startswith(f"node-token-{node_id}"):
+        raise HTTPException(status_code=403, detail="Invalid node token")
+    
+    # tenant_id 추출 (Redis에서 조회)
+    # 임시로 모든 테넌트 검색 (비효율적이지만 프로토타입용)
+    tenant_id = None
+    for tid in ["demo:demo", "org123:proj456"]:  # 하드코딩된 테넌트 목록
+        node_state = node_store.get_node_state(tid, node_id)
+        if node_state:
+            tenant_id = tid
+            break
+    
+    if not tenant_id:
+        raise HTTPException(status_code=404, detail="Node not found")
+    
+    # 연결 상태 업데이트
+    node_store.set_node_state(tenant_id, node_id, "online", "poll")
+    
+    # 명령 가져오기
+    commands = node_store.pop_commands(tenant_id, node_id, limit=10)
+    
+    logger.info(f"[Node Poll] node={node_id} tenant={tenant_id} commands={len(commands)}")
+    
+    return {
+        "commands": commands,
+        "timestamp": _utc_now()
+    }
+
+
+@app.post("/node/command", status_code=202, response_model=NodeCommandResponse)
+def node_command(
+    body: NodeCommandRequest,
+    x_api_key: Optional[str] = Header(None),
+    authorization: Optional[str] = Header(None),
+    x_org_id: str = Header(...),
+    x_project_id: str = Header(...)
+):
+    """
+    노드에게 명령 전송
+    
+    User → Dashboard: "로컬 폴더 스캔" 버튼 클릭
+    Backend: 명령을 Redis 큐에 추가 → 202 Accepted
+    """
+    require_api_key(x_api_key, authorization)
+    tenant_id = f"{x_org_id}:{x_project_id}"
+    
+    command_id = f"cmd-{uuid.uuid4().hex[:12]}"
+    
+    command = {
+        "command_id": command_id,
+        "type": body.command_type,
+        "params": body.params
+    }
+    
+    # 명령 큐에 추가
+    node_store.push_command(tenant_id, body.node_id, command)
+    
+    logger.info(f"[Node Command] command_id={command_id} node={body.node_id} type={body.command_type}")
+    
+    # SSE로 명령 전송 알림
+    report = _mk_report(
+        status="started",
+        summary=f"명령 전송: {body.command_type}",
+        risk="GREEN",
+        causality={
+            "correlation_id": command_id,
+            "command_id": command_id,
+            "ask_id": None,
+            "type": body.command_type
+        },
+        ui_hint={
+            "surface": "sidecar",
+            "cards": [{
+                "type": "command_sent",
+                "title": f"명령 전송: {body.command_type}",
+                "body": f"Node: **{body.node_id}**\nParams: {json.dumps(body.params, indent=2)}"
+            }]
+        },
+        data={"command": command}
+    )
+    stream_store.append_event(tenant_id, "report", report)
+    
+    return NodeCommandResponse(command_id=command_id, node_id=body.node_id)
+
+
+@app.post("/node/report", status_code=200, response_model=NodeReportResponse)
+def node_report(body: NodeReportRequest):
+    """
+    노드 리포트 수신
+    
+    Node → Backend: 진행 상황 또는 최종 결과 업로드
+    Backend: SSE로 UI에 전파
+    """
+    # TODO: JWT 검증
+    # 임시로 node_id 기반으로 tenant_id 조회
+    tenant_id = None
+    for tid in ["demo:demo", "org123:proj456"]:
+        node_state = node_store.get_node_state(tid, body.node_id)
+        if node_state:
+            tenant_id = tid
+            break
+    
+    if not tenant_id:
+        raise HTTPException(status_code=404, detail="Node not found")
+    
+    report_id = f"r-node-{uuid.uuid4().hex[:12]}"
+    
+    # 리포트 생성
+    report = _mk_report(
+        report_id=report_id,
+        status=body.status,
+        summary=f"Node 리포트: {body.command_id}",
+        risk="GREEN" if body.status != "failed" else "YELLOW",
+        causality={
+            "correlation_id": body.command_id,
+            "command_id": body.command_id,
+            "ask_id": None,
+            "type": "node.report"
+        },
+        ui_hint={
+            "surface": "dashboard",
+            "cards": [{
+                "type": "node_report",
+                "title": f"Node 리포트: {body.status}",
+                "body": f"Node: **{body.node_id}**\nCommand: {body.command_id}\n\n{json.dumps(body.progress or body.result or {}, indent=2)}"
+            }]
+        },
+        data={
+            "node_id": body.node_id,
+            "command_id": body.command_id,
+            "status": body.status,
+            "progress": body.progress,
+            "result": body.result,
+            "error": body.error
+        }
+    )
+    
+    # SSE 전파
+    stream_store.append_event(tenant_id, "report", report)
+    
+    # 완료 시 RAG 인제스트 (result에 chunks가 있는 경우)
+    if body.status == "completed" and body.result and "chunks" in body.result:
+        chunks = body.result["chunks"]
+        ingested = 0
+        for chunk in chunks[:100]:  # 최대 100개씩
+            try:
+                rag_engine.ingest(
+                    tenant=tenant_id,
+                    doc_id=chunk["doc_id"],
+                    text=chunk["text"],
+                    meta=chunk.get("meta", {})
+                )
+                ingested += 1
+            except Exception as e:
+                logger.error(f"[Node Report] RAG ingest failed: {e}")
+        
+        logger.info(f"[Node Report] RAG ingested {ingested}/{len(chunks)} chunks from node={body.node_id}")
+        
+        # RAG 인제스트 완료 리포트
+        rag_report = _mk_report(
+            status="done",
+            summary=f"RAG 인제스트 완료: {ingested}개 청크",
+            risk="GREEN",
+            causality={
+                "correlation_id": body.command_id,
+                "command_id": body.command_id,
+                "ask_id": None,
+                "type": "rag.ingest"
+            },
+            ui_hint={
+                "surface": "dashboard",
+                "cards": [{
+                    "type": "rag_ingest_done",
+                    "title": "RAG 인제스트 완료",
+                    "body": f"Node **{body.node_id}**에서 **{ingested}개** 청크를 RAG 인덱스에 추가했습니다."
+                }]
+            },
+            data={"ingested": ingested, "total": len(chunks)}
+        )
+        stream_store.append_event(tenant_id, "report", rag_report)
+    
+    logger.info(f"[Node Report] node={body.node_id} command={body.command_id} status={body.status}")
+    
+    return NodeReportResponse(received=True, report_id=report_id)
+
+
+@app.get("/node/list", status_code=200)
+def node_list(
+    x_api_key: Optional[str] = Header(None),
+    authorization: Optional[str] = Header(None),
+    x_org_id: str = Header(...),
+    x_project_id: str = Header(...),
+    status_filter: Optional[str] = Query(None)
+):
+    """
+    테넌트의 노드 목록 조회
+    
+    Dashboard: 노드 상태 표시
+    """
+    require_api_key(x_api_key, authorization)
+    tenant_id = f"{x_org_id}:{x_project_id}"
+    
+    nodes = node_store.list_tenant_nodes(tenant_id, status_filter=status_filter)
+    
+    return {"nodes": nodes, "total": len(nodes)}

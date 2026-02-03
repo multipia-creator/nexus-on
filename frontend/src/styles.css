@@ -137,3 +137,32 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
 .ytQueueTitle { font-size: 13px; font-weight: 700; }
 .ytQueueChannel { font-size: 11px; opacity: 0.7; }
 
+/* Nodes Manager Styles */
+.nodesManager { padding: 20px; max-width: 1200px; margin: 0 auto; }
+.nodesHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.nodesHeader h2 { font-size: 20px; font-weight: 900; margin: 0; }
+.nodeActions { display: flex; gap: 10px; }
+
+.pairingCodeBox { border: 2px solid #3b82f6; border-radius: 16px; background: rgba(59, 130, 246, 0.1); padding: 20px; margin-bottom: 20px; }
+.pairingCodeBox h3 { font-size: 16px; font-weight: 900; margin: 0 0 10px 0; }
+.pairingCode { font-size: 32px; font-weight: 900; letter-spacing: 4px; text-align: center; margin: 15px 0; padding: 15px; border: 1px solid #3b82f6; border-radius: 12px; background: rgba(0, 0, 0, 0.3); }
+.pairingInstructions { font-size: 13px; margin: 10px 0 5px 0; opacity: 0.9; }
+.pairingCommand { font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.5); overflow-x: auto; }
+.pairingExpiry { font-size: 12px; text-align: center; margin-top: 10px; opacity: 0.7; }
+
+.nodesList { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 15px; }
+.nodeCard { border: 1px solid #2a2f38; border-radius: 16px; background: #10151d; padding: 16px; }
+.nodeCardHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.nodeStatus { font-size: 14px; font-weight: 700; }
+.nodeConnection .badge { font-size: 10px; padding: 4px 8px; border-radius: 6px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+.nodeCardBody { display: flex; flex-direction: column; gap: 12px; }
+.nodeInfo { display: flex; flex-direction: column; gap: 6px; }
+.infoRow { display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 12px; }
+.infoLabel { opacity: 0.6; }
+.infoValue { font-weight: 600; }
+
+.nodeActions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+.btn-sm { font-size: 12px; padding: 6px 12px; }
+
+.emptyState { text-align: center; opacity: 0.5; padding: 40px 20px; }

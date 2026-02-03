@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nexus-seria-ai-agent",
+  "name": "nexus",
   "compatibility_date": "2026-02-03",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [

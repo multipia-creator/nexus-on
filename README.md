@@ -1,7 +1,8 @@
-# NEXUS_세리아 AI 에이전트 시스템
+# NEXUS - 세리아 AI 에이전트 시스템
 
 ## 프로젝트 개요
-- **프로젝트명**: NEXUS_세리아 AI 에이전트 시스템
+- **프로젝트명**: NEXUS (세리아 AI 에이전트 시스템)
+- **도메인**: nexus
 - **목표**: 차세대 AI 에이전트 시스템 구축
 - **기술 스택**: Hono + TypeScript + Cloudflare Pages
 
@@ -63,7 +64,7 @@ pm2 start ecosystem.config.cjs
 
 # 서비스 확인
 pm2 list
-pm2 logs nexus-seria-ai-agent --nostream
+pm2 logs nexus --nostream
 
 # 서비스 테스트
 npm test
@@ -78,7 +79,7 @@ npm run git:log  # 로그 확인
 
 ## 프로젝트 구조
 ```
-nexus-seria-ai-agent/
+nexus/
 ├── src/
 │   ├── index.tsx      # 메인 애플리케이션 진입점
 │   └── renderer.tsx   # JSX 렌더러

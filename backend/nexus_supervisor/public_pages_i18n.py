@@ -1,0 +1,797 @@
+"""
+Public pages with i18n support (Korean/English toggle).
+WORLD-CLASS AI Character Assistant Service.
+"""
+import json
+import logging
+from pathlib import Path
+from typing import Dict, List, Any
+
+logger = logging.getLogger("nexus_supervisor")
+
+# Path to data directory
+DATA_DIR = Path(__file__).parent.parent / "data"
+
+
+def load_modules_data() -> List[Dict[str, Any]]:
+    """Load modules.json data."""
+    try:
+        with open(DATA_DIR / "modules.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load modules.json: {e}")
+        return []
+
+
+def load_benchmark_data() -> List[Dict[str, Any]]:
+    """Load benchmark.json data."""
+    try:
+        with open(DATA_DIR / "benchmark.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load benchmark.json: {e}")
+        return []
+
+
+# i18n Translations
+TRANSLATIONS = {
+    "ko": {
+        "nav_home": "홈",
+        "nav_pricing": "가격",
+        "nav_dashboard": "대시보드",
+        "nav_canvas": "캔버스",
+        "nav_login": "로그인",
+        
+        "hero_title": "잠들지 않는<br>당신만의 AI 캐릭터 비서",
+        "hero_subtitle": "항상 깨어있는 당신만의 AI 캐릭터 비서",
+        "hero_tagline": "Live2D 캐릭터가 화면에 항상 존재하며, 자율적으로 작업을 수행하지만<br>중요한 결정은 항상 당신의 승인을 받습니다.",
+        "hero_cta_primary": "무료로 시작하기",
+        "hero_cta_secondary": "데모 보기",
+        
+        "value1_title": "항상 화면에 존재",
+        "value1_desc": "화면에 항상 존재하는 Live2D 캐릭터 비서.<br>5가지 상태로 현재 작업을 시각적으로 표현합니다.",
+        "value2_title": "자율적이지만 통제 가능",
+        "value2_desc": "자율적으로 작업을 수행하지만,<br>중요한 결정은 항상 당신의 승인을 받습니다.",
+        "value3_title": "한국어 네이티브",
+        "value3_desc": "한국어 네이티브 지원.<br>HWP 파일을 완벽하게 처리합니다.",
+        
+        "footer_text": "잠들지 않는 당신만의 AI 캐릭터 비서",
+        "footer_dev": "개발: 남현우 교수, 서경대학교",
+        
+        "pricing_title": "가격 플랜",
+        "pricing_subtitle": "당신의 필요에 맞는 플랜을 선택하세요.<br>언제든지 업그레이드 가능합니다.",
+        "pricing_coming": "가격 플랜 페이지 구현 중...",
+        "pricing_plans": "FREE / PRO / ENTERPRISE 플랜 제공 예정",
+        
+        "dashboard_title": "대시보드 프리뷰",
+        "dashboard_subtitle": "실시간으로 업데이트되는 AI 비서의 작업 현황을 확인하세요.",
+        "dashboard_coming": "대시보드 프리뷰 페이지 구현 중...",
+        "dashboard_features": "3-Column Layout | 실시간 SSE 업데이트 | Live2D 상태 변화",
+        
+        "canvas_title": "캔버스 워크스페이스",
+        "canvas_subtitle": "AI 비서와 함께 문서를 작성하고 편집하세요.",
+        "canvas_coming": "캔버스 워크스페이스 페이지 구현 중...",
+        "canvas_features": "Markdown Editor | AI 제안 | Multi-format Export",
+        
+        "login_title": "다시 오신 것을 환영합니다",
+        "login_subtitle": "다시 만나서 반가워요!",
+        "login_email": "이메일",
+        "login_password": "비밀번호",
+        "login_button": "로그인",
+        "login_no_account": "계정이 없으신가요?",
+        "login_signup": "회원가입",
+    },
+    "en": {
+        "nav_home": "Home",
+        "nav_pricing": "Pricing",
+        "nav_dashboard": "Dashboard",
+        "nav_canvas": "Canvas",
+        "nav_login": "Login",
+        
+        "hero_title": "Your AI Character Assistant<br>That Never Sleeps",
+        "hero_subtitle": "Your Always-On AI Character Assistant",
+        "hero_tagline": "A Live2D character is always present on your screen, working autonomously<br>but always seeking your approval for important decisions.",
+        "hero_cta_primary": "Start Free",
+        "hero_cta_secondary": "Watch Demo",
+        
+        "value1_title": "Always Visible",
+        "value1_desc": "A Live2D character assistant always present on screen.<br>5 states visually represent current tasks.",
+        "value2_title": "Autonomous but Controlled",
+        "value2_desc": "Works autonomously,<br>but always requires your approval for critical decisions.",
+        "value3_title": "Korean Native",
+        "value3_desc": "Native Korean language support.<br>Handles HWP files perfectly.",
+        
+        "footer_text": "Your AI Character Assistant That Never Sleeps",
+        "footer_dev": "Developed by Prof. Nam Hyunwoo, Seokyeong University",
+        
+        "pricing_title": "Pricing Plans",
+        "pricing_subtitle": "Choose the plan that fits your needs.<br>Upgrade anytime.",
+        "pricing_coming": "Pricing page under construction...",
+        "pricing_plans": "FREE / PRO / ENTERPRISE plans coming soon",
+        
+        "dashboard_title": "Dashboard Preview",
+        "dashboard_subtitle": "Monitor your AI assistant's real-time activity.",
+        "dashboard_coming": "Dashboard preview page under construction...",
+        "dashboard_features": "3-Column Layout | Real-time SSE Updates | Live2D State Changes",
+        
+        "canvas_title": "Canvas Workspace",
+        "canvas_subtitle": "Create and edit documents with your AI assistant.",
+        "canvas_coming": "Canvas workspace page under construction...",
+        "canvas_features": "Markdown Editor | AI Suggestions | Multi-format Export",
+        
+        "login_title": "Welcome Back",
+        "login_subtitle": "Good to see you again!",
+        "login_email": "Email",
+        "login_password": "Password",
+        "login_button": "Sign In",
+        "login_no_account": "Don't have an account?",
+        "login_signup": "Sign Up",
+    }
+}
+
+
+def t(key: str, lang: str = "ko") -> str:
+    """Translation helper."""
+    return TRANSLATIONS.get(lang, TRANSLATIONS["ko"]).get(key, key)
+
+
+def render_world_class_styles() -> str:
+    """NEXUS UI v2.0 - World-Class Design System with i18n support."""
+    return """
+    <style>
+      @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+      
+      :root {
+        /* Colors */
+        --bg-primary: #FFFFFF;
+        --bg-secondary: #F7F7F8;
+        --text-primary: #111111;
+        --text-secondary: #3C3C43;
+        --text-tertiary: #6B6B73;
+        --accent-primary: #2563EB;
+        --accent-hover: #1D4ED8;
+        --accent-soft: #EFF6FF;
+        --border-default: #E6E6EA;
+        --border-strong: #D1D1D6;
+        
+        /* Gradients */
+        --gradient-hero: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 30%, #DBEAFE 100%);
+        --gradient-accent: linear-gradient(90deg, #2563EB 0%, #3B82F6 100%);
+        --gradient-card-hover: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.1) 100%);
+        
+        /* Status Colors */
+        --status-green: #16A34A;
+        --status-yellow: #F59E0B;
+        --status-red: #DC2626;
+        
+        /* Typography */
+        --font-sans: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        --text-3xl: 48px;
+        --text-2xl: 32px;
+        --text-xl: 24px;
+        --text-lg: 18px;
+        --text-base: 14px;
+        --text-sm: 12px;
+        
+        /* Spacing */
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-6: 24px;
+        --space-8: 32px;
+        --space-12: 48px;
+        --space-16: 64px;
+        --space-20: 80px;
+        
+        /* Radius */
+        --radius-card: 18px;
+        --radius-control: 12px;
+        --radius-pill: 999px;
+        
+        /* Shadow */
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+        
+        /* Motion */
+        --duration-ui: 180ms;
+        --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      
+      body {
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      /* Animations */
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+      }
+      
+      @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.6); }
+      }
+      
+      @keyframes slide-in-up {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Navigation */
+      nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-default);
+        padding: var(--space-4) var(--space-6);
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      .nav-brand {
+        font-size: var(--text-xl);
+        font-weight: 700;
+        background: var(--gradient-accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-decoration: none;
+        margin-right: auto;
+      }
+      
+      .nav-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: var(--text-base);
+        font-weight: 500;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-control);
+        transition: all var(--duration-ui) var(--ease-out);
+      }
+      
+      .nav-link:hover {
+        background: var(--accent-soft);
+        color: var(--accent-primary);
+        transform: translateY(-2px);
+      }
+      
+      .nav-link.active {
+        background: var(--gradient-accent);
+        color: #FFFFFF;
+      }
+      
+      /* Language Toggle Button */
+      .lang-toggle {
+        padding: var(--space-2) var(--space-4);
+        border: 2px solid var(--accent-primary);
+        background: white;
+        color: var(--accent-primary);
+        border-radius: var(--radius-pill);
+        font-size: var(--text-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--duration-ui) var(--ease-out);
+      }
+      
+      .lang-toggle:hover {
+        background: var(--accent-primary);
+        color: white;
+        transform: scale(1.05);
+      }
+      
+      /* Hero Section */
+      .hero-world-class {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gradient-hero);
+        position: relative;
+        overflow: hidden;
+        padding: var(--space-12) var(--space-6);
+      }
+      
+      .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        animation: slide-in-up 0.8s var(--ease-out);
+      }
+      
+      .hero-character {
+        width: 400px;
+        height: 480px;
+        margin: 0 auto var(--space-8);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(239, 246, 255, 0.8) 100%);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: float 4s ease-in-out infinite;
+        position: relative;
+      }
+      
+      .hero-character::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: var(--radius-card);
+        padding: 2px;
+        background: var(--gradient-accent);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
+      
+      .character-placeholder {
+        font-size: 120px;
+        opacity: 0.6;
+      }
+      
+      .character-state {
+        position: absolute;
+        bottom: var(--space-4);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(37, 99, 235, 0.9);
+        color: white;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-pill);
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+      
+      .hero-title {
+        font-size: var(--text-3xl);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--space-4);
+        line-height: 1.2;
+      }
+      
+      .hero-subtitle {
+        font-size: var(--text-xl);
+        color: var(--text-secondary);
+        margin-bottom: var(--space-8);
+        font-weight: 500;
+      }
+      
+      .hero-tagline {
+        font-size: var(--text-lg);
+        color: var(--text-tertiary);
+        max-width: 700px;
+        margin: 0 auto var(--space-8);
+        line-height: 1.75;
+      }
+      
+      .hero-cta-group {
+        display: flex;
+        gap: var(--space-4);
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      
+      /* Glassmorphism Buttons */
+      .btn-glass-primary {
+        display: inline-block;
+        padding: var(--space-4) var(--space-8);
+        background: var(--gradient-accent);
+        color: white;
+        border-radius: var(--radius-pill);
+        font-size: var(--text-lg);
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: var(--shadow-lg);
+        transition: all var(--duration-ui) var(--ease-out);
+        border: none;
+        cursor: pointer;
+      }
+      
+      .btn-glass-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+      }
+      
+      .btn-glass-secondary {
+        display: inline-block;
+        padding: var(--space-4) var(--space-8);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        color: var(--accent-primary);
+        border: 2px solid var(--accent-primary);
+        border-radius: var(--radius-pill);
+        font-size: var(--text-lg);
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: var(--shadow-md);
+        transition: all var(--duration-ui) var(--ease-out);
+        cursor: pointer;
+      }
+      
+      .btn-glass-secondary:hover {
+        background: var(--accent-soft);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+      
+      /* Core Values */
+      .core-values {
+        padding: var(--space-20) var(--space-6);
+        background: var(--bg-primary);
+      }
+      
+      .core-values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--space-8);
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      .value-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--radius-card);
+        padding: var(--space-8);
+        box-shadow: var(--shadow-md);
+        transition: all var(--duration-ui) var(--ease-out);
+        text-align: center;
+      }
+      
+      .value-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+        background: var(--gradient-card-hover);
+      }
+      
+      .value-icon {
+        font-size: 64px;
+        margin-bottom: var(--space-4);
+      }
+      
+      .value-title {
+        font-size: var(--text-xl);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--space-3);
+      }
+      
+      .value-desc {
+        font-size: var(--text-base);
+        color: var(--text-secondary);
+        line-height: 1.75;
+      }
+      
+      /* Container */
+      .container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: var(--space-12) var(--space-6);
+      }
+      
+      .section-title {
+        font-size: var(--text-2xl);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--space-8);
+        text-align: center;
+      }
+      
+      .section-subtitle {
+        font-size: var(--text-lg);
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto var(--space-12);
+        text-align: center;
+        line-height: 1.75;
+      }
+      
+      /* Footer */
+      footer {
+        background: var(--bg-secondary);
+        padding: var(--space-12) var(--space-6);
+        text-align: center;
+        border-top: 1px solid var(--border-default);
+      }
+      
+      footer p {
+        color: var(--text-tertiary);
+        font-size: var(--text-sm);
+      }
+      
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero-character {
+          width: 280px;
+          height: 320px;
+        }
+        
+        .character-placeholder {
+          font-size: 80px;
+        }
+        
+        .hero-title {
+          font-size: var(--text-2xl);
+        }
+        
+        .hero-subtitle {
+          font-size: var(--text-lg);
+        }
+        
+        .btn-glass-primary,
+        .btn-glass-secondary {
+          font-size: var(--text-base);
+          padding: var(--space-3) var(--space-6);
+        }
+      }
+    </style>
+    """
+
+
+def render_navigation(current_page: str = "", lang: str = "ko") -> str:
+    """Render navigation with language toggle."""
+    nav_items = [
+        (t("nav_home", lang), "/"),
+        (t("nav_pricing", lang), "/pricing"),
+        (t("nav_dashboard", lang), "/dashboard-preview"),
+        (t("nav_canvas", lang), "/canvas-preview"),
+        (t("nav_login", lang), "/login"),
+    ]
+    
+    other_lang = "en" if lang == "ko" else "ko"
+    lang_label = "EN" if lang == "ko" else "한국어"
+    
+    nav_html = "<nav>"
+    nav_html += '<a href="/" class="nav-brand">NEXUS-ON</a>'
+    for label, path in nav_items:
+        active_class = "active" if path == current_page else ""
+        nav_html += f'<a href="{path}?lang={lang}" class="nav-link {active_class}">{label}</a>'
+    nav_html += f'<button class="lang-toggle" onclick="toggleLanguage()">{lang_label}</button>'
+    nav_html += """
+    <script>
+    function toggleLanguage() {
+        const url = new URL(window.location.href);
+        const currentLang = url.searchParams.get('lang') || 'ko';
+        const newLang = currentLang === 'ko' ? 'en' : 'ko';
+        url.searchParams.set('lang', newLang);
+        window.location.href = url.toString();
+    }
+    </script>
+    """
+    nav_html += "</nav>"
+    return nav_html
+
+
+def render_footer(lang: str = "ko") -> str:
+    """Render footer."""
+    return f"""
+    <footer>
+        <p>&copy; 2026 NEXUS-ON. {t("footer_text", lang)}</p>
+        <p>{t("footer_dev", lang)}</p>
+    </footer>
+    """
+
+
+def landing_page(lang: str = "ko") -> str:
+    """Render world-class landing page with i18n support."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NEXUS-ON | {t("hero_subtitle", lang)}</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/", lang)}
+        
+        <!-- HERO SECTION -->
+        <section class="hero-world-class">
+            <div class="hero-content">
+                <div class="hero-character">
+                    <div class="character-placeholder">🎭</div>
+                    <div class="character-state">Idle</div>
+                </div>
+                
+                <h1 class="hero-title">{t("hero_title", lang)}</h1>
+                <p class="hero-subtitle">{t("hero_subtitle", lang)}</p>
+                <p class="hero-tagline">{t("hero_tagline", lang)}</p>
+                
+                <div class="hero-cta-group">
+                    <a href="/signup?lang={lang}" class="btn-glass-primary">{t("hero_cta_primary", lang)}</a>
+                    <a href="#demo" class="btn-glass-secondary">{t("hero_cta_secondary", lang)}</a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3 CORE VALUES -->
+        <section class="core-values">
+            <div class="core-values-grid">
+                <div class="value-card">
+                    <div class="value-icon">🎭</div>
+                    <h3 class="value-title">{t("value1_title", lang)}</h3>
+                    <p class="value-desc">{t("value1_desc", lang)}</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">🤖</div>
+                    <h3 class="value-title">{t("value2_title", lang)}</h3>
+                    <p class="value-desc">{t("value2_desc", lang)}</p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">🇰🇷</div>
+                    <h3 class="value-title">{t("value3_title", lang)}</h3>
+                    <p class="value-desc">{t("value3_desc", lang)}</p>
+                </div>
+            </div>
+        </section>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def pricing_page(lang: str = "ko") -> str:
+    """Render pricing page with i18n."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("nav_pricing", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/pricing", lang)}
+        
+        <div class="container">
+            <h1 class="section-title">{t("pricing_title", lang)}</h1>
+            <p class="section-subtitle">{t("pricing_subtitle", lang)}</p>
+            
+            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
+                <div style="font-size: 64px; margin-bottom: 24px;">💳</div>
+                <p style="font-size: 18px;">{t("pricing_coming", lang)}</p>
+                <p>{t("pricing_plans", lang)}</p>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def dashboard_preview_page(lang: str = "ko") -> str:
+    """Render dashboard preview with i18n."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("nav_dashboard", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/dashboard-preview", lang)}
+        
+        <div class="container">
+            <h1 class="section-title">{t("dashboard_title", lang)}</h1>
+            <p class="section-subtitle">{t("dashboard_subtitle", lang)}</p>
+            
+            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
+                <div style="font-size: 64px; margin-bottom: 24px;">📊</div>
+                <p style="font-size: 18px;">{t("dashboard_coming", lang)}</p>
+                <p>{t("dashboard_features", lang)}</p>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def canvas_preview_page(lang: str = "ko") -> str:
+    """Render canvas workspace with i18n."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("nav_canvas", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/canvas-preview", lang)}
+        
+        <div class="container">
+            <h1 class="section-title">{t("canvas_title", lang)}</h1>
+            <p class="section-subtitle">{t("canvas_subtitle", lang)}</p>
+            
+            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
+                <div style="font-size: 64px; margin-bottom: 24px;">📝</div>
+                <p style="font-size: 18px;">{t("canvas_coming", lang)}</p>
+                <p>{t("canvas_features", lang)}</p>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def login_page(lang: str = "ko") -> str:
+    """Render login page with i18n."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("nav_login", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/login", lang)}
+        
+        <div class="container">
+            <div style="text-align: center; padding: 100px 0;">
+                <div style="font-size: 64px; margin-bottom: 24px;">🔐</div>
+                <h1 class="section-title">{t("login_title", lang)}</h1>
+                <p class="section-subtitle">{t("login_subtitle", lang)}</p>
+                
+                <div style="max-width: 400px; margin: 48px auto; text-align: left;">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">{t("login_email", lang)}</label>
+                        <input type="email" placeholder="your@email.com" 
+                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-default); 
+                                      border-radius: var(--radius-control); font-size: var(--text-base);">
+                    </div>
+                    
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">{t("login_password", lang)}</label>
+                        <input type="password" placeholder="••••••••" 
+                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-default); 
+                                      border-radius: var(--radius-control); font-size: var(--text-base);">
+                    </div>
+                    
+                    <button class="btn-glass-primary" style="width: 100%; margin-bottom: 16px;">{t("login_button", lang)}</button>
+                    
+                    <div style="text-align: center; color: var(--text-tertiary); font-size: var(--text-sm);">
+                        {t("login_no_account", lang)} <a href="/signup?lang={lang}" style="color: var(--accent-primary);">{t("login_signup", lang)}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """

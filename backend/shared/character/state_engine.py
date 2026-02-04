@@ -70,11 +70,7 @@ def _looks_like_work_request(text: str) -> bool:
 
     # Light tokens + context verbs (avoid false positives like '추천해줘')
     light_nouns = ["체크리스트", "리포트", "보고", "요약", "가이드", "문서", "테스트", "빌드", "배치"]
-    light_verbs = ["정리", "만들", "작성", "검토", "확인", "업데이트", "수정", "원인", "해결"    # Korean: GitHub comment / review actions
-    r"(깃허브|github)(?:[가-힣]{0,2})?(?:\s+\S+){0,3}\s*(코멘트|comment|댓글)(?:\s+\S+){0,2}\s*(달아|달아줘|남겨|남겨줘|추가|작성)",
-    # Korean: merge without explicit tool noun (e.g., '자동으로 머지해줘')
-    r"(자동으로\s*)?머지\s*(해줘|해\s*줘|해|해봐)",
-]
+    light_verbs = ["정리", "만들", "작성", "검토", "확인", "업데이트", "수정", "원인", "해결"]
     return any(n in t for n in light_nouns) and any(v in t for v in light_verbs)
 
 

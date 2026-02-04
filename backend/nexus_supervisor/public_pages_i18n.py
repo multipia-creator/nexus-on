@@ -98,23 +98,6 @@ TRANSLATIONS = {
         "intro_diff3": "한국어 최적화: HWP 파일 네이티브 지원",
         "intro_diff4": "로컬 우선: 클라우드 업로드 없는 안전한 데이터 처리",
         
-        "intro_section3_title": "개발자 소개",
-        "intro_dev_name": "남현우 교수",
-        "intro_dev_title": "ICT 전략·콘텐츠·시스템·디자인 전문가",
-        "intro_dev_affiliation": "서경대학교 소프트웨어학과",
-        "intro_dev_website": "웹사이트: dxpia.com",
-        "intro_dev_description": "ICT 디자인과 전략 분야의 전문가로, AI·블록체인·IoT 등 첨단 기술을 활용한 혁신적인 서비스를 설계하고 개발합니다. 어린이 과학관 건립, 개인 맞춤형 화장품 비즈니스, 뮤지엄 사인시스템 등 다양한 ICT 프로젝트를 주도해왔습니다.",
-        "intro_dev_expertise_title": "전문 분야",
-        "intro_dev_expertise1": "ICT 전략 및 혁신 컨설팅",
-        "intro_dev_expertise2": "AI·블록체인·IoT 서비스 설계",
-        "intro_dev_expertise3": "UX/UI 디자인 및 개발",
-        "intro_dev_expertise4": "콘텐츠 전략 및 인터랙티브 미디어",
-        "intro_dev_projects_title": "주요 프로젝트",
-        "intro_dev_project1": "ART NFT Blockchain",
-        "intro_dev_project2": "Beauty Skin AI IoT",
-        "intro_dev_project3": "Smart Museums & Curators",
-        "intro_dev_project4": "Multimedia E-Book Platform",
-        
         "modules_title": "모듈 시스템",
         "modules_subtitle": "8개의 핵심 모듈로 구성된 강력한 AI 에이전트",
         "modules_count": "개 모듈",
@@ -171,37 +154,6 @@ TRANSLATIONS = {
         "login_button": "Sign In",
         "login_no_account": "Don't have an account?",
         "login_signup": "Sign Up",
-        
-        "intro_title": "About NEXUS-ON",
-        "intro_subtitle": "Autonomous AI Agent System based on Live2D Character Assistant",
-        "intro_section1_title": "Core Concept",
-        "intro_section1_content": "NEXUS-ON is an innovative AI assistant system where a Live2D character is always present on screen, working autonomously but always requiring user approval for critical decisions.",
-        "intro_section2_title": "Key Differentiators",
-        "intro_diff1": "Visual Presence: Live2D character always on screen",
-        "intro_diff2": "Controlled Autonomy: Autonomous but requires approval for critical decisions",
-        "intro_diff3": "Korean Optimized: Native HWP file support",
-        "intro_diff4": "Local-first: Secure data processing without cloud uploads",
-        
-        "intro_section3_title": "About the Developer",
-        "intro_dev_name": "Professor Hyun-woo Nam",
-        "intro_dev_title": "ICT Strategy·Contents·System·Design Expert",
-        "intro_dev_affiliation": "Seokyeong University, Department of Software",
-        "intro_dev_website": "Website: dxpia.com",
-        "intro_dev_description": "Expert in ICT design and strategy, specializing in innovative services using AI, Blockchain, and IoT technologies. Led various ICT projects including children's science museum construction, personalized cosmetics business, and museum signing systems.",
-        "intro_dev_expertise_title": "Expertise",
-        "intro_dev_expertise1": "ICT Strategy & Innovation Consulting",
-        "intro_dev_expertise2": "AI·Blockchain·IoT Service Design",
-        "intro_dev_expertise3": "UX/UI Design & Development",
-        "intro_dev_expertise4": "Content Strategy & Interactive Media",
-        "intro_dev_projects_title": "Key Projects",
-        "intro_dev_project1": "ART NFT Blockchain",
-        "intro_dev_project2": "Beauty Skin AI IoT",
-        "intro_dev_project3": "Smart Museums & Curators",
-        "intro_dev_project4": "Multimedia E-Book Platform",
-        
-        "modules_title": "Module System",
-        "modules_subtitle": "Powerful AI agent with 8 core modules",
-        "modules_count": " modules",
     }
 }
 
@@ -236,19 +188,18 @@ def render_live2d_component(page_state: str = 'idle') -> str:
     <!-- Live2D Cubism Core -->
     <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
     
-    <!-- pixi-live2d-display -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.5.0/dist/index.min.js"></script>
+    <!-- pixi-live2d-display (LOCAL) -->
+    <script src="/static/js/pixi-live2d-display.min.js"></script>
 
     <!-- Live2D Manager -->
     <script src="/static/js/live2d-loader.js"></script>
 
-    <!-- SSE + Live2D Integration (NEW) -->
-    <script src="/static/js/sse-live2d-integration.js"></script>
+    <!-- TTS Manager -->
+    <script src="/static/js/tts-manager.js"></script>
 
-    <!-- Initialize Live2D + SSE -->
+    <!-- Initialize Live2D -->
     <script>
         let live2dManager = null;
-        let live2dAgent = null;
         
         window.addEventListener('DOMContentLoaded', () => {{
             try {{
@@ -268,7 +219,6 @@ def render_live2d_component(page_state: str = 'idle') -> str:
                             'live2d-container',
                             '/live2d/haru_greeter_t05.model3.json'
                         );
-                        window.live2dManager = live2dManager;
                         
                         // Set initial state
                         setTimeout(() => {{
@@ -276,23 +226,6 @@ def render_live2d_component(page_state: str = 'idle') -> str:
                                 live2dManager.setState('{page_state}');
                                 container.classList.remove('loading');
                                 console.log('✅ Live2D initialized with state: {page_state}');
-                                
-                                // Initialize SSE + Live2D integration
-                                // For demo, use placeholder API key
-                                // In production, this should come from session/auth
-                                const apiKey = 'demo-key';
-                                const orgId = 'default';
-                                const projectId = 'default';
-                                
-                                try {{
-                                    live2dAgent = new Live2DAgentIntegration(apiKey, orgId, projectId);
-                                    window.live2dAgent = live2dAgent;
-                                    live2dAgent.connect();
-                                    console.log('✅ SSE + Live2D Agent connected');
-                                }} catch (error) {{
-                                    console.error('❌ SSE connection error:', error);
-                                    // Continue without SSE (fallback to manual control)
-                                }}
                             }}
                         }}, 1000);
                         
@@ -1259,62 +1192,6 @@ def intro_page(lang: str = "ko") -> str:
                         <li>✅ {t("intro_diff3", lang)}</li>
                         <li>✅ {t("intro_diff4", lang)}</li>
                     </ul>
-                </div>
-                
-                <!-- Developer Section -->
-                <div style="background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%); padding: var(--space-8); border-radius: var(--radius-card); margin-top: var(--space-8); border: 2px solid var(--accent-soft);">
-                    <div style="display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-6);">
-                        <div style="font-size: 64px;">👨‍💻</div>
-                        <div>
-                            <h2 style="font-size: var(--text-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-1);">
-                                {t("intro_section3_title", lang)}
-                            </h2>
-                            <p style="color: var(--text-tertiary); font-size: var(--text-sm);">
-                                {t("intro_dev_title", lang)}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div style="background: white; padding: var(--space-6); border-radius: var(--radius-control); margin-bottom: var(--space-4); box-shadow: var(--shadow-sm);">
-                        <h3 style="font-size: var(--text-lg); font-weight: 600; color: var(--accent-primary); margin-bottom: var(--space-2);">
-                            {t("intro_dev_name", lang)}
-                        </h3>
-                        <p style="color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-2);">
-                            📍 {t("intro_dev_affiliation", lang)}
-                        </p>
-                        <p style="color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-4);">
-                            🌐 {t("intro_dev_website", lang)}
-                        </p>
-                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: var(--text-base);">
-                            {t("intro_dev_description", lang)}
-                        </p>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-4);">
-                        <div style="background: white; padding: var(--space-4); border-radius: var(--radius-control); box-shadow: var(--shadow-sm);">
-                            <h4 style="font-size: var(--text-base); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2);">
-                                <span style="font-size: 20px;">🎯</span> {t("intro_dev_expertise_title", lang)}
-                            </h4>
-                            <ul style="color: var(--text-secondary); line-height: 1.8; font-size: var(--text-sm); list-style: none; padding: 0;">
-                                <li>• {t("intro_dev_expertise1", lang)}</li>
-                                <li>• {t("intro_dev_expertise2", lang)}</li>
-                                <li>• {t("intro_dev_expertise3", lang)}</li>
-                                <li>• {t("intro_dev_expertise4", lang)}</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background: white; padding: var(--space-4); border-radius: var(--radius-control); box-shadow: var(--shadow-sm);">
-                            <h4 style="font-size: var(--text-base); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2);">
-                                <span style="font-size: 20px;">🚀</span> {t("intro_dev_projects_title", lang)}
-                            </h4>
-                            <ul style="color: var(--text-secondary); line-height: 1.8; font-size: var(--text-sm); list-style: none; padding: 0;">
-                                <li>• {t("intro_dev_project1", lang)}</li>
-                                <li>• {t("intro_dev_project2", lang)}</li>
-                                <li>• {t("intro_dev_project3", lang)}</li>
-                                <li>• {t("intro_dev_project4", lang)}</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
                 
                 <div style="text-align: center; margin-top: var(--space-12);">

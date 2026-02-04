@@ -246,15 +246,34 @@ class Live2DAgentIntegration {
         // TTS event handlers (for future lip-sync integration)
         this.sseClient.onTTSStart = (data) => {
             console.log('[Live2D Agent] TTS started:', data.text);
-            // Future: Start lip-sync animation
-            if (this.live2dManager) {
-                this.live2dManager.setState('speaking');
+            
+            // Speak the text using TTS Manager
+            if (window.ttsManager && data.text) {
+                // Set Live2D to speaking state
+                if (this.live2dManager) {
+                    this.live2dManager.setState('speaking');
+                }
+                
+                // Speak with TTS
+                window.ttsManager.speak(data.text, {
+                    lang: data.voice && data.voice.includes('en-') ? 'en-US' : 'ko-KR',
+                    rate: 1.0,
+                    pitch: 1.0,
+                    volume: 0.8
+                }).catch(err => {
+                    console.error('[Live2D Agent] TTS error:', err);
+                });
+            } else {
+                // Fallback: just set state without audio
+                if (this.live2dManager) {
+                    this.live2dManager.setState('speaking');
+                }
             }
         };
 
         this.sseClient.onTTSEnd = (data) => {
             console.log('[Live2D Agent] TTS ended, duration:', data.duration_ms);
-            // Future: Stop lip-sync animation
+            
             // Wait a bit before returning to idle
             if (this.speakingTimeout) {
                 clearTimeout(this.speakingTimeout);

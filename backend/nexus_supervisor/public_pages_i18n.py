@@ -37,6 +37,8 @@ def load_benchmark_data() -> List[Dict[str, Any]]:
 TRANSLATIONS = {
     "ko": {
         "nav_home": "홈",
+        "nav_intro": "소개",
+        "nav_modules": "모듈",
         "nav_pricing": "가격",
         "nav_dashboard": "대시보드",
         "nav_canvas": "캔버스",
@@ -80,6 +82,20 @@ TRANSLATIONS = {
         "login_button": "로그인",
         "login_no_account": "계정이 없으신가요?",
         "login_signup": "회원가입",
+        
+        "intro_title": "NEXUS-ON 소개",
+        "intro_subtitle": "Live2D 캐릭터 비서 기반의 자율 AI 에이전트 시스템",
+        "intro_section1_title": "핵심 개념",
+        "intro_section1_content": "NEXUS-ON은 Live2D 캐릭터가 화면에 항상 존재하며, 자율적으로 작업을 수행하지만 중요한 결정은 항상 사용자의 승인을 받는 혁신적인 AI 비서 시스템입니다.",
+        "intro_section2_title": "차별화 포인트",
+        "intro_diff1": "시각적 존재감: 항상 화면에 존재하는 Live2D 캐릭터",
+        "intro_diff2": "통제된 자율성: 자율적이지만 중요 결정은 승인 필요",
+        "intro_diff3": "한국어 최적화: HWP 파일 네이티브 지원",
+        "intro_diff4": "로컬 우선: 클라우드 업로드 없는 안전한 데이터 처리",
+        
+        "modules_title": "모듈 시스템",
+        "modules_subtitle": "8개의 핵심 모듈로 구성된 강력한 AI 에이전트",
+        "modules_count": "개 모듈",
     },
     "en": {
         "nav_home": "Home",
@@ -788,6 +804,123 @@ def login_page(lang: str = "ko") -> str:
                         {t("login_no_account", lang)} <a href="/signup?lang={lang}" style="color: var(--accent-primary);">{t("login_signup", lang)}</a>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def intro_page(lang: str = "ko") -> str:
+    """Render introduction page with i18n."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("nav_intro", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/intro", lang)}
+        
+        <div class="container">
+            <h1 class="section-title">{t("intro_title", lang)}</h1>
+            <p class="section-subtitle">{t("intro_subtitle", lang)}</p>
+            
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div style="background: var(--bg-secondary); padding: var(--space-8); border-radius: var(--radius-card); margin-bottom: var(--space-8);">
+                    <h2 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-4); color: var(--text-primary);">
+                        {t("intro_section1_title", lang)}
+                    </h2>
+                    <p style="color: var(--text-secondary); line-height: 1.75; font-size: var(--text-base);">
+                        {t("intro_section1_content", lang)}
+                    </p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); padding: var(--space-8); border-radius: var(--radius-card);">
+                    <h2 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-4); color: var(--text-primary);">
+                        {t("intro_section2_title", lang)}
+                    </h2>
+                    <ul style="color: var(--text-secondary); line-height: 2; font-size: var(--text-base); list-style: none; padding: 0;">
+                        <li>✅ {t("intro_diff1", lang)}</li>
+                        <li>✅ {t("intro_diff2", lang)}</li>
+                        <li>✅ {t("intro_diff3", lang)}</li>
+                        <li>✅ {t("intro_diff4", lang)}</li>
+                    </ul>
+                </div>
+                
+                <div style="text-align: center; margin-top: var(--space-12);">
+                    <a href="/modules?lang={lang}" class="btn-glass-primary">{t("nav_modules", lang)}</a>
+                </div>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def modules_page(lang: str = "ko") -> str:
+    """Render modules page with module cards."""
+    modules = load_modules_data()
+    
+    modules_html = ""
+    for module in modules:
+        status_color = {
+            "stable": "var(--status-green)",
+            "beta": "var(--status-yellow)",
+            "alpha": "var(--status-red)"
+        }.get(module.get("status", "alpha"), "var(--status-red)")
+        
+        modules_html += f"""
+        <div class="value-card" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+                <div style="font-size: 48px;">{module.get('icon', '📦')}</div>
+                <div style="background: {status_color}; color: white; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600;">
+                    {module.get('status_label', module.get('status', 'Unknown'))}
+                </div>
+            </div>
+            <h3 style="font-size: var(--text-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">
+                {module.get('name', 'Unknown Module')}
+            </h3>
+            <p style="font-size: var(--text-sm); color: var(--text-tertiary); margin-bottom: var(--space-4);">
+                {module.get('tagline', '')}
+            </p>
+            <p style="font-size: var(--text-base); color: var(--text-secondary); line-height: 1.6;">
+                {module.get('description', '')}
+            </p>
+        </div>
+        """
+    
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("nav_modules", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/modules", lang)}
+        
+        <div class="container">
+            <h1 class="section-title">{t("modules_title", lang)}</h1>
+            <p class="section-subtitle">{t("modules_subtitle", lang)}</p>
+            
+            <div style="text-align: center; margin-bottom: var(--space-12);">
+                <span style="background: var(--gradient-accent); color: white; padding: var(--space-2) var(--space-6); border-radius: var(--radius-pill); font-weight: 600;">
+                    {len(modules)} {t("modules_count", lang)}
+                </span>
+            </div>
+            
+            <div class="core-values-grid">
+                {modules_html}
             </div>
         </div>
         

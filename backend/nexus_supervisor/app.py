@@ -1901,33 +1901,93 @@ async def character_decide(request: Request):
             "sexy_cooldown_seconds": int,
             "user_opt_out_sexy": bool,
             "task_busy": bool,
-            "tool_allowlist_active": bool
-        }
+            "tool_allowlist_active": bool,
+            "last_cooldown_update": float (optional),
+            "turns_since_jealousy_trigger": int (optional),
+            "tool_success": bool (optional),
+            "approval_granted": bool (optional),
+            "negative_feedback": bool (optional)
+        },
+        "auto_update": bool (default: true)
     }
     
     Response:
     {
         "decision": CharacterDecision,
         "presence": PresencePacket,
-        "context": CharacterContext,
-        "user_input": str
+        "context": CharacterContext (auto-updated),
+        "user_input": str,
+        "auto_updates": {
+            "intimacy_change": str,
+            "jealousy_change": str,
+            "cooldown_change": str
+        }
     }
     """
     from shared.character.state_engine import CharacterContext, decide_state
     from shared.character.presence import presence_to_live2d
+    from shared.character.auto_intimacy import auto_update_intimacy
+    from shared.character.jealousy_detector import auto_update_jealousy
+    from shared.character.cooldown_manager import auto_manage_cooldown
     import uuid
+    import time
     
     try:
         body = await request.json()
         user_input = body.get("user_input", "")
         ctx_data = body.get("context", {})
+        auto_update = body.get("auto_update", True)
         
-        # Build context
+        # Extract current values
+        intimacy = int(ctx_data.get("intimacy", 0))
+        jealousy_level = int(ctx_data.get("jealousy_level", 0))
+        sexy_cooldown_seconds = int(ctx_data.get("sexy_cooldown_seconds", 0))
+        last_cooldown_update = ctx_data.get("last_cooldown_update", time.time())
+        turns_since_jealousy = ctx_data.get("turns_since_jealousy_trigger", 0)
+        
+        # Auto-update logic
+        auto_updates = {
+            "intimacy_change": "자동 업데이트 비활성",
+            "jealousy_change": "자동 업데이트 비활성",
+            "cooldown_change": "자동 업데이트 비활성"
+        }
+        
+        if auto_update:
+            # 1. Update intimacy
+            tool_success = ctx_data.get("tool_success", False)
+            approval_granted = ctx_data.get("approval_granted", False)
+            negative_feedback = ctx_data.get("negative_feedback", False)
+            
+            intimacy, intimacy_msg = auto_update_intimacy(
+                current_intimacy=intimacy,
+                user_input=user_input,
+                tool_success=tool_success,
+                approval_granted=approval_granted,
+                negative_feedback=negative_feedback
+            )
+            auto_updates["intimacy_change"] = intimacy_msg
+            
+            # 2. Update jealousy
+            jealousy_level, jealousy_msg = auto_update_jealousy(
+                current_jealousy=jealousy_level,
+                user_input=user_input,
+                turns_since_trigger=turns_since_jealousy
+            )
+            auto_updates["jealousy_change"] = jealousy_msg
+            
+            # 3. Update cooldown
+            sexy_cooldown_seconds, cooldown_msg = auto_manage_cooldown(
+                current_cooldown_seconds=sexy_cooldown_seconds,
+                last_update_timestamp=last_cooldown_update
+            )
+            auto_updates["cooldown_change"] = cooldown_msg
+        
+        # Build context with updated values
         ctx = CharacterContext(
-            intimacy=int(ctx_data.get("intimacy", 0)),
-            jealousy_level=int(ctx_data.get("jealousy_level", 0)),
+            intimacy=intimacy,
+            jealousy_level=jealousy_level,
             sexy_blocked=bool(ctx_data.get("sexy_blocked", False)),
-            sexy_cooldown_seconds=int(ctx_data.get("sexy_cooldown_seconds", 0)),
+            sexy_cooldown_seconds=sexy_cooldown_seconds,
             user_opt_out_sexy=bool(ctx_data.get("user_opt_out_sexy", False)),
             task_busy=bool(ctx_data.get("task_busy", False)),
             tool_allowlist_active=bool(ctx_data.get("tool_allowlist_active", True)),
@@ -1957,8 +2017,10 @@ async def character_decide(request: Request):
                 "user_opt_out_sexy": ctx.user_opt_out_sexy,
                 "task_busy": ctx.task_busy,
                 "tool_allowlist_active": ctx.tool_allowlist_active,
+                "last_cooldown_update": time.time()
             },
-            "user_input": user_input
+            "user_input": user_input,
+            "auto_updates": auto_updates
         }
         
     except Exception as e:

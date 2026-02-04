@@ -37,6 +37,11 @@ def load_benchmark_data() -> List[Dict[str, Any]]:
 TRANSLATIONS = {
     "ko": {
         "nav_home": "홈",
+        "hero_input_placeholder": "무엇을 도와드릴까요?",
+        "hero_voice_button": "음성 입력",
+        "hero_text_button": "전송",
+        "voice_not_supported": "이 브라우저는 음성 인식을 지원하지 않습니다.",
+        
         "nav_intro": "소개",
         "nav_modules": "모듈",
         "nav_pricing": "가격",
@@ -105,6 +110,11 @@ TRANSLATIONS = {
         "nav_dashboard": "Dashboard",
         "nav_canvas": "Canvas",
         "nav_login": "Login",
+        
+        "hero_input_placeholder": "What can I help you with?",
+        "hero_voice_button": "Voice Input",
+        "hero_text_button": "Send",
+        "voice_not_supported": "Your browser does not support speech recognition.",
         
         "hero_title": "Your AI Character Assistant<br>That Never Sleeps",
         "hero_subtitle": "Your Always-On AI Character Assistant",
@@ -472,6 +482,89 @@ def render_world_class_styles() -> str:
         line-height: 1.75;
       }
       
+      /* Hero Input Container (AI Chat) */
+      .hero-input-container {
+        max-width: 700px;
+        margin: 0 auto var(--space-8);
+        padding: 0 var(--space-4);
+      }
+      
+      .hero-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(37, 99, 235, 0.15);
+        border-radius: var(--radius-control);
+        padding: var(--space-2);
+        box-shadow: var(--shadow-lg);
+        transition: all var(--duration-ui) var(--ease-out);
+      }
+      
+      .hero-input-wrapper:focus-within {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1), var(--shadow-lg);
+      }
+      
+      .hero-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: var(--text-base);
+        color: var(--text-primary);
+        padding: var(--space-3) var(--space-4);
+        outline: none;
+        font-family: var(--font-sans);
+      }
+      
+      .hero-input::placeholder {
+        color: var(--text-tertiary);
+      }
+      
+      .hero-voice-btn,
+      .hero-send-btn {
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: var(--radius-control);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all var(--duration-ui) var(--ease-out);
+        font-size: 20px;
+      }
+      
+      .hero-voice-btn {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+      
+      .hero-voice-btn:hover {
+        background: var(--accent-soft);
+        transform: scale(1.05);
+      }
+      
+      .hero-voice-btn:active {
+        transform: scale(0.95);
+      }
+      
+      .hero-send-btn {
+        background: var(--gradient-accent);
+        color: white;
+        font-weight: 600;
+      }
+      
+      .hero-send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+      
+      .hero-send-btn:active {
+        transform: scale(0.95);
+      }
+      
       .hero-cta-group {
         display: flex;
         gap: var(--space-4);
@@ -628,10 +721,32 @@ def render_world_class_styles() -> str:
           font-size: var(--text-lg);
         }
         
+        .hero-input-container {
+          padding: 0 var(--space-2);
+        }
+        
+        .hero-input-wrapper {
+          flex-wrap: nowrap;
+        }
+        
+        .hero-voice-btn,
+        .hero-send-btn {
+          width: 40px;
+          height: 40px;
+          font-size: 18px;
+        }
+        
+        .hero-cta-group {
+          flex-direction: column;
+          gap: var(--space-3);
+        }
+        
         .btn-glass-primary,
         .btn-glass-secondary {
           font-size: var(--text-base);
           padding: var(--space-3) var(--space-6);
+          width: 100%;
+          max-width: 300px;
         }
       }
     </style>
@@ -642,6 +757,8 @@ def render_navigation(current_page: str = "", lang: str = "ko") -> str:
     """Render navigation with language toggle."""
     nav_items = [
         (t("nav_home", lang), "/"),
+        (t("nav_intro", lang), "/intro"),
+        (t("nav_modules", lang), "/modules"),
         (t("nav_pricing", lang), "/pricing"),
         (t("nav_dashboard", lang), "/dashboard-preview"),
         (t("nav_canvas", lang), "/canvas-preview"),
@@ -706,6 +823,24 @@ def landing_page(lang: str = "ko") -> str:
                 <p class="hero-subtitle">{t("hero_subtitle", lang)}</p>
                 <p class="hero-tagline">{t("hero_tagline", lang)}</p>
                 
+                <!-- AI Chat Input UI (Below Live2D Character) -->
+                <div class="hero-input-container">
+                    <div class="hero-input-wrapper">
+                        <input 
+                            type="text" 
+                            class="hero-input" 
+                            placeholder="{t('hero_input_placeholder', lang)}"
+                            id="hero-chat-input"
+                        />
+                        <button class="hero-voice-btn" id="voice-input-btn" title="{t('hero_voice_button', lang)}">
+                            🎤
+                        </button>
+                        <button class="hero-send-btn" id="send-btn" title="{t('hero_text_button', lang)}">
+                            →
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="hero-cta-group">
                     <a href="/signup?lang={lang}" class="btn-glass-primary">{t("hero_cta_primary", lang)}</a>
                     <a href="#demo" class="btn-glass-secondary">{t("hero_cta_secondary", lang)}</a>
@@ -737,6 +872,79 @@ def landing_page(lang: str = "ko") -> str:
         </section>
         
         {render_footer(lang)}
+        
+        <!-- Chat Input & Voice Interaction -->
+        <script>
+            // Chat input handler
+            const chatInput = document.getElementById('hero-chat-input');
+            const sendBtn = document.getElementById('send-btn');
+            const voiceBtn = document.getElementById('voice-input-btn');
+            const character = window.nexusCharacter();
+            
+            // Send message
+            function sendMessage() {{
+                const message = chatInput.value.trim();
+                if (!message) return;
+                
+                console.log('Sending message:', message);
+                if (character) character.setState('thinking');
+                
+                // Simulate response
+                setTimeout(() => {{
+                    if (character) character.setState('speaking');
+                    setTimeout(() => {{
+                        if (character) character.setState('idle');
+                    }}, 2000);
+                }}, 1000);
+                
+                chatInput.value = '';
+            }}
+            
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {{
+                if (e.key === 'Enter') sendMessage();
+            }});
+            
+            // Voice input
+            voiceBtn.addEventListener('click', () => {{
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {{
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    recognition.lang = '{lang}';
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    
+                    recognition.onstart = () => {{
+                        if (character) character.setState('listening');
+                        voiceBtn.style.background = 'var(--accent-primary)';
+                        voiceBtn.style.color = 'white';
+                    }};
+                    
+                    recognition.onresult = (event) => {{
+                        const transcript = event.results[0][0].transcript;
+                        chatInput.value = transcript;
+                        if (character) character.setState('thinking');
+                    }};
+                    
+                    recognition.onend = () => {{
+                        voiceBtn.style.background = '';
+                        voiceBtn.style.color = '';
+                        if (character) character.setState('idle');
+                    }};
+                    
+                    recognition.onerror = (event) => {{
+                        console.error('Speech recognition error:', event.error);
+                        voiceBtn.style.background = '';
+                        voiceBtn.style.color = '';
+                        if (character) character.setState('idle');
+                    }};
+                    
+                    recognition.start();
+                }} else {{
+                    alert('{t("voice_not_supported", lang)}');
+                }}
+            }});
+        </script>
         
         <!-- Scroll-based state changes -->
         <script>

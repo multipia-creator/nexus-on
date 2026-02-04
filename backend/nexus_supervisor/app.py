@@ -19,14 +19,32 @@ from shared.logging_utils import setup_logging
 from shared.credential_vault import CredentialVault
 from shared.tenant_ctx import TenantCtx
 
-# Import TTS service
+# Import TTS service (with fallback to API Key method)
+TTS_ENABLED = False
+generate_tts = None
+
+# Try service account method first (recommended)
 try:
     from shared.tts_service import generate_tts, tts_service
-    TTS_ENABLED = True
-    logger.info("✅ TTS service enabled (Google Cloud TTS)")
+    if tts_service.enabled:
+        TTS_ENABLED = True
+        logger.info("✅ TTS service enabled (Google Cloud TTS - Service Account)")
 except ImportError:
-    TTS_ENABLED = False
-    logger.warning("⚠️ TTS service not available - install google-cloud-texttospeech")
+    logger.warning("⚠️ google-cloud-texttospeech not installed")
+
+# Fallback to API Key method
+if not TTS_ENABLED:
+    try:
+        from shared.tts_service_apikey import generate_tts_with_apikey
+        generate_tts = generate_tts_with_apikey
+        # Check if API key is available
+        if os.getenv("GOOGLE_CLOUD_API_KEY"):
+            TTS_ENABLED = True
+            logger.info("✅ TTS service enabled (Google Cloud TTS - API Key)")
+        else:
+            logger.warning("⚠️ GOOGLE_CLOUD_API_KEY not set - TTS disabled")
+    except Exception as e:
+        logger.warning(f"⚠️ TTS service fallback failed: {e}")
 from shared.pii_mask import mask_sensitive
 from shared.llm_client import LLMClient
 from shared.task_store import TaskStore

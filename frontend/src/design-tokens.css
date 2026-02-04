@@ -6,6 +6,12 @@
  * Philosophy: "Tactile Craft" + "Human-in-the-loop"
  */
 
+/* ============================================================
+ * Pretendard Font Import (MUST be first)
+ * ============================================================ */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
 :root {
   /* ============================================================
    * Color Tokens (LOCKED)
@@ -201,9 +207,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-
-/* ============================================================
- * Pretendard Font Import
- * ============================================================ */
-
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');

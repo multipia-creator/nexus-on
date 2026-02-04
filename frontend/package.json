@@ -14,6 +14,7 @@
     "docker:run:demo": "docker run -p 8080:80 -e VITE_DEMO_MODE=true nexus-frontend"
   },
   "dependencies": {
+    "lucide-react": "^0.563.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

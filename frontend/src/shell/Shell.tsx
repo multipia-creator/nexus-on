@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useAgentReportStream } from '../stream/useAgentReportStream'
 import { Dock } from './components/Dock'
+import { TopNav } from './components/TopNav'
 import { AssistantStage } from './components/AssistantStage'
 import { Dashboard } from './components/Dashboard'
 import { Sidecar } from './components/Sidecar'
@@ -109,33 +110,7 @@ export function Shell() {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="brand">
-          <div className="logo">N</div>
-          <div className="brandText">
-            <div className="brandTitle">NEXUS UI Skeleton {demoMode && '🎭 DEMO'}</div>
-            <div className="brandSub">stream-first UI contract harness</div>
-          </div>
-        </div>
-
-        <div className="status">
-          <span className={connected ? 'pill ok' : 'pill bad'}>{connected ? 'connected' : 'disconnected'}</span>
-          {demoMode && <span className="pill" style={{ backgroundColor: '#ff9800' }}>DEMO MODE</span>}
-          <span className="pill">last_event_id={lastEventId}</span>
-          <span className="pill">last_ping={lastPingTs ?? '-'}</span>
-        </div>
-
-        <div className="controls">
-          <label>org <input value={orgId} onChange={e => setOrgId(e.target.value)} /></label>
-          <label>project <input value={projectId} onChange={e => setProjectId(e.target.value)} /></label>
-          <label>session <input value={sessionId} onChange={e => setSessionId(e.target.value)} /></label>
-          <button onClick={() => { localStorage.clear(); window.location.reload() }}>Clear cursor</button>
-          <button onClick={emitSidecarRed}>Emit RED</button>
-          <button onClick={approveYes}>Approvals yes</button>
-          <button onClick={() => setDevicesOpen(true)}>Devices</button>
-          <button onClick={() => setView('youtube')} className={view === 'youtube' ? 'active' : ''}>YouTube</button>
-        </div>
-      </header>
+      <TopNav currentView={view} onViewChange={setView} />
 
       <main className="main">
         {view === 'stage' ? (

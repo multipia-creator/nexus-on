@@ -1,13 +1,13 @@
 """
 Public pages HTML rendering for NEXUS-ON marketing site.
-Live2D Character + Autonomous AI + Human-in-the-loop concept.
+WORLD-CLASS AI Character Assistant Service.
 
-Design System: NEXUS UI v1.1
-- White + High-Chroma Blue Accent
-- Pretendard Font
-- 8pt Grid Spacing
-- 180ms Motion
-- Live2D Character Integration
+Design System: NEXUS UI v2.0 (World-Class Edition)
+- Gradient Backgrounds
+- Glassmorphism
+- Micro Animations
+- Live2D Character Integration (Large Scale)
+- Premium Interactive Elements
 """
 import json
 import logging
@@ -40,8 +40,8 @@ def load_benchmark_data() -> List[Dict[str, Any]]:
         return []
 
 
-def render_base_styles() -> str:
-    """NEXUS UI v1.1 base styles."""
+def render_world_class_styles() -> str:
+    """NEXUS UI v2.0 - World-Class Design System."""
     return """
     <style>
       @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
@@ -59,6 +59,14 @@ def render_base_styles() -> str:
         --border-default: #E6E6EA;
         --border-strong: #D1D1D6;
         
+        /* Gradients (World-Class) */
+        --gradient-hero: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 30%, #DBEAFE 100%);
+        --gradient-accent: linear-gradient(90deg, #2563EB 0%, #3B82F6 100%);
+        --gradient-card-hover: linear-gradient(135deg, 
+          rgba(37, 99, 235, 0.05) 0%, 
+          rgba(59, 130, 246, 0.1) 100%);
+        --gradient-premium: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+        
         /* Status Colors */
         --status-green: #16A34A;
         --status-green-bg: #F0FDF4;
@@ -70,8 +78,9 @@ def render_base_styles() -> str:
         /* Typography */
         --font-sans: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, 
                      "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-        --text-2xl: 28px;
-        --text-xl: 22px;
+        --text-3xl: 48px;
+        --text-2xl: 32px;
+        --text-xl: 24px;
         --text-lg: 18px;
         --text-base: 14px;
         --text-sm: 12px;
@@ -84,8 +93,11 @@ def render_base_styles() -> str:
         --space-5: 20px;
         --space-6: 24px;
         --space-8: 32px;
+        --space-10: 40px;
         --space-12: 48px;
         --space-16: 64px;
+        --space-20: 80px;
+        --space-24: 96px;
         
         /* Radius */
         --radius-card: 18px;
@@ -96,11 +108,15 @@ def render_base_styles() -> str:
         --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
         --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
         --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 6px 18px rgba(0, 0, 0, 0.10);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+        --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
         
         /* Motion */
+        --duration-micro: 120ms;
         --duration-ui: 180ms;
+        --duration-modal: 240ms;
         --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+        --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
       }
       
       * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -110,12 +126,58 @@ def render_base_styles() -> str:
         font-size: var(--text-base);
         color: var(--text-primary);
         background: var(--bg-primary);
-        line-height: 1.5;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
       }
       
-      /* Navigation */
+      /* ============================================
+         WORLD-CLASS ANIMATIONS
+         ============================================ */
+      
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+      }
+      
+      @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.6); }
+      }
+      
+      @keyframes slide-in-up {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes scale-in {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      
+      @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+      }
+      
+      /* ============================================
+         NAVIGATION (Premium)
+         ============================================ */
+      
       nav {
-        background: var(--bg-secondary);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
         border-bottom: 1px solid var(--border-default);
         padding: var(--space-4) var(--space-6);
         display: flex;
@@ -127,9 +189,12 @@ def render_base_styles() -> str:
       }
       
       .nav-brand {
-        font-size: var(--text-lg);
-        font-weight: 600;
-        color: var(--text-primary);
+        font-size: var(--text-xl);
+        font-weight: 700;
+        background: var(--gradient-accent);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         text-decoration: none;
         margin-right: auto;
       }
@@ -139,7 +204,7 @@ def render_base_styles() -> str:
         text-decoration: none;
         font-size: var(--text-base);
         font-weight: 500;
-        padding: var(--space-2) var(--space-3);
+        padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-control);
         transition: all var(--duration-ui) var(--ease-out);
       }
@@ -147,14 +212,232 @@ def render_base_styles() -> str:
       .nav-link:hover {
         background: var(--accent-soft);
         color: var(--accent-primary);
+        transform: translateY(-2px);
       }
       
       .nav-link.active {
-        background: var(--accent-primary);
+        background: var(--gradient-accent);
         color: #FFFFFF;
       }
       
-      /* Container */
+      /* ============================================
+         HERO SECTION (Full Screen, Character-Focused)
+         ============================================ */
+      
+      .hero-world-class {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gradient-hero);
+        position: relative;
+        overflow: hidden;
+        padding: var(--space-12) var(--space-6);
+      }
+      
+      .hero-world-class::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+      }
+      
+      .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        animation: slide-in-up 0.8s var(--ease-out);
+      }
+      
+      .hero-character {
+        width: 400px;
+        height: 480px;
+        margin: 0 auto var(--space-8);
+        background: linear-gradient(135deg, 
+          rgba(255, 255, 255, 0.9) 0%, 
+          rgba(239, 246, 255, 0.8) 100%);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: float 4s ease-in-out infinite;
+        position: relative;
+      }
+      
+      .hero-character::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: var(--radius-card);
+        padding: 2px;
+        background: var(--gradient-accent);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
+      
+      .character-placeholder {
+        font-size: 120px;
+        opacity: 0.6;
+      }
+      
+      .character-state {
+        position: absolute;
+        bottom: var(--space-4);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(37, 99, 235, 0.9);
+        color: white;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-pill);
+        font-size: var(--text-sm);
+        font-weight: 600;
+      }
+      
+      .hero-title {
+        font-size: var(--text-3xl);
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--space-4);
+        line-height: 1.2;
+      }
+      
+      .hero-subtitle {
+        font-size: var(--text-xl);
+        color: var(--text-secondary);
+        margin-bottom: var(--space-8);
+        font-weight: 500;
+      }
+      
+      .hero-tagline {
+        font-size: var(--text-lg);
+        color: var(--text-tertiary);
+        max-width: 700px;
+        margin: 0 auto var(--space-8);
+        line-height: 1.75;
+      }
+      
+      .hero-cta-group {
+        display: flex;
+        gap: var(--space-4);
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      
+      /* ============================================
+         GLASSMORPHISM BUTTONS
+         ============================================ */
+      
+      .btn-glass-primary {
+        display: inline-block;
+        padding: var(--space-4) var(--space-8);
+        background: var(--gradient-accent);
+        color: white;
+        border-radius: var(--radius-pill);
+        font-size: var(--text-lg);
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: var(--shadow-lg);
+        transition: all var(--duration-ui) var(--ease-out);
+        border: none;
+        cursor: pointer;
+      }
+      
+      .btn-glass-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+      }
+      
+      .btn-glass-secondary {
+        display: inline-block;
+        padding: var(--space-4) var(--space-8);
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        color: var(--accent-primary);
+        border: 2px solid var(--accent-primary);
+        border-radius: var(--radius-pill);
+        font-size: var(--text-lg);
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: var(--shadow-md);
+        transition: all var(--duration-ui) var(--ease-out);
+        cursor: pointer;
+      }
+      
+      .btn-glass-secondary:hover {
+        background: var(--accent-soft);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+      
+      /* ============================================
+         3 CORE VALUES (Glassmorphism Cards)
+         ============================================ */
+      
+      .core-values {
+        padding: var(--space-20) var(--space-6);
+        background: var(--bg-primary);
+      }
+      
+      .core-values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--space-8);
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      .value-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: var(--radius-card);
+        padding: var(--space-8);
+        box-shadow: var(--shadow-md);
+        transition: all var(--duration-ui) var(--ease-out);
+        text-align: center;
+        animation: scale-in 0.6s var(--ease-out);
+      }
+      
+      .value-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+        background: var(--gradient-card-hover);
+      }
+      
+      .value-icon {
+        font-size: 64px;
+        margin-bottom: var(--space-4);
+      }
+      
+      .value-title {
+        font-size: var(--text-xl);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--space-3);
+      }
+      
+      .value-desc {
+        font-size: var(--text-base);
+        color: var(--text-secondary);
+        line-height: 1.75;
+      }
+      
+      /* ============================================
+         CONTAINER & UTILITIES
+         ============================================ */
+      
       .container {
         max-width: 1240px;
         margin: 0 auto;
@@ -167,210 +450,32 @@ def render_base_styles() -> str:
         padding: var(--space-12) var(--space-6);
       }
       
-      /* Hero */
-      .hero {
-        text-align: center;
-        padding: var(--space-16) var(--space-6);
-        background: linear-gradient(135deg, var(--accent-soft) 0%, var(--bg-primary) 100%);
-      }
-      
-      .hero h1 {
-        font-size: 32px;
-        font-weight: 600;
+      .section-title {
+        font-size: var(--text-2xl);
+        font-weight: 700;
         color: var(--text-primary);
-        margin-bottom: var(--space-4);
-        line-height: 1.25;
-      }
-      
-      .hero .lead {
-        font-size: var(--text-lg);
-        color: var(--text-secondary);
-        max-width: 600px;
-        margin: 0 auto var(--space-8);
-        line-height: 1.75;
-      }
-      
-      /* Buttons */
-      .btn {
-        display: inline-block;
-        padding: var(--space-3) var(--space-6);
-        border-radius: var(--radius-control);
-        font-size: var(--text-base);
-        font-weight: 500;
-        text-decoration: none;
-        transition: all var(--duration-ui) var(--ease-out);
-        border: 0;
-        cursor: pointer;
-      }
-      
-      .btn-primary {
-        background: var(--accent-primary);
-        color: #FFFFFF;
-      }
-      
-      .btn-primary:hover {
-        background: var(--accent-hover);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-sm);
-      }
-      
-      .btn-secondary {
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        border: 1px solid var(--border-default);
-      }
-      
-      .btn-secondary:hover {
-        border-color: var(--accent-primary);
-        color: var(--accent-primary);
-      }
-      
-      .btn-group {
-        display: flex;
-        gap: var(--space-3);
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      
-      /* Grid */
-      .grid-3 {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: var(--space-4);
-        margin-top: var(--space-8);
-      }
-      
-      .grid-2 {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-        gap: var(--space-4);
-        margin-top: var(--space-8);
-      }
-      
-      /* Cards */
-      .card {
-        background: var(--bg-primary);
-        border: 1px solid var(--border-default);
-        border-radius: var(--radius-card);
-        padding: var(--space-5);
-        transition: all var(--duration-ui) var(--ease-out);
-      }
-      
-      .card:hover {
-        border-color: var(--accent-primary);
-        box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
-      }
-      
-      .card-title {
-        font-size: var(--text-lg);
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: var(--space-2);
-      }
-      
-      .card-text {
-        font-size: var(--text-base);
-        color: var(--text-secondary);
-        line-height: 1.75;
-      }
-      
-      .card-icon {
-        width: 48px;
-        height: 48px;
-        margin-bottom: var(--space-3);
-        color: var(--accent-primary);
-      }
-      
-      /* Badge */
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-1);
-        padding: var(--space-1) var(--space-3);
-        border-radius: var(--radius-pill);
-        font-size: var(--text-sm);
-        font-weight: 500;
-      }
-      
-      .badge-stable {
-        background: var(--status-green-bg);
-        color: var(--status-green);
-      }
-      
-      .badge-beta {
-        background: var(--status-yellow-bg);
-        color: var(--status-yellow);
-      }
-      
-      .badge-alpha {
-        background: var(--status-red-bg);
-        color: var(--status-red);
-      }
-      
-      /* Table */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: var(--space-6);
-        font-size: var(--text-base);
-      }
-      
-      th {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-default);
-        padding: var(--space-3);
-        text-align: left;
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-      
-      td {
-        border: 1px solid var(--border-default);
-        padding: var(--space-3);
-        color: var(--text-secondary);
-      }
-      
-      tr:hover {
-        background: var(--bg-secondary);
-      }
-      
-      /* Live2D Placeholder */
-      .live2d-placeholder {
-        position: fixed;
-        top: var(--space-4);
-        right: var(--space-4);
-        width: 280px;
-        height: 320px;
-        background: linear-gradient(135deg, var(--accent-soft) 0%, var(--bg-secondary) 100%);
-        border: 2px solid var(--accent-primary);
-        border-radius: var(--radius-card);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: var(--space-2);
-        z-index: 90;
-        box-shadow: var(--shadow-lg);
-      }
-      
-      .live2d-placeholder-icon {
-        font-size: 48px;
-      }
-      
-      .live2d-placeholder-text {
-        font-size: var(--text-sm);
-        color: var(--text-tertiary);
+        margin-bottom: var(--space-8);
         text-align: center;
       }
       
-      /* Footer */
+      .section-subtitle {
+        font-size: var(--text-lg);
+        color: var(--text-secondary);
+        max-width: 700px;
+        margin: 0 auto var(--space-12);
+        text-align: center;
+        line-height: 1.75;
+      }
+      
+      /* ============================================
+         FOOTER
+         ============================================ */
+      
       footer {
         background: var(--bg-secondary);
-        border-top: 1px solid var(--border-default);
-        padding: var(--space-8) var(--space-6);
+        padding: var(--space-12) var(--space-6);
         text-align: center;
-        margin-top: var(--space-16);
+        border-top: 1px solid var(--border-default);
       }
       
       footer p {
@@ -378,36 +483,47 @@ def render_base_styles() -> str:
         font-size: var(--text-sm);
       }
       
-      /* Responsive */
+      /* ============================================
+         RESPONSIVE
+         ============================================ */
+      
       @media (max-width: 768px) {
-        nav {
-          flex-wrap: wrap;
-          gap: var(--space-3);
+        .hero-character {
+          width: 280px;
+          height: 320px;
         }
         
-        .nav-brand {
-          width: 100%;
-          margin-bottom: var(--space-2);
+        .character-placeholder {
+          font-size: 80px;
         }
         
-        .hero h1 {
-          font-size: 24px;
+        .hero-title {
+          font-size: var(--text-2xl);
         }
         
-        .hero .lead {
+        .hero-subtitle {
+          font-size: var(--text-lg);
+        }
+        
+        .hero-tagline {
           font-size: var(--text-base);
         }
         
-        .live2d-placeholder {
-          width: 140px;
-          height: 160px;
-          bottom: var(--space-4);
-          right: var(--space-4);
-          top: auto;
+        .btn-glass-primary,
+        .btn-glass-secondary {
+          font-size: var(--text-base);
+          padding: var(--space-3) var(--space-6);
         }
-        
-        .live2d-placeholder-icon {
-          font-size: 32px;
+      }
+      
+      /* Reduced Motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
         }
       }
     </style>
@@ -418,392 +534,251 @@ def render_navigation(current_page: str = "") -> str:
     """Render navigation bar."""
     nav_items = [
         ("Home", "/"),
-        ("Intro", "/intro"),
-        ("Developer", "/developer"),
-        ("Modules", "/modules"),
-        ("Benchmark", "/benchmark"),
-        ("App", "/app"),
+        ("Pricing", "/pricing"),
+        ("Dashboard", "/dashboard-preview"),
+        ("Canvas", "/canvas-preview"),
+        ("Login", "/login"),
     ]
     
-    nav_html = ""
-    for label, url in nav_items:
-        active_class = " active" if current_page == label.lower() else ""
-        nav_html += f'<a href="{url}" class="nav-link{active_class}">{label}</a>\n'
-    
-    return f"""
-    <nav>
-      <a href="/" class="nav-brand">NEXUS-ON</a>
-      {nav_html}
-    </nav>
+    nav_html = "<nav>"
+    nav_html += '<a href="/" class="nav-brand">NEXUS-ON</a>'
+    for label, path in nav_items:
+        active_class = "active" if path == current_page else ""
+        nav_html += f'<a href="{path}" class="nav-link {active_class}">{label}</a>'
+    nav_html += "</nav>"
+    return nav_html
+
+
+def render_footer() -> str:
+    """Render footer."""
+    return """
+    <footer>
+        <p>&copy; 2026 NEXUS-ON. Your AI Character Assistant That Never Sleeps.</p>
+        <p>Developed by Prof. Nam Hyunwoo, Seokyeong University.</p>
+    </footer>
     """
-
-
-def render_live2d_placeholder(state: str = "idle") -> str:
-    """Render Live2D character placeholder."""
-    states = {
-        "idle": ("🤖", "Idle"),
-        "listening": ("👂", "Listening"),
-        "speaking": ("💬", "Speaking"),
-        "thinking": ("🤔", "Thinking"),
-        "busy": ("⚙️", "Busy"),
-    }
-    
-    icon, label = states.get(state, states["idle"])
-    
-    return f"""
-    <div class="live2d-placeholder" data-state="{state}">
-      <div class="live2d-placeholder-icon">{icon}</div>
-      <div class="live2d-placeholder-text">
-        Live2D Character<br>{label}
-      </div>
-    </div>
-    """
-
-
-def render_page(title: str, body_html: str, current_page: str = "", live2d_state: str = "idle") -> str:
-    """Render complete HTML page with NEXUS UI v1.1."""
-    return f"""<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{title} - NEXUS-ON</title>
-  {render_base_styles()}
-</head>
-<body>
-  {render_navigation(current_page)}
-  {render_live2d_placeholder(live2d_state)}
-  
-  {body_html}
-  
-  <footer>
-    <p>&copy; 2026 NEXUS-ON. Developed by Prof. Nam Hyunwoo, Seokyeong University.</p>
-    <p style="margin-top: 8px;">
-      <a href="https://github.com/multipia-creator/nexus-on" style="color: var(--accent-primary); text-decoration: none;">GitHub</a>
-    </p>
-  </footer>
-</body>
-</html>
-"""
 
 
 def landing_page() -> str:
-    """Landing page: Hero + 3 Pillars."""
-    body = """
-    <div class="hero">
-      <h1>Your Always-On AI Character Assistant<br>with Human Oversight</h1>
-      <p class="lead">
-        NEXUS is a local, always-available AI assistant powered by Live2D character and Claude Sonnet 4.5. 
-        It executes multi-step tasks autonomously, but always asks permission for critical actions.
-      </p>
-      <div class="btn-group">
-        <a href="/intro" class="btn btn-primary">Learn More</a>
-        <a href="/app" class="btn btn-secondary">Try NEXUS-ON</a>
-      </div>
-    </div>
-    
-    <div class="container">
-      <h2 style="text-align: center; font-size: var(--text-xl); margin-bottom: var(--space-8);">
-        3 Core Principles
-      </h2>
-      
-      <div class="grid-3">
-        <div class="card">
-          <div class="card-icon">🎨</div>
-          <div class="card-title">Visual Presence</div>
-          <div class="card-text">
-            Live2D character provides visual feedback for every action. 
-            Idle, Speaking, Listening, Thinking—you always know what's happening.
-          </div>
-        </div>
+    """Render world-class landing page with huge Live2D character."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NEXUS-ON | Your AI Character Assistant That Never Sleeps</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/")}
         
-        <div class="card">
-          <div class="card-icon">🤖</div>
-          <div class="card-title">Autonomous Execution</div>
-          <div class="card-text">
-            NEXUS handles complex workflows automatically. 
-            Research, document analysis, scheduling—all in one conversation.
-          </div>
-        </div>
-        
-        <div class="card">
-          <div class="card-icon">👤</div>
-          <div class="card-title">Human Approval Gates</div>
-          <div class="card-text">
-            RED actions (external sharing, file deletion) require your explicit approval. 
-            GREEN tasks run automatically, YELLOW notify you, RED wait for yes/no.
-          </div>
-        </div>
-      </div>
-    </div>
-    """
-    
-    return render_page("Home", body, "home", "idle")
-
-
-def intro_page() -> str:
-    """Introduction page: Why NEXUS?"""
-    body = """
-    <div class="container-narrow">
-      <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-4);">Why NEXUS-ON?</h1>
-      <p class="lead" style="margin-bottom: var(--space-8);">
-        Most AI assistants are either too autonomous (unpredictable) or too manual (inefficient). 
-        NEXUS balances both.
-      </p>
-      
-      <h2 style="font-size: var(--text-xl); margin-top: var(--space-12); margin-bottom: var(--space-4);">The Problem</h2>
-      <p style="margin-bottom: var(--space-3); color: var(--text-secondary);">
-        ❌ <strong>ChatGPT/Claude</strong>: Great for chat, but no autonomous execution<br>
-        ❌ <strong>AutoGPT</strong>: Too autonomous, no control, unpredictable behavior<br>
-        ❌ <strong>Existing assistants</strong>: No visual feedback, status unclear
-      </p>
-      
-      <h2 style="font-size: var(--text-xl); margin-top: var(--space-12); margin-bottom: var(--space-4);">Our Solution</h2>
-      <p style="margin-bottom: var(--space-6); color: var(--text-secondary);">
-        NEXUS combines the best of both worlds: <strong>autonomous execution</strong> with <strong>mandatory approval gates</strong> 
-        for risky actions. Plus, a <strong>Live2D character</strong> shows you exactly what's happening.
-      </p>
-      
-      <div class="card" style="margin-top: var(--space-8);">
-        <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">4 Key Differentiators</h3>
-        <ul style="list-style: none; padding: 0;">
-          <li style="margin-bottom: var(--space-3); color: var(--text-secondary);">
-            <strong>1️⃣ Live2D Character</strong><br>
-            4 animation states (Idle/Speaking/Listening/Thinking) + status glow (Busy=yellow, Alert=red)
-          </li>
-          <li style="margin-bottom: var(--space-3); color: var(--text-secondary);">
-            <strong>2️⃣ Human-in-the-loop by Design</strong><br>
-            GREEN (auto), YELLOW (notify), RED (approval required)
-          </li>
-          <li style="margin-bottom: var(--space-3); color: var(--text-secondary);">
-            <strong>3️⃣ Local-First Architecture</strong><br>
-            Data stays local, multi-LLM support, native Korean HWP
-          </li>
-          <li style="margin-bottom: var(--space-3); color: var(--text-secondary);">
-            <strong>4️⃣ Always-On Availability</strong><br>
-            Background execution, SSE real-time updates, multi-tenant
-          </li>
-        </ul>
-      </div>
-      
-      <div style="text-align: center; margin-top: var(--space-12);">
-        <a href="/modules" class="btn btn-primary">Explore Modules</a>
-        <a href="/developer" class="btn btn-secondary" style="margin-left: var(--space-3);">Meet the Creator</a>
-      </div>
-    </div>
-    """
-    
-    return render_page("Introduction", body, "intro", "listening")
-
-
-def developer_page() -> str:
-    """Developer page: About the Creator."""
-    body = """
-    <div class="container-narrow">
-      <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-4);">Meet the Creator</h1>
-      
-      <div class="card" style="margin-top: var(--space-8);">
-        <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-2);">Professor Nam Hyunwoo</h2>
-        <p style="color: var(--text-tertiary); margin-bottom: var(--space-4);">서경대학교 (Seokyeong University)</p>
-        
-        <p style="color: var(--text-secondary); line-height: 1.75; margin-bottom: var(--space-4);">
-          Prof. Nam specializes in AI systems, human-computer interaction, and autonomous agent design. 
-          NEXUS-ON emerged from his research into safer, more controllable AI assistants that respect user 
-          agency while enabling complex workflows.
-        </p>
-        
-        <h3 style="font-size: var(--text-lg); margin-top: var(--space-6); margin-bottom: var(--space-3);">Research Interests</h3>
-        <ul style="list-style: none; padding: 0; color: var(--text-secondary);">
-          <li style="margin-bottom: var(--space-2);">• AI Safety & Alignment</li>
-          <li style="margin-bottom: var(--space-2);">• Multi-agent Systems & Orchestration</li>
-          <li style="margin-bottom: var(--space-2);">• Korean NLP & Document Processing</li>
-          <li style="margin-bottom: var(--space-2);">• Human-in-the-loop AI Design</li>
-          <li style="margin-bottom: var(--space-2);">• Visual Feedback in AI Interfaces</li>
-        </ul>
-      </div>
-      
-      <div class="card" style="margin-top: var(--space-6);">
-        <h3 style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Why I Built NEXUS</h3>
-        <p style="color: var(--text-secondary); line-height: 1.75; margin-bottom: var(--space-4);">
-          As a researcher, I work with complex multi-step tasks (literature review, data analysis), 
-          Korean documents (HWP files), multiple AI models, and sensitive data requiring local storage. 
-          Existing AI assistants fell short.
-        </p>
-        
-        <p style="color: var(--text-secondary); line-height: 1.75; margin-bottom: var(--space-4);">
-          <strong>ChatGPT</strong>: Great for chat, but no autonomy<br>
-          <strong>AutoGPT</strong>: Too autonomous, no control<br>
-          <strong>Custom scripts</strong>: No visual feedback, hard to debug
-        </p>
-        
-        <p style="color: var(--text-secondary); line-height: 1.75;">
-          <strong>NEXUS bridges this gap</strong>: Autonomous multi-step execution + Visual feedback via Live2D character + 
-          Mandatory approval for risky actions + Native Korean document support + Local-first, multi-LLM architecture.
-        </p>
-      </div>
-      
-      <div style="text-align: center; margin-top: var(--space-12);">
-        <a href="https://github.com/multipia-creator/nexus-on" class="btn btn-primary">View on GitHub</a>
-      </div>
-    </div>
-    """
-    
-    return render_page("Developer", body, "developer", "thinking")
-
-
-def modules_page() -> str:
-    """Modules page: What's Inside."""
-    modules = load_modules_data()
-    
-    # Status badge mapping
-    status_badges = {
-        "stable": '<span class="badge badge-stable">✅ Production Ready</span>',
-        "beta": '<span class="badge badge-beta">⚠️ Beta</span>',
-        "alpha": '<span class="badge badge-alpha">🚧 Alpha</span>',
-    }
-    
-    module_cards_html = ""
-    for module in modules:
-        status_badge = status_badges.get(module.get("status", "alpha"), "")
-        
-        # Key features list
-        features_html = ""
-        for feature in module.get("key_features", []):
-            features_html += f"<li>• {feature}</li>"
-        
-        module_cards_html += f"""
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-3);">
-            <div>
-              <div class="card-icon">{module.get('icon', '📦')}</div>
-              <h3 class="card-title">{module.get('name', 'Unknown')}</h3>
+        <!-- HERO SECTION (Full Screen, Character-Focused) -->
+        <section class="hero-world-class">
+            <div class="hero-content">
+                <!-- HUGE Live2D Character -->
+                <div class="hero-character">
+                    <div class="character-placeholder">🎭</div>
+                    <div class="character-state">Idle</div>
+                </div>
+                
+                <h1 class="hero-title">Your AI Character Assistant<br>That Never Sleeps</h1>
+                <p class="hero-subtitle">항상 깨어있는 당신만의 AI 캐릭터 비서</p>
+                <p class="hero-tagline">
+                    Live2D 캐릭터가 화면에 항상 존재하며, 자율적으로 작업을 수행하지만<br>
+                    중요한 결정은 항상 당신의 승인을 받습니다.
+                </p>
+                
+                <div class="hero-cta-group">
+                    <a href="/signup" class="btn-glass-primary">무료로 시작하기</a>
+                    <a href="#demo" class="btn-glass-secondary">데모 보기</a>
+                </div>
             </div>
-            {status_badge}
-          </div>
-          
-          <p style="color: var(--text-tertiary); font-size: var(--text-sm); margin-bottom: var(--space-3);">
-            {module.get('tagline', '')}
-          </p>
-          
-          <p class="card-text" style="margin-bottom: var(--space-4);">
-            {module.get('description', '')}
-          </p>
-          
-          <details style="margin-top: var(--space-3);">
-            <summary style="cursor: pointer; color: var(--accent-primary); font-weight: 500;">
-              Key Features
-            </summary>
-            <ul style="list-style: none; padding: 0; margin-top: var(--space-2); color: var(--text-secondary); font-size: var(--text-sm);">
-              {features_html}
-            </ul>
-          </details>
-        </div>
-        """
-    
-    body = f"""
-    <div class="container">
-      <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-4); text-align: center;">
-        8 Integrated Modules for Autonomous Workflows
-      </h1>
-      <p class="lead" style="text-align: center; margin-bottom: var(--space-8);">
-        Each module works independently, but they're designed to work together seamlessly—just like a real assistant.
-      </p>
-      
-      <div class="grid-2">
-        {module_cards_html}
-      </div>
-      
-      <div style="text-align: center; margin-top: var(--space-12);">
-        <a href="/benchmark" class="btn btn-primary">See How We Compare</a>
-      </div>
-    </div>
+        </section>
+        
+        <!-- 3 CORE VALUES -->
+        <section class="core-values">
+            <div class="core-values-grid">
+                <div class="value-card">
+                    <div class="value-icon">🎭</div>
+                    <h3 class="value-title">Always Visible</h3>
+                    <p class="value-desc">
+                        화면에 항상 존재하는 Live2D 캐릭터 비서.<br>
+                        5가지 상태로 현재 작업을 시각적으로 표현합니다.
+                    </p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">🤖</div>
+                    <h3 class="value-title">Autonomous but Controlled</h3>
+                    <p class="value-desc">
+                        자율적으로 작업을 수행하지만,<br>
+                        중요한 결정은 항상 당신의 승인을 받습니다.
+                    </p>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">🇰🇷</div>
+                    <h3 class="value-title">Korean Native</h3>
+                    <p class="value-desc">
+                        한국어 네이티브 지원.<br>
+                        HWP 파일을 완벽하게 처리합니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        {render_footer()}
+    </body>
+    </html>
     """
-    
-    return render_page("Modules", body, "modules", "speaking")
 
 
-def benchmark_page() -> str:
-    """Benchmark page: How We Compare."""
-    benchmark_data = load_benchmark_data()
-    
-    # Find NEXUS entry
-    nexus_entry = next((item for item in benchmark_data if item.get("product") == "NEXUS-ON"), None)
-    
-    # Differentiation card
-    differentiation_html = ""
-    if nexus_entry:
-        strengths_html = ""
-        for strength in nexus_entry.get("strengths", []):
-            strengths_html += f"<li style='margin-bottom: var(--space-2);'>✅ {strength}</li>"
+def pricing_page() -> str:
+    """Render pricing page."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pricing - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/pricing")}
         
-        differentiation_html = f"""
-        <div class="card" style="background: var(--accent-soft); border-color: var(--accent-primary); margin-bottom: var(--space-12);">
-          <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-4); color: var(--accent-primary);">
-            💡 What Makes NEXUS Different?
-          </h2>
-          <p style="color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.75;">
-            NEXUS is the only assistant that combines <strong>visual presence</strong> (Live2D character) + 
-            <strong>autonomy</strong> (multi-step execution) + <strong>control</strong> (approval gates) + 
-            <strong>local-first</strong> (data control) + <strong>multi-LLM</strong> (no vendor lock-in).
-          </p>
-          <ul style="list-style: none; padding: 0; color: var(--text-secondary);">
-            {strengths_html}
-          </ul>
+        <div class="container">
+            <h1 class="section-title">가격 플랜</h1>
+            <p class="section-subtitle">
+                당신의 필요에 맞는 플랜을 선택하세요.<br>
+                언제든지 업그레이드 가능합니다.
+            </p>
+            
+            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
+                <div style="font-size: 64px; margin-bottom: 24px;">💳</div>
+                <p style="font-size: 18px;">가격 플랜 페이지 구현 중...</p>
+                <p>FREE / PRO / ENTERPRISE 플랜 제공 예정</p>
+            </div>
         </div>
-        """
-    
-    # Comparison table
-    table_rows_html = ""
-    for item in benchmark_data:
-        product_name = item.get("product", "Unknown")
-        company = item.get("company", "")
-        positioning = item.get("positioning", "")
-        price_tier = item.get("price_tier", "")
-        deployment = item.get("deployment", "")
         
-        # Highlight NEXUS row
-        row_style = 'background: var(--accent-soft);' if product_name == "NEXUS-ON" else ''
-        
-        table_rows_html += f"""
-        <tr style="{row_style}">
-          <td><strong>{product_name}</strong><br><span style="font-size: var(--text-sm); color: var(--text-tertiary);">{company}</span></td>
-          <td style="font-size: var(--text-sm);">{positioning}</td>
-          <td style="font-size: var(--text-sm);">{price_tier}</td>
-          <td style="font-size: var(--text-sm);">{deployment}</td>
-        </tr>
-        """
-    
-    body = f"""
-    <div class="container">
-      <h1 style="font-size: var(--text-2xl); margin-bottom: var(--space-4); text-align: center;">
-        Choose the Right AI Assistant for Your Needs
-      </h1>
-      <p class="lead" style="text-align: center; margin-bottom: var(--space-8);">
-        NEXUS is designed for researchers, teams, and power users who need both autonomy and control.
-      </p>
-      
-      {differentiation_html}
-      
-      <h2 style="font-size: var(--text-xl); margin-bottom: var(--space-4);">Comparison Table</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Positioning</th>
-            <th>Price Tier</th>
-            <th>Deployment</th>
-          </tr>
-        </thead>
-        <tbody>
-          {table_rows_html}
-        </tbody>
-      </table>
-      
-      <div style="text-align: center; margin-top: var(--space-12);">
-        <a href="/app" class="btn btn-primary">Try NEXUS-ON</a>
-        <a href="/intro" class="btn btn-secondary" style="margin-left: var(--space-3);">Learn More</a>
-      </div>
-    </div>
+        {render_footer()}
+    </body>
+    </html>
     """
-    
-    return render_page("Benchmark", body, "benchmark", "busy")
+
+
+def dashboard_preview_page() -> str:
+    """Render dashboard preview page."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard Preview - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/dashboard-preview")}
+        
+        <div class="container">
+            <h1 class="section-title">대시보드 프리뷰</h1>
+            <p class="section-subtitle">
+                실시간으로 업데이트되는 AI 비서의 작업 현황을 확인하세요.
+            </p>
+            
+            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
+                <div style="font-size: 64px; margin-bottom: 24px;">📊</div>
+                <p style="font-size: 18px;">대시보드 프리뷰 페이지 구현 중...</p>
+                <p>3-Column Layout | 실시간 SSE 업데이트 | Live2D 상태 변화</p>
+            </div>
+        </div>
+        
+        {render_footer()}
+    </body>
+    </html>
+    """
+
+
+def canvas_preview_page() -> str:
+    """Render canvas workspace preview page."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Canvas Preview - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/canvas-preview")}
+        
+        <div class="container">
+            <h1 class="section-title">캔버스 워크스페이스</h1>
+            <p class="section-subtitle">
+                AI 비서와 함께 문서를 작성하고 편집하세요.
+            </p>
+            
+            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
+                <div style="font-size: 64px; margin-bottom: 24px;">📝</div>
+                <p style="font-size: 18px;">캔버스 워크스페이스 페이지 구현 중...</p>
+                <p>Markdown Editor | AI 제안 | Multi-format Export</p>
+            </div>
+        </div>
+        
+        {render_footer()}
+    </body>
+    </html>
+    """
+
+
+def login_page() -> str:
+    """Render login page."""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login - NEXUS-ON</title>
+        {render_world_class_styles()}
+    </head>
+    <body>
+        {render_navigation("/login")}
+        
+        <div class="container-narrow">
+            <div style="text-align: center; padding: 100px 0;">
+                <div style="font-size: 64px; margin-bottom: 24px;">🔐</div>
+                <h1 class="section-title">Welcome Back</h1>
+                <p class="section-subtitle">다시 만나서 반가워요!</p>
+                
+                <div style="max-width: 400px; margin: 48px auto; text-align: left;">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Email</label>
+                        <input type="email" placeholder="your@email.com" 
+                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-default); 
+                                      border-radius: var(--radius-control); font-size: var(--text-base);">
+                    </div>
+                    
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Password</label>
+                        <input type="password" placeholder="••••••••" 
+                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-default); 
+                                      border-radius: var(--radius-control); font-size: var(--text-base);">
+                    </div>
+                    
+                    <button class="btn-glass-primary" style="width: 100%; margin-bottom: 16px;">Sign In</button>
+                    
+                    <div style="text-align: center; color: var(--text-tertiary); font-size: var(--text-sm);">
+                        Don't have an account? <a href="/signup" style="color: var(--accent-primary);">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {render_footer()}
+    </body>
+    </html>
+    """

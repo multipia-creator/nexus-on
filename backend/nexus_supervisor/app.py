@@ -1735,45 +1735,8 @@ def _mk_report(
 
 @app.get("/")
 def landing_page():
-    """Landing page: product promise + CTA + 3 feature cards."""
-    body = """
-<div class="hero">
-  <h1>AI-Powered Autonomous Assistant with Human Oversight</h1>
-  <p class="lead">
-    NEXUS-ON은 자율 에이전트와 Human-in-the-loop 승인 시스템을 결합하여<br>
-    안전하고 효율적인 업무 자동화를 제공합니다.
-  </p>
-  <a href="/app" class="btn btn-large">App 실행</a>
-</div>
-
-<div class="container">
-  <h2>핵심 특징</h2>
-  <div class="grid-3">
-    <div class="card">
-      <div class="card-title">🤖 자율 에이전트</div>
-      <div class="card-text">
-        Claude Sonnet 4.5 기반 멀티 LLM 게이트웨이로<br>
-        복잡한 작업을 자동으로 처리합니다.
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">✋ Human-in-the-loop</div>
-      <div class="card-text">
-        위험도 기반 승인 시스템(GREEN/YELLOW/RED)으로<br>
-        중요한 결정에는 사람의 승인이 필요합니다.
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">📝 작업 캔버스</div>
-      <div class="card-text">
-        실시간 협업이 가능한 작업 공간에서<br>
-        초안 작성과 편집을 자유롭게 진행하세요.
-      </div>
-    </div>
-  </div>
-</div>
-"""
-    return HTMLResponse(render_page("Home", body, "home"))
+    """World-Class Landing Page with huge Live2D character."""
+    return HTMLResponse(render_landing_page())
 
 
 @app.get("/intro")
@@ -2571,6 +2534,45 @@ def api_public_benchmark():
     """Public API: return benchmark.json data. For future real-time updates."""
     benchmark = load_benchmark_data()
     return {"benchmark": benchmark, "count": len(benchmark), "last_updated": _utc_now()}
+
+
+# ============================================
+# NEW WORLD-CLASS PAGES
+# ============================================
+
+@app.get("/pricing")
+def pricing_page_route():
+    """Pricing page with 3-tier plans."""
+    return HTMLResponse(render_pricing_page())
+
+
+@app.get("/dashboard-preview")
+def dashboard_preview_page_route():
+    """Dashboard preview page."""
+    return HTMLResponse(render_dashboard_preview_page())
+
+
+@app.get("/canvas-preview")
+def canvas_preview_page_route():
+    """Canvas workspace preview page."""
+    return HTMLResponse(render_canvas_preview_page())
+
+
+@app.get("/login")
+def login_page_route():
+    """Login page."""
+    return HTMLResponse(render_login_page())
+
+
+@app.get("/signup")
+def signup_page_route():
+    """Sign up page (redirects to login for now)."""
+    return HTMLResponse(render_login_page())
+
+
+# ============================================
+# SSE STREAMING
+# ============================================
 
 
 @app.get("/agent/reports/stream")

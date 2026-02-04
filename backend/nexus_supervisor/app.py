@@ -32,7 +32,7 @@ try:
 except ImportError:
     logger.warning("⚠️ google-cloud-texttospeech not installed")
 
-# Fallback to API Key method
+# Fallback to API Key method (logger not yet defined, use print)
 if not TTS_ENABLED:
     try:
         from shared.tts_service_apikey import generate_tts_with_apikey
@@ -40,11 +40,11 @@ if not TTS_ENABLED:
         # Check if API key is available
         if os.getenv("GOOGLE_CLOUD_API_KEY"):
             TTS_ENABLED = True
-            logger.info("✅ TTS service enabled (Google Cloud TTS - API Key)")
+            print("✅ TTS service enabled (Google Cloud TTS - API Key)")
         else:
-            logger.warning("⚠️ GOOGLE_CLOUD_API_KEY not set - TTS disabled")
+            print("⚠️ GOOGLE_CLOUD_API_KEY not set - TTS disabled")
     except Exception as e:
-        logger.warning(f"⚠️ TTS service fallback failed: {e}")
+        print(f"⚠️ TTS service fallback failed: {e}")
 from shared.pii_mask import mask_sensitive
 from shared.llm_client import LLMClient
 from shared.task_store import TaskStore
@@ -57,12 +57,12 @@ from shared.play_games import PlayEngine
 from shared.security import verify_callback_signature, verify_callback_signature_multi, parse_callback_secrets_json
 from shared.callback_rotation import load_callback_secrets, load_rotatable_secrets, rotate_activate_rotatable, dump_rotatable_secrets_json, reconcile_expired, persist_if_file
 from shared.nonce_store import NonceStore
-from shared.metrics import TASK_CREATE, TASK_GET, CALLBACK, LLM_GEN, QUEUE_PUBLISH_FAIL, TASK_DURATION
+# from shared.metrics import TASK_CREATE, TASK_GET, CALLBACK, LLM_GEN, QUEUE_PUBLISH_FAIL, TASK_DURATION  # Disabled for minimal deployment
 from shared.mq_utils import declare_queues, publish_json
 from shared.node_store import NodeStore
-from nexus_supervisor.public_pages import (
-    render_page, load_modules_data, load_benchmark_data
-)
+# from nexus_supervisor.public_pages import (  # Disabled for minimal deployment
+#     render_page, load_modules_data, load_benchmark_data
+# )
 
 setup_logging()
 logger = logging.getLogger("nexus_supervisor")
@@ -124,6 +124,15 @@ class AgentCallbackRequest(BaseModel):
     result: Optional[Dict[str, Any]] = None
     error: Optional[Dict[str, Any]] = None
     metrics: Optional[Dict[str, Any]] = None
+
+class TaskCreateRequest(BaseModel):
+    requested_by: str = "system"
+    params: Optional[Dict[str, Any]] = None
+
+class TaskCreateResponse(BaseModel):
+    task_id: str
+    task_type: str
+    status: str
 
 class LLMGenerateRequest(BaseModel):
     input: str = Field(..., min_length=1)
@@ -2027,6 +2036,39 @@ async def character_decide(request: Request):
         logger.error(f"Character decide error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+def render_landing_page():
+    """Simple landing page for NEXUS-ON"""
+    return """
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NEXUS-ON | 세리아 AI 캐릭터 시스템</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gradient-to-br from-purple-100 to-pink-100 min-h-screen flex items-center justify-center">
+        <div class="text-center max-w-2xl mx-auto p-8">
+            <h1 class="text-5xl font-bold text-gray-800 mb-4">🤖 NEXUS-ON</h1>
+            <p class="text-2xl text-gray-600 mb-8">세리아 AI 캐릭터 자아 시스템</p>
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <p class="text-lg text-gray-700 mb-4">자동화된 감정 및 상태 관리 시스템</p>
+                <ul class="text-left space-y-2 text-gray-600">
+                    <li>✅ 친밀도 자동 증가/감소</li>
+                    <li>✅ 질투 자동 감지 및 decay</li>
+                    <li>✅ 쿨다운 자동 관리</li>
+                    <li>✅ 6가지 모드 (friendly, focused, sexy, jealous, busy, play)</li>
+                </ul>
+            </div>
+            <div class="space-x-4">
+                <a href="/intro" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg">소개</a>
+                <a href="/api/character/decide" class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg">API</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
 
 @app.get("/")
 def landing_page():

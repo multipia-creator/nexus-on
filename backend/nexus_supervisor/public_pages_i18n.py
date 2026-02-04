@@ -242,9 +242,13 @@ def render_live2d_component(page_state: str = 'idle') -> str:
     <!-- Live2D Manager -->
     <script src="/static/js/live2d-loader.js"></script>
 
-    <!-- Initialize Live2D -->
+    <!-- SSE + Live2D Integration (NEW) -->
+    <script src="/static/js/sse-live2d-integration.js"></script>
+
+    <!-- Initialize Live2D + SSE -->
     <script>
         let live2dManager = null;
+        let live2dAgent = null;
         
         window.addEventListener('DOMContentLoaded', () => {{
             try {{
@@ -264,6 +268,7 @@ def render_live2d_component(page_state: str = 'idle') -> str:
                             'live2d-container',
                             '/live2d/haru_greeter_t05.model3.json'
                         );
+                        window.live2dManager = live2dManager;
                         
                         // Set initial state
                         setTimeout(() => {{
@@ -271,6 +276,23 @@ def render_live2d_component(page_state: str = 'idle') -> str:
                                 live2dManager.setState('{page_state}');
                                 container.classList.remove('loading');
                                 console.log('✅ Live2D initialized with state: {page_state}');
+                                
+                                // Initialize SSE + Live2D integration
+                                // For demo, use placeholder API key
+                                // In production, this should come from session/auth
+                                const apiKey = 'demo-key';
+                                const orgId = 'default';
+                                const projectId = 'default';
+                                
+                                try {{
+                                    live2dAgent = new Live2DAgentIntegration(apiKey, orgId, projectId);
+                                    window.live2dAgent = live2dAgent;
+                                    live2dAgent.connect();
+                                    console.log('✅ SSE + Live2D Agent connected');
+                                }} catch (error) {{
+                                    console.error('❌ SSE connection error:', error);
+                                    // Continue without SSE (fallback to manual control)
+                                }}
                             }}
                         }}, 1000);
                         

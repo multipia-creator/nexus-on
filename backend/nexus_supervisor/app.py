@@ -1450,6 +1450,9 @@ def chat_send(
 
     causality = {"type": "chat.send", "command_id": None, "correlation_id": correlation_id}
 
+    # Emit agent_status: listening (user message received)
+    _emit_agent_status(tenant_id, "listening", {"user_message": msg[:80]})
+
     # 1) append user message as a chat report
     user_report = _mk_report(
         status="done",
@@ -1553,9 +1556,24 @@ def chat_send(
 
         # default: normal chat (includes /play and '놀아줘' via state_engine -> play_engine)
         # inject session_id for continuity
+        # Emit agent_status: thinking (processing chat request)
+        _emit_agent_status(tenant_id, "thinking", {"user_message": msg[:80]})
+        
         context = dict(body.context or {})
         context["session_id"] = session_id
         payload = _run_character_chat_core(tenant_id=tenant_id, user_input=msg, context=context, request_id=request_id)
+        
+        # Emit agent_status: speaking (sending response)
+        response_text = payload.get("text", "")
+        _emit_agent_status(tenant_id, "speaking", {"response": response_text[:80]})
+        
+        # Emit TTS events for lip-sync simulation
+        # In production, this would be replaced with actual TTS service calls
+        _emit_tts(tenant_id, "tts_start", {"text": response_text, "voice": "ko-KR-Neural2-A"})
+        # Simulate TTS duration (in production, this comes from TTS service)
+        estimated_duration_ms = len(response_text) * 100  # ~100ms per character
+        _emit_tts(tenant_id, "tts_end", {"duration_ms": estimated_duration_ms})
+        
         assistant = _mk_report(
             status="done",
             summary="chat: assistant reply",
@@ -1573,6 +1591,10 @@ def chat_send(
             },
         )
         stream_store.append_event(tenant_id, "report", assistant)
+        
+        # Emit agent_status: idle (chat completed)
+        _emit_agent_status(tenant_id, "idle", {"chat_completed": True})
+        
         return {"accepted": True, "first_followup_report_id": assistant["report_id"], "correlation_id": correlation_id}
 
     except Exception as e:
@@ -1585,6 +1607,8 @@ def chat_send(
             data={"snapshot": stream_store.snapshot(tenant_id)},
         )
         stream_store.append_event(tenant_id, "report", err)
+        # Emit agent_status: idle (error occurred)
+        _emit_agent_status(tenant_id, "idle", {"error": str(e)})
         return {"accepted": True, "first_followup_report_id": err["report_id"], "correlation_id": correlation_id}
 
 
@@ -1731,6 +1755,51 @@ def _mk_report(
         "data": data or {},
         "causality": causality,
     }
+
+
+def _emit_agent_status(tenant_id: str, status: str, context: Optional[Dict[str, Any]] = None) -> None:
+    """
+    Emit agent_status event to SSE stream for Live2D character state sync.
+    
+    Args:
+        tenant_id: Tenant identifier
+        status: One of: idle, listening, thinking, speaking, busy, waiting_approval
+        context: Optional context data (e.g., current_task, message)
+    """
+    valid_statuses = {"idle", "listening", "thinking", "speaking", "busy", "waiting_approval"}
+    if status not in valid_statuses:
+        logger.warning(f"Invalid agent_status: {status}. Defaulting to 'idle'")
+        status = "idle"
+    
+    payload = {
+        "status": status,
+        "ts": _utc_now(),
+        "context": context or {},
+    }
+    stream_store.append_event(tenant_id, "agent_status", payload)
+    logger.debug(f"[agent_status] {tenant_id}: {status}")
+
+
+def _emit_tts(tenant_id: str, event_type: str, data: Dict[str, Any]) -> None:
+    """
+    Emit TTS event to SSE stream for Live2D lip-sync.
+    
+    Args:
+        tenant_id: Tenant identifier
+        event_type: One of: tts_start, tts_chunk, tts_end
+        data: TTS event data (e.g., audio_url, chunk_data, duration)
+    """
+    valid_event_types = {"tts_start", "tts_chunk", "tts_end"}
+    if event_type not in valid_event_types:
+        logger.warning(f"Invalid tts event_type: {event_type}")
+        return
+    
+    payload = {
+        "ts": _utc_now(),
+        **data,
+    }
+    stream_store.append_event(tenant_id, event_type, payload)
+    logger.debug(f"[{event_type}] {tenant_id}")
 
 
 @app.get("/")
@@ -2667,6 +2736,9 @@ def sidecar_command(
         "surface": (body.client_context or {}).get("surface") or "sidecar",
     }
 
+    # Emit agent_status: listening (command received)
+    _emit_agent_status(tenant_id, "listening", {"command_type": body.type, "command_id": body.command_id})
+
     started = _mk_report(
         status="started",
         summary=f"accepted: {body.type}",
@@ -2690,6 +2762,9 @@ def sidecar_command(
         
         if not approved:
             # Create RED Ask and return 202 (execution blocked)
+            # Emit agent_status: waiting_approval
+            _emit_agent_status(tenant_id, "waiting_approval", {"command_type": body.type, "command_id": body.command_id})
+            
             ask_id = f"ask-{uuid.uuid4().hex[:10]}"
             ask = {
                 "ask_id": ask_id,
@@ -2720,6 +2795,9 @@ def sidecar_command(
             )
 
     # execute (P0: in-process)
+    # Emit agent_status: thinking (command execution started)
+    _emit_agent_status(tenant_id, "thinking", {"command_type": body.type, "command_id": body.command_id})
+    
     try:
         if body.type == "external_share.prepare":
             # Already handled by RED check above
@@ -2948,6 +3026,11 @@ def sidecar_command(
             data={"error": {"message": str(e)}, "snapshot": stream_store.snapshot(tenant_id)},
         )
         stream_store.append_event(tenant_id, "report", err)
+        # Emit agent_status: idle (error occurred)
+        _emit_agent_status(tenant_id, "idle", {"error": str(e)})
+
+    # Emit agent_status: idle (command completed successfully)
+    _emit_agent_status(tenant_id, "idle", {"command_type": body.type, "command_id": body.command_id, "completed": True})
 
     return SidecarCommandAccepted(
         command_id=body.command_id,
@@ -2977,6 +3060,12 @@ def approvals_decide(
     remaining = stream_store.list_asks(tenant_id)
     blocked = any((a.get("risk") == "RED") for a in remaining)
     stream_store.set_autopilot(tenant_id, {"state": "idle" if not blocked else "blocked", "blocked_by_red": blocked})
+
+    # Emit agent_status based on approval decision
+    if body.decision == "approve":
+        _emit_agent_status(tenant_id, "idle", {"approval": "approved", "ask_id": ask_id})
+    else:
+        _emit_agent_status(tenant_id, "idle", {"approval": "rejected", "ask_id": ask_id})
 
     report = _mk_report(
         status="done",

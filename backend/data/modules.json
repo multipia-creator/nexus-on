@@ -1,0 +1,90 @@
+[
+  {
+    "module_id": "m001",
+    "name": "Character Assistant Core",
+    "last_updated": "2026-02-03",
+    "highlights": [
+      "Claude Sonnet 4.5 integration",
+      "Multi-provider LLM gateway",
+      "SSE-based real-time updates"
+    ],
+    "status": "G"
+  },
+  {
+    "module_id": "m002",
+    "name": "Human-in-the-loop Approval System",
+    "last_updated": "2026-02-02",
+    "highlights": [
+      "Two-phase commit for RED actions",
+      "Risk-based approval workflow (GREEN/YELLOW/RED)",
+      "202 Accepted pattern with SSE notifications"
+    ],
+    "status": "G"
+  },
+  {
+    "module_id": "m003",
+    "name": "RAG Engine (Naive)",
+    "last_updated": "2026-02-01",
+    "highlights": [
+      "Token overlap-based retrieval",
+      "HWP file support with fallback",
+      "Automatic 03:00 KST ingestion"
+    ],
+    "status": "Y"
+  },
+  {
+    "module_id": "m004",
+    "name": "YouTube Integration",
+    "last_updated": "2026-01-30",
+    "highlights": [
+      "Search and queue management",
+      "Embedded player support",
+      "Queue persistence in Redis"
+    ],
+    "status": "G"
+  },
+  {
+    "module_id": "m005",
+    "name": "Canvas Workspace",
+    "last_updated": "2026-01-28",
+    "highlights": [
+      "Local draft storage",
+      "Multi-format export support",
+      "Collaborative editing ready"
+    ],
+    "status": "Y"
+  },
+  {
+    "module_id": "m006",
+    "name": "Multi-tenant Context",
+    "last_updated": "2026-02-03",
+    "highlights": [
+      "org-id and project-id scoping",
+      "Credential vault per tenant",
+      "Cost tagging and audit trails"
+    ],
+    "status": "G"
+  },
+  {
+    "module_id": "m007",
+    "name": "Node Management",
+    "last_updated": "2026-02-03",
+    "highlights": [
+      "Windows node pairing",
+      "Command queue with polling",
+      "Report upload and SSE propagation"
+    ],
+    "status": "Y"
+  },
+  {
+    "module_id": "m008",
+    "name": "Observability Stack",
+    "last_updated": "2026-01-25",
+    "highlights": [
+      "Prometheus metrics",
+      "Correlation ID propagation",
+      "Audit logging with PII masking"
+    ],
+    "status": "R"
+  }
+]

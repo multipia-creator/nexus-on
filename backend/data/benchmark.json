@@ -1,0 +1,74 @@
+[
+  {
+    "category": "AI Assistant Platforms",
+    "product": "Claude Projects (Anthropic)",
+    "strengths": "State-of-art reasoning (Sonnet 4.5), extended context window, artifacts support",
+    "weaknesses": "No local deployment, rate limits on API, no built-in approval system",
+    "price_tier": "$$$ (API-based)",
+    "notes": "Best for general reasoning tasks, lacks human-in-the-loop controls",
+    "last_updated": "2026-02-03"
+  },
+  {
+    "category": "AI Assistant Platforms",
+    "product": "ChatGPT Enterprise (OpenAI)",
+    "strengths": "Wide model selection (GPT-4, o1), custom GPTs, DALL-E integration",
+    "weaknesses": "No transparent approval workflow, limited RAG customization",
+    "price_tier": "$$$ (per-user)",
+    "notes": "General purpose, not tailored for autonomous agent scenarios",
+    "last_updated": "2026-02-02"
+  },
+  {
+    "category": "Autonomous Agent Frameworks",
+    "product": "LangChain + LangGraph",
+    "strengths": "Flexible agent orchestration, wide integration ecosystem, open source",
+    "weaknesses": "No built-in UI, requires significant custom development, steep learning curve",
+    "price_tier": "$ (OSS + infra)",
+    "notes": "Developer-focused framework, not end-user ready",
+    "last_updated": "2026-02-01"
+  },
+  {
+    "category": "Autonomous Agent Frameworks",
+    "product": "AutoGPT",
+    "strengths": "Self-prompting capabilities, plugin system, community-driven",
+    "weaknesses": "Unstable outputs, no approval gates, high token consumption",
+    "price_tier": "$$ (OSS + API costs)",
+    "notes": "Experimental, not production-ready for critical tasks",
+    "last_updated": "2026-01-30"
+  },
+  {
+    "category": "RAG Solutions",
+    "product": "Pinecone + LangChain",
+    "strengths": "High-quality vector search, managed service, scalable",
+    "weaknesses": "External dependency, cost scales with usage, no HWP support out-of-box",
+    "price_tier": "$$$ (hosted)",
+    "notes": "Best-in-class vector DB, requires integration work",
+    "last_updated": "2026-01-28"
+  },
+  {
+    "category": "RAG Solutions",
+    "product": "Chroma (local)",
+    "strengths": "Local deployment, fast setup, good for prototyping",
+    "weaknesses": "Limited scalability, basic query capabilities",
+    "price_tier": "$ (OSS)",
+    "notes": "Good for development, lacks enterprise features",
+    "last_updated": "2026-01-25"
+  },
+  {
+    "category": "Human-in-the-loop Tools",
+    "product": "Scale AI Rapid",
+    "strengths": "Annotation workflows, quality control, labeling marketplace",
+    "weaknesses": "Focused on data labeling, not general agent approval",
+    "price_tier": "$$$ (per-task)",
+    "notes": "Specialized for ML training data, not agent decisions",
+    "last_updated": "2026-01-22"
+  },
+  {
+    "category": "Integrated Platforms",
+    "product": "NEXUS-ON",
+    "strengths": "Integrated assistant+agent+approval+RAG, local-first, SSE-driven UI, HWP support",
+    "weaknesses": "Early stage (P0), limited scalability testing, naive RAG implementation",
+    "price_tier": "$ (self-hosted OSS)",
+    "notes": "Designed for autonomous tasks with human oversight, Korean document support",
+    "last_updated": "2026-02-03"
+  }
+]

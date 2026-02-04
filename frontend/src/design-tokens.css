@@ -1,0 +1,209 @@
+/**
+ * NEXUS UI v1.1 Design Tokens
+ * Based on: design_tokens_v1_0.md
+ * 
+ * Theme: White + Minimal + High-Chroma Accent
+ * Philosophy: "Tactile Craft" + "Human-in-the-loop"
+ */
+
+:root {
+  /* ============================================================
+   * Color Tokens (LOCKED)
+   * ============================================================ */
+  
+  /* Background */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F7F7F8;
+  --bg-tertiary: #F0F0F2;
+  
+  /* Border */
+  --border-default: #E6E6EA;
+  --border-subtle: rgba(230, 230, 234, 0.5);
+  --border-strong: #D1D1D6;
+  
+  /* Text */
+  --text-primary: #111111;
+  --text-secondary: #3C3C43;
+  --text-tertiary: #6B6B73;
+  --text-disabled: rgba(60, 60, 67, 0.3);
+  
+  /* Accent (High-Chroma Blue) */
+  --accent-primary: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-soft: #EFF6FF;
+  --accent-text: #1E40AF;
+  
+  /* Semantic Colors */
+  --color-success: #16A34A;
+  --color-success-soft: #F0FDF4;
+  --color-warning: #F59E0B;
+  --color-warning-soft: #FFFBEB;
+  --color-danger: #DC2626;
+  --color-danger-soft: #FEF2F2;
+  --color-info: #0EA5E9;
+  --color-info-soft: #F0F9FF;
+  
+  /* Status Badge (GREEN/YELLOW/RED) */
+  --status-green: var(--color-success);
+  --status-green-bg: var(--color-success-soft);
+  --status-yellow: var(--color-warning);
+  --status-yellow-bg: var(--color-warning-soft);
+  --status-red: var(--color-danger);
+  --status-red-bg: var(--color-danger-soft);
+  
+  /* ============================================================
+   * Typography (LOCKED)
+   * ============================================================ */
+  
+  /* Font Family */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, 
+               "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", 
+               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Font Sizes (28/22/18/14/12) */
+  --text-2xl: 28px;  /* Headings */
+  --text-xl: 22px;   /* Subheadings */
+  --text-lg: 18px;   /* Large text */
+  --text-base: 14px; /* Body text */
+  --text-sm: 12px;   /* Small text */
+  
+  /* Font Weights (400/500/600 only) */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+  
+  /* ============================================================
+   * Spacing (8pt Grid: 4,8,12,16,20,24,32...)
+   * ============================================================ */
+  
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  
+  /* ============================================================
+   * Border Radius (LOCKED)
+   * ============================================================ */
+  
+  --radius-pill: 999px;  /* Pills, tags */
+  --radius-card: 18px;   /* Cards */
+  --radius-control: 12px; /* Buttons, inputs */
+  --radius-sm: 8px;      /* Small elements */
+  
+  /* ============================================================
+   * Shadows (Subtle: 0 1 2 / 0 6 18)
+   * ============================================================ */
+  
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 6px 18px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.12);
+  
+  /* ============================================================
+   * Motion (LOCKED)
+   * ============================================================ */
+  
+  /* Duration */
+  --duration-micro: 120ms;  /* Micro interactions */
+  --duration-ui: 180ms;     /* UI transitions */
+  --duration-modal: 240ms;  /* Modal/overlay */
+  
+  /* Easing */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* ============================================================
+   * Layout
+   * ============================================================ */
+  
+  --max-width-content: 1240px;
+  --max-width-narrow: 768px;
+  --max-width-wide: 1440px;
+  
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* ============================================================
+   * Icon System (신규 추가)
+   * ============================================================ */
+  
+  /* Icon Sizing */
+  --icon-xs: 16px;  /* 버튼 내부, 인라인 */
+  --icon-sm: 20px;  /* 작은 컨트롤 */
+  --icon-md: 24px;  /* 기본 (99% 케이스) */
+  --icon-lg: 32px;  /* 헤더, 중요 액션 */
+  --icon-xl: 48px;  /* 온보딩, 빈 상태 */
+  
+  /* Icon Colors */
+  --icon-primary: var(--text-primary);
+  --icon-secondary: var(--text-secondary);
+  --icon-tertiary: var(--text-tertiary);
+  --icon-accent: var(--accent-primary);
+  --icon-danger: var(--color-danger);
+  
+  /* Icon Stroke */
+  --icon-stroke: 1.75px;  /* LOCKED */
+
+  /* ============================================================
+   * Live2D Character (신규 추가)
+   * ============================================================ */
+  
+  /* Character Size */
+  --live2d-width: 280px;
+  --live2d-height: 320px;
+  
+  /* Character Position (Desktop) */
+  --live2d-top: var(--space-4);
+  --live2d-left: var(--space-4);
+  
+  /* Character Position (Mobile) */
+  --live2d-bottom-mobile: var(--space-4);
+  --live2d-right-mobile: var(--space-4);
+  
+  /* Character Glow */
+  --live2d-glow-busy: 0 0 20px rgba(245, 158, 11, 0.6);  /* Warning yellow */
+  --live2d-glow-alert: 0 0 24px rgba(220, 38, 38, 0.8);  /* Danger red */
+}
+
+/* ============================================================
+ * Reduced Motion (Accessibility)
+ * ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-micro: 0ms;
+    --duration-ui: 0ms;
+    --duration-modal: 0ms;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+ * Pretendard Font Import
+ * ============================================================ */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');

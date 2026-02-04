@@ -33,6 +33,9 @@ from shared.nonce_store import NonceStore
 from shared.metrics import TASK_CREATE, TASK_GET, CALLBACK, LLM_GEN, QUEUE_PUBLISH_FAIL, TASK_DURATION
 from shared.mq_utils import declare_queues, publish_json
 from shared.node_store import NodeStore
+from nexus_supervisor.public_pages import (
+    render_page, load_modules_data, load_benchmark_data
+)
 
 setup_logging()
 logger = logging.getLogger("nexus_supervisor")
@@ -1731,7 +1734,313 @@ def _mk_report(
 
 
 @app.get("/")
-def ui_root():
+def landing_page():
+    """Landing page: product promise + CTA + 3 feature cards."""
+    body = """
+<div class="hero">
+  <h1>AI-Powered Autonomous Assistant with Human Oversight</h1>
+  <p class="lead">
+    NEXUS-ON은 자율 에이전트와 Human-in-the-loop 승인 시스템을 결합하여<br>
+    안전하고 효율적인 업무 자동화를 제공합니다.
+  </p>
+  <a href="/app" class="btn btn-large">App 실행</a>
+</div>
+
+<div class="container">
+  <h2>핵심 특징</h2>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title">🤖 자율 에이전트</div>
+      <div class="card-text">
+        Claude Sonnet 4.5 기반 멀티 LLM 게이트웨이로<br>
+        복잡한 작업을 자동으로 처리합니다.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✋ Human-in-the-loop</div>
+      <div class="card-text">
+        위험도 기반 승인 시스템(GREEN/YELLOW/RED)으로<br>
+        중요한 결정에는 사람의 승인이 필요합니다.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📝 작업 캔버스</div>
+      <div class="card-text">
+        실시간 협업이 가능한 작업 공간에서<br>
+        초안 작성과 편집을 자유롭게 진행하세요.
+      </div>
+    </div>
+  </div>
+</div>
+"""
+    return HTMLResponse(render_page("Home", body, "home"))
+
+
+@app.get("/intro")
+def intro_page():
+    """Intro page: purpose + core values + architecture + developer section."""
+    body = """
+<div class="container-narrow">
+  <h1>NEXUS-ON 소개</h1>
+  <p class="lead">
+    NEXUS-ON은 로컬 상주형(Always-on) 캐릭터 비서와 자율 에이전트를 목표로 하는<br>
+    차세대 AI 협업 플랫폼입니다.
+  </p>
+  
+  <h2>핵심 가치</h2>
+  <div class="card">
+    <h3>1. 자율 에이전트 (Autonomous Agent)</h3>
+    <p>
+      사용자의 지시를 이해하고 스스로 작업을 계획하며 실행하는 AI 에이전트입니다.<br>
+      Claude Sonnet 4.5, Gemini, OpenAI 등 멀티 LLM 게이트웨이를 지원하며,<br>
+      실패 시 자동 fallback으로 안정성을 보장합니다.
+    </p>
+  </div>
+  
+  <div class="card">
+    <h3>2. Human-in-the-loop</h3>
+    <p>
+      모든 작업은 위험도(GREEN/YELLOW/RED)로 분류되며,<br>
+      외부 전송이나 중요한 결정은 반드시 사람의 승인을 거칩니다.<br>
+      Two-phase commit 방식으로 오작동을 방지합니다.
+    </p>
+  </div>
+  
+  <div class="card">
+    <h3>3. Canvas (작업 공간)</h3>
+    <p>
+      실시간으로 업데이트되는 작업 캔버스에서 초안 작성, 체크리스트 관리,<br>
+      협업 편집이 가능합니다. 모든 변경 사항은 로컬에 저장되며<br>
+      향후 클라우드 동기화를 지원할 예정입니다.
+    </p>
+  </div>
+  
+  <h2>아키텍처 요약</h2>
+  <p>
+    NEXUS-ON은 <strong>FastAPI</strong> 기반 백엔드와 <strong>SSE(Server-Sent Events)</strong>를 활용한<br>
+    실시간 UI 업데이트를 제공합니다. 모든 상태 전이는 단일 SSE 스트림<br>
+    <code>/agent/reports/stream</code>을 통해 일관되게 처리됩니다.
+  </p>
+  <ul>
+    <li><strong>LLM Layer</strong>: 멀티 프로바이더 게이트웨이 + fallback</li>
+    <li><strong>Approval Layer</strong>: 202 Accepted + SSE notification</li>
+    <li><strong>RAG Layer</strong>: Redis 기반 인덱싱 + HWP 지원</li>
+    <li><strong>Storage</strong>: Redis (state), RabbitMQ (queues)</li>
+  </ul>
+  
+  <h2>개발자 소개</h2>
+  <div class="card">
+    <p>
+      <strong>서경대학교 남현우 교수</strong><br>
+      NEXUS-ON 프로젝트의 설계 및 개발을 주도하고 있습니다.<br>
+      AI와 소프트웨어 공학의 융합을 통해 사람 중심의 자율 시스템을 연구합니다.
+    </p>
+  </div>
+</div>
+"""
+    return HTMLResponse(render_page("Intro", body, "intro"))
+
+
+@app.get("/developer")
+def developer_page():
+    """Developer page: text-only section about 서경대학교 남현우 교수."""
+    body = """
+<div class="container-narrow">
+  <h1>개발자 소개</h1>
+  
+  <div class="card">
+    <h2>서경대학교 남현우 교수</h2>
+    <p class="lead">
+      NEXUS-ON 프로젝트를 설계하고 개발하는 연구자이자 교육자입니다.
+    </p>
+    
+    <h3>연구 분야</h3>
+    <p>
+      • AI 에이전트 시스템과 Human-in-the-loop 인터페이스<br>
+      • 자율 시스템의 안전성과 신뢰성<br>
+      • 소프트웨어 공학과 AI의 융합<br>
+      • 한국어 문서 처리 및 RAG 시스템
+    </p>
+    
+    <h3>프로젝트 비전</h3>
+    <p>
+      NEXUS-ON은 AI가 사람을 대체하는 것이 아니라,<br>
+      사람과 AI가 협력하여 더 나은 결과를 만들어내는 것을 목표로 합니다.<br>
+      <br>
+      특히 한국어 문서(HWP 포함)를 자연스럽게 처리하고,<br>
+      로컬 환경에서도 안전하게 작동하는 시스템을 구축하는 데 중점을 두고 있습니다.
+    </p>
+    
+    <h3>개발 철학</h3>
+    <p>
+      • <strong>Local-first</strong>: 데이터와 제어권은 사용자에게<br>
+      • <strong>Human oversight</strong>: 중요한 결정은 반드시 사람이<br>
+      • <strong>Fail-safe</strong>: 실패해도 안전하게, 복구 가능하게<br>
+      • <strong>Open by design</strong>: 투명하고 확장 가능한 아키텍처
+    </p>
+  </div>
+  
+  <div class="card">
+    <p class="small">
+      연락: 서경대학교 컴퓨터공학과<br>
+      NEXUS-ON은 교육 및 연구 목적으로 개발된 오픈소스 프로젝트입니다.
+    </p>
+  </div>
+</div>
+"""
+    return HTMLResponse(render_page("Developer", body, "developer"))
+
+
+@app.get("/modules")
+def modules_page():
+    """Modules page: render modules.json + benchmark table on same page."""
+    modules = load_modules_data()
+    benchmark = load_benchmark_data()
+    
+    # Build modules table
+    modules_rows = ""
+    for m in modules:
+        status_class = {"G": "green", "Y": "yellow", "R": "red"}.get(m.get("status", "Y"), "yellow")
+        highlights = "<br>".join([f"• {h}" for h in m.get("highlights", [])])
+        modules_rows += f"""
+<tr>
+  <td><strong>{m.get('module_id', '')}</strong></td>
+  <td>{m.get('name', '')}</td>
+  <td><span class="badge badge-{status_class}">{m.get('status', 'Y')}</span></td>
+  <td style="font-size:12px">{highlights}</td>
+  <td style="font-size:12px">{m.get('last_updated', '')}</td>
+</tr>
+"""
+    
+    # Build benchmark table
+    benchmark_rows = ""
+    for b in benchmark:
+        benchmark_rows += f"""
+<tr>
+  <td><strong>{b.get('category', '')}</strong></td>
+  <td>{b.get('product', '')}</td>
+  <td style="font-size:12px">{b.get('strengths', '')}</td>
+  <td style="font-size:12px">{b.get('weaknesses', '')}</td>
+  <td>{b.get('price_tier', '')}</td>
+  <td style="font-size:12px">{b.get('last_updated', '')}</td>
+</tr>
+"""
+    
+    body = f"""
+<div class="container">
+  <h1>모듈 현황</h1>
+  <p class="lead">
+    NEXUS-ON을 구성하는 핵심 모듈들의 상태와 주요 기능을 확인하세요.
+  </p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Module ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Highlights</th>
+        <th>Last Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      {modules_rows}
+    </tbody>
+  </table>
+  
+  <h2 style="margin-top:48px">경쟁 제품 비교</h2>
+  <p class="lead">
+    NEXUS-ON과 유사한 제품들의 강점, 약점, 가격대를 비교합니다.
+  </p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Product</th>
+        <th>Strengths</th>
+        <th>Weaknesses</th>
+        <th>Price Tier</th>
+        <th>Last Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      {benchmark_rows}
+    </tbody>
+  </table>
+  
+  <div class="card" style="margin-top:24px">
+    <p class="small">
+      <strong>참고:</strong> 위 비교 데이터는 /data/modules.json 및 /data/benchmark.json 파일에서 로드됩니다.<br>
+      향후 데이터베이스 기반 실시간 업데이트로 전환될 예정입니다.
+    </p>
+  </div>
+</div>
+"""
+    return HTMLResponse(render_page("Modules", body, "modules"))
+
+
+@app.get("/benchmark")
+def benchmark_page():
+    """Benchmark page: render benchmark.json as table."""
+    benchmark = load_benchmark_data()
+    
+    rows = ""
+    for b in benchmark:
+        rows += f"""
+<tr>
+  <td><strong>{b.get('category', '')}</strong></td>
+  <td>{b.get('product', '')}</td>
+  <td>{b.get('strengths', '')}</td>
+  <td>{b.get('weaknesses', '')}</td>
+  <td>{b.get('price_tier', '')}</td>
+  <td style="font-size:12px">{b.get('notes', '')}</td>
+  <td style="font-size:12px">{b.get('last_updated', '')}</td>
+</tr>
+"""
+    
+    body = f"""
+<div class="container">
+  <h1>제품 비교표</h1>
+  <p class="lead">
+    AI Assistant 및 Autonomous Agent 관련 제품들을 카테고리별로 비교합니다.<br>
+    NEXUS-ON의 포지셔닝과 차별화 포인트를 확인하세요.
+  </p>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Product</th>
+        <th>Strengths</th>
+        <th>Weaknesses</th>
+        <th>Price Tier</th>
+        <th>Notes</th>
+        <th>Last Updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows}
+    </tbody>
+  </table>
+  
+  <div class="card" style="margin-top:24px">
+    <h3>NEXUS-ON의 차별점</h3>
+    <p>
+      • <strong>Human-in-the-loop 내장</strong>: 승인 시스템이 플랫폼에 통합됨<br>
+      • <strong>로컬 우선</strong>: 외부 의존성 최소화, 데이터 주권 보장<br>
+      • <strong>한국어 문서 지원</strong>: HWP 파일을 네이티브로 처리<br>
+      • <strong>SSE 기반 실시간 UI</strong>: 단일 소스 원칙으로 일관성 보장
+    </p>
+  </div>
+</div>
+"""
+    return HTMLResponse(render_page("Benchmark", body, "benchmark"))
+
+
+@app.get("/app")
+def ui_app():
+    """Existing work app UI moved to /app. All functionality unchanged."""
     # Simple, zero-build local UI.
     html = """<!doctype html>
 <html lang="ko">
@@ -2248,6 +2557,20 @@ def ui_root():
 </html>
 """
     return HTMLResponse(html)
+
+
+@app.get("/api/public/modules")
+def api_public_modules():
+    """Public API: return modules.json data. For future real-time updates."""
+    modules = load_modules_data()
+    return {"modules": modules, "count": len(modules), "last_updated": _utc_now()}
+
+
+@app.get("/api/public/benchmark")
+def api_public_benchmark():
+    """Public API: return benchmark.json data. For future real-time updates."""
+    benchmark = load_benchmark_data()
+    return {"benchmark": benchmark, "count": len(benchmark), "last_updated": _utc_now()}
 
 
 @app.get("/agent/reports/stream")

@@ -1,0 +1,148 @@
+/* NEXUS-ON Live2D Character Styles */
+
+.live2d-container {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: auto; /* Enable clicks for interaction */
+  
+  /* GPU 가속 */
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  
+  /* 기본 트랜지션 */
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+/* Desktop: 우측 상단 */
+@media (min-width: 1024px) {
+  .live2d-container {
+    top: 80px;
+    right: 40px;
+    width: 280px;
+    height: 320px;
+  }
+}
+
+/* Tablet/Mobile: 하단 우측 */
+@media (max-width: 1023px) {
+  .live2d-container {
+    bottom: 80px;
+    right: 20px;
+    width: 180px;
+    height: 206px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .live2d-container {
+    width: 140px;
+    height: 160px;
+    bottom: 60px;
+    right: 10px;
+  }
+}
+
+/* Live2D Canvas */
+.live2d-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* 상태별 효과 */
+.live2d-container[data-status="idle"] {
+  opacity: 0.95;
+}
+
+.live2d-container[data-status="listening"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+}
+
+.live2d-container[data-status="thinking"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+}
+
+.live2d-container[data-status="speaking"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5));
+  animation: speaking-pulse 1s ease-in-out infinite;
+}
+
+.live2d-container[data-status="busy"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 25px rgba(234, 179, 8, 0.6));
+  animation: busy-pulse 2s ease-in-out infinite;
+}
+
+/* 애니메이션 */
+@keyframes speaking-pulse {
+  0%, 100% { transform: scale(1) translateZ(0); }
+  50% { transform: scale(1.02) translateZ(0); }
+}
+
+@keyframes busy-pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1) translateZ(0);
+  }
+  50% { 
+    opacity: 0.9; 
+    transform: scale(1.03) translateZ(0);
+  }
+}
+
+/* Loading state */
+.live2d-container.loading {
+  opacity: 0.5;
+}
+
+.live2d-container.loading::after {
+  content: 'Loading...';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #64748B;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Error state */
+.live2d-container.error::after {
+  content: 'Failed to load';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #DC2626;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .live2d-container {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .live2d-container[data-status="speaking"],
+  .live2d-container[data-status="busy"] {
+    animation: none !important;
+  }
+}
+
+/* Interactive hover effect */
+.live2d-container:hover {
+  transform: scale(1.02) translateZ(0);
+  cursor: pointer;
+}
+
+.live2d-container:active {
+  transform: scale(0.98) translateZ(0);
+}

@@ -5,28 +5,32 @@
   z-index: 1000;
   pointer-events: none; /* Don't block clicks */
   
-  /* Desktop: 우측 상단 */
-  @media (min-width: 1024px) {
-    top: 80px;
-    right: 40px;
-    width: 280px;
-    height: 320px;
-  }
-  
-  /* Mobile: 하단 우측, 50% 축소 */
-  @media (max-width: 1023px) {
-    bottom: 80px;
-    right: 20px;
-    width: 140px;
-    height: 160px;
-  }
-  
   /* GPU 가속 */
   will-change: transform, opacity;
   transform: translateZ(0);
   
   /* 기본 트랜지션 */
   transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+/* Desktop: 우측 상단 */
+@media (min-width: 1024px) {
+  .live2d-container {
+    top: 80px;
+    right: 40px;
+    width: 280px;
+    height: 320px;
+  }
+}
+
+/* Mobile: 하단 우측, 50% 축소 */
+@media (max-width: 1023px) {
+  .live2d-container {
+    bottom: 80px;
+    right: 20px;
+    width: 140px;
+    height: 160px;
+  }
 }
 
 /* 상태별 효과 */

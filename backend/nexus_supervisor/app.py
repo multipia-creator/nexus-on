@@ -60,9 +60,17 @@ from shared.nonce_store import NonceStore
 # from shared.metrics import TASK_CREATE, TASK_GET, CALLBACK, LLM_GEN, QUEUE_PUBLISH_FAIL, TASK_DURATION  # Disabled for minimal deployment
 from shared.mq_utils import declare_queues, publish_json
 from shared.node_store import NodeStore
-# from nexus_supervisor.public_pages import (  # Disabled for minimal deployment
-#     render_page, load_modules_data, load_benchmark_data
-# )
+from nexus_supervisor.public_pages_i18n import (
+    landing_page as render_landing_page_i18n,
+    intro_page as render_intro_page_i18n,
+    pricing_page as render_pricing_page_i18n,
+    dashboard_preview_page as render_dashboard_page_i18n,
+    canvas_preview_page as render_canvas_page_i18n,
+    login_page as render_login_page_i18n,
+    modules_page as render_modules_page_i18n,
+    load_modules_data,
+    load_benchmark_data
+)
 
 setup_logging()
 logger = logging.getLogger("nexus_supervisor")
@@ -2037,108 +2045,16 @@ async def character_decide(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def render_landing_page():
-    """Simple landing page for NEXUS-ON"""
-    return """
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>NEXUS-ON | 세리아 AI 캐릭터 시스템</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="bg-gradient-to-br from-purple-100 to-pink-100 min-h-screen flex items-center justify-center">
-        <div class="text-center max-w-2xl mx-auto p-8">
-            <h1 class="text-5xl font-bold text-gray-800 mb-4">🤖 NEXUS-ON</h1>
-            <p class="text-2xl text-gray-600 mb-8">세리아 AI 캐릭터 자아 시스템</p>
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-                <p class="text-lg text-gray-700 mb-4">자동화된 감정 및 상태 관리 시스템</p>
-                <ul class="text-left space-y-2 text-gray-600">
-                    <li>✅ 친밀도 자동 증가/감소</li>
-                    <li>✅ 질투 자동 감지 및 decay</li>
-                    <li>✅ 쿨다운 자동 관리</li>
-                    <li>✅ 6가지 모드 (friendly, focused, sexy, jealous, busy, play)</li>
-                </ul>
-            </div>
-            <div class="space-x-4">
-                <a href="/intro" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg">소개</a>
-                <a href="/api/character/decide" class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg">API</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-
 @app.get("/")
-def landing_page():
+def landing_page(lang: str = "ko"):
     """World-Class Landing Page with huge Live2D character."""
-    return HTMLResponse(render_landing_page())
+    return HTMLResponse(render_landing_page_i18n(lang))
 
 
 @app.get("/intro")
-def intro_page():
+def intro_page(lang: str = "ko"):
     """Intro page: purpose + core values + architecture + developer section."""
-    body = """
-<div class="container-narrow">
-  <h1>NEXUS-ON 소개</h1>
-  <p class="lead">
-    NEXUS-ON은 로컬 상주형(Always-on) 캐릭터 비서와 자율 에이전트를 목표로 하는<br>
-    차세대 AI 협업 플랫폼입니다.
-  </p>
-  
-  <h2>핵심 가치</h2>
-  <div class="card">
-    <h3>1. 자율 에이전트 (Autonomous Agent)</h3>
-    <p>
-      사용자의 지시를 이해하고 스스로 작업을 계획하며 실행하는 AI 에이전트입니다.<br>
-      Claude Sonnet 4.5, Gemini, OpenAI 등 멀티 LLM 게이트웨이를 지원하며,<br>
-      실패 시 자동 fallback으로 안정성을 보장합니다.
-    </p>
-  </div>
-  
-  <div class="card">
-    <h3>2. Human-in-the-loop</h3>
-    <p>
-      모든 작업은 위험도(GREEN/YELLOW/RED)로 분류되며,<br>
-      외부 전송이나 중요한 결정은 반드시 사람의 승인을 거칩니다.<br>
-      Two-phase commit 방식으로 오작동을 방지합니다.
-    </p>
-  </div>
-  
-  <div class="card">
-    <h3>3. Canvas (작업 공간)</h3>
-    <p>
-      실시간으로 업데이트되는 작업 캔버스에서 초안 작성, 체크리스트 관리,<br>
-      협업 편집이 가능합니다. 모든 변경 사항은 로컬에 저장되며<br>
-      향후 클라우드 동기화를 지원할 예정입니다.
-    </p>
-  </div>
-  
-  <h2>아키텍처 요약</h2>
-  <p>
-    NEXUS-ON은 <strong>FastAPI</strong> 기반 백엔드와 <strong>SSE(Server-Sent Events)</strong>를 활용한<br>
-    실시간 UI 업데이트를 제공합니다. 모든 상태 전이는 단일 SSE 스트림<br>
-    <code>/agent/reports/stream</code>을 통해 일관되게 처리됩니다.
-  </p>
-  <ul>
-    <li><strong>LLM Layer</strong>: 멀티 프로바이더 게이트웨이 + fallback</li>
-    <li><strong>Approval Layer</strong>: 202 Accepted + SSE notification</li>
-    <li><strong>RAG Layer</strong>: Redis 기반 인덱싱 + HWP 지원</li>
-    <li><strong>Storage</strong>: Redis (state), RabbitMQ (queues)</li>
-  </ul>
-  
-  <h2>개발자 소개</h2>
-  <div class="card">
-    <p>
-      <strong>서경대학교 남현우 교수</strong><br>
-      NEXUS-ON 프로젝트의 설계 및 개발을 주도하고 있습니다.<br>
-      AI와 소프트웨어 공학의 융합을 통해 사람 중심의 자율 시스템을 연구합니다.
-    </p>
-  </div>
-</div>
-"""
-    return HTMLResponse(render_page("Intro", body, "intro"))
+    return HTMLResponse(render_intro_page_i18n(lang))
 
 
 @app.get("/developer")
@@ -2192,7 +2108,7 @@ def developer_page():
 
 
 @app.get("/modules")
-def modules_page():
+def modules_page(lang: str = "ko"):
     """Modules page: render modules.json + benchmark table on same page."""
     modules = load_modules_data()
     benchmark = load_benchmark_data()
@@ -2277,7 +2193,7 @@ def modules_page():
   </div>
 </div>
 """
-    return HTMLResponse(render_page("Modules", body, "modules"))
+    return HTMLResponse(render_modules_page_i18n(lang))
 
 
 @app.get("/benchmark")
@@ -2878,33 +2794,33 @@ def api_public_benchmark():
 # ============================================
 
 @app.get("/pricing")
-def pricing_page_route():
+def pricing_page_route(lang: str = "ko"):
     """Pricing page with 3-tier plans."""
-    return HTMLResponse(render_pricing_page())
+    return HTMLResponse(render_pricing_page_i18n(lang))
 
 
 @app.get("/dashboard-preview")
-def dashboard_preview_page_route():
+def dashboard_preview_page_route(lang: str = "ko"):
     """Dashboard preview page."""
-    return HTMLResponse(render_dashboard_preview_page())
+    return HTMLResponse(render_dashboard_page_i18n(lang))
 
 
 @app.get("/canvas-preview")
-def canvas_preview_page_route():
+def canvas_preview_page_route(lang: str = "ko"):
     """Canvas workspace preview page."""
-    return HTMLResponse(render_canvas_preview_page())
+    return HTMLResponse(render_canvas_page_i18n(lang))
 
 
 @app.get("/login")
-def login_page_route():
+def login_page_route(lang: str = "ko"):
     """Login page."""
-    return HTMLResponse(render_login_page())
+    return HTMLResponse(render_login_page_i18n(lang))
 
 
 @app.get("/signup")
-def signup_page_route():
+def signup_page_route(lang: str = "ko"):
     """Sign up page (redirects to login for now)."""
-    return HTMLResponse(render_login_page())
+    return HTMLResponse(render_login_page_i18n(lang))
 
 
 @app.get("/ceria-test")

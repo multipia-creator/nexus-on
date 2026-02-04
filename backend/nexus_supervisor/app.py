@@ -1886,6 +1886,86 @@ async def serve_tts_audio(filename: str):
     raise HTTPException(status_code=404, detail="Audio file not found")
 
 
+@app.post("/api/character/decide")
+async def character_decide(request: Request):
+    """
+    Character state decision API for testing Ceria's self system.
+    
+    Request body:
+    {
+        "user_input": str,
+        "context": {
+            "intimacy": int (0~100),
+            "jealousy_level": int (0~4),
+            "sexy_blocked": bool,
+            "sexy_cooldown_seconds": int,
+            "user_opt_out_sexy": bool,
+            "task_busy": bool,
+            "tool_allowlist_active": bool
+        }
+    }
+    
+    Response:
+    {
+        "decision": CharacterDecision,
+        "presence": PresencePacket,
+        "context": CharacterContext,
+        "user_input": str
+    }
+    """
+    from shared.character.state_engine import CharacterContext, decide_state
+    from shared.character.presence import presence_to_live2d
+    import uuid
+    
+    try:
+        body = await request.json()
+        user_input = body.get("user_input", "")
+        ctx_data = body.get("context", {})
+        
+        # Build context
+        ctx = CharacterContext(
+            intimacy=int(ctx_data.get("intimacy", 0)),
+            jealousy_level=int(ctx_data.get("jealousy_level", 0)),
+            sexy_blocked=bool(ctx_data.get("sexy_blocked", False)),
+            sexy_cooldown_seconds=int(ctx_data.get("sexy_cooldown_seconds", 0)),
+            user_opt_out_sexy=bool(ctx_data.get("user_opt_out_sexy", False)),
+            task_busy=bool(ctx_data.get("task_busy", False)),
+            tool_allowlist_active=bool(ctx_data.get("tool_allowlist_active", True)),
+        )
+        
+        # Decide state
+        decision = decide_state(user_input, ctx)
+        
+        # Generate presence packet
+        request_id = str(uuid.uuid4())
+        presence = presence_to_live2d(request_id, decision, ctx)
+        
+        return {
+            "decision": {
+                "mode": decision.mode,
+                "sexy_level": decision.sexy_level,
+                "jealousy_level": decision.jealousy_level,
+                "requires_confirm": decision.requires_confirm,
+                "tool_calls_allowed": decision.tool_calls_allowed,
+            },
+            "presence": presence,
+            "context": {
+                "intimacy": ctx.intimacy,
+                "jealousy_level": ctx.jealousy_level,
+                "sexy_blocked": ctx.sexy_blocked,
+                "sexy_cooldown_seconds": ctx.sexy_cooldown_seconds,
+                "user_opt_out_sexy": ctx.user_opt_out_sexy,
+                "task_busy": ctx.task_busy,
+                "tool_allowlist_active": ctx.tool_allowlist_active,
+            },
+            "user_input": user_input
+        }
+        
+    except Exception as e:
+        logger.error(f"Character decide error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/")
 def landing_page():
     """World-Class Landing Page with huge Live2D character."""
@@ -2721,6 +2801,17 @@ def login_page_route():
 def signup_page_route():
     """Sign up page (redirects to login for now)."""
     return HTMLResponse(render_login_page())
+
+
+@app.get("/ceria-test")
+def ceria_system_test_page():
+    """Ceria Character Self System Test Page."""
+    from pathlib import Path
+    html_path = Path(__file__).parent.parent.parent / "public" / "ceria-system-test.html"
+    if html_path.exists():
+        return HTMLResponse(html_path.read_text())
+    else:
+        return HTMLResponse("<h1>Test page not found</h1><p>Please ensure ceria-system-test.html exists in public/</p>", status_code=404)
 
 
 # ============================================

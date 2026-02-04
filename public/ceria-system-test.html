@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세리아 자아 시스템 테스트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .mode-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 4px;
+        }
+        
+        .mode-friendly { background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%); }
+        .mode-focused { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+        .mode-sexy { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
+        .mode-jealous { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .mode-busy { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+        .mode-play { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .presence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .presence-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .presence-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .presence-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="p-8 text-white">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-2">🤖 세리아 자아 시스템</h1>
+            <p class="text-lg opacity-90">Ceria Character Self System Test</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Left: Context Controls -->
+            <div class="glass p-6">
+                <h2 class="text-2xl font-bold mb-4">📊 Context Variables</h2>
+                
+                <!-- Intimacy Slider -->
+                <div class="mb-6">
+                    <label class="block mb-2 font-semibold">
+                        친밀도 (Intimacy): <span id="intimacy-value" class="text-pink-300">0</span>
+                    </label>
+                    <input type="range" id="intimacy" class="slider" min="0" max="100" value="0">
+                    <div class="flex justify-between text-sm mt-1 opacity-70">
+                        <span>낯선 (0)</span>
+                        <span>친밀 (51+)</span>
+                        <span>매우 친밀 (80+)</span>
+                    </div>
+                </div>
+
+                <!-- Jealousy Level -->
+                <div class="mb-6">
+                    <label class="block mb-2 font-semibold">
+                        질투 레벨 (Jealousy): <span id="jealousy-value" class="text-yellow-300">0</span>
+                    </label>
+                    <input type="range" id="jealousy" class="slider" min="0" max="4" value="0">
+                    <div class="flex justify-between text-sm mt-1 opacity-70">
+                        <span>평온 (0)</span>
+                        <span>가벼운 질투 (2)</span>
+                        <span>강한 질투 (4)</span>
+                    </div>
+                </div>
+
+                <!-- Sexy Controls -->
+                <div class="mb-6 p-4 bg-black bg-opacity-20 rounded-lg">
+                    <h3 class="font-semibold mb-2">💕 Sexy Mode 설정</h3>
+                    <label class="flex items-center mb-2 cursor-pointer">
+                        <input type="checkbox" id="sexy-blocked" class="mr-2 w-5 h-5">
+                        <span>Sexy Blocked (차단)</span>
+                    </label>
+                    <label class="flex items-center mb-2 cursor-pointer">
+                        <input type="checkbox" id="sexy-cooldown" class="mr-2 w-5 h-5">
+                        <span>Cooldown Active (쿨다운 중)</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="user-opt-out" class="mr-2 w-5 h-5">
+                        <span>User Opt-out (사용자 거부)</span>
+                    </label>
+                </div>
+
+                <!-- Task Busy -->
+                <div class="mb-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="task-busy" class="mr-2 w-5 h-5">
+                        <span class="font-semibold">⚙️ Task Busy (작업 중)</span>
+                    </label>
+                </div>
+
+                <!-- Tool Allowlist -->
+                <div class="mb-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="tool-allowlist" class="mr-2 w-5 h-5" checked>
+                        <span class="font-semibold">🛠️ Tool Allowlist Active</span>
+                    </label>
+                </div>
+
+                <!-- User Input -->
+                <div class="mb-4">
+                    <label class="block mb-2 font-semibold">💬 사용자 입력</label>
+                    <textarea 
+                        id="user-input" 
+                        class="w-full p-3 rounded-lg bg-black bg-opacity-30 text-white border border-white border-opacity-30"
+                        rows="3"
+                        placeholder="세리아에게 말하고 싶은 것을 입력하세요...&#10;예: '안녕', '이슈 생성해줘', '놀아줘'"
+                    ></textarea>
+                </div>
+
+                <!-- Test Scenarios -->
+                <div class="mb-4">
+                    <label class="block mb-2 font-semibold">⚡ 빠른 시나리오</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="loadScenario('friendly')" class="p-2 bg-green-600 rounded-lg hover:bg-green-700">
+                            친근한 대화
+                        </button>
+                        <button onclick="loadScenario('work')" class="p-2 bg-blue-600 rounded-lg hover:bg-blue-700">
+                            업무 요청
+                        </button>
+                        <button onclick="loadScenario('intimate')" class="p-2 bg-pink-600 rounded-lg hover:bg-pink-700">
+                            친밀 모드
+                        </button>
+                        <button onclick="loadScenario('jealous')" class="p-2 bg-yellow-600 rounded-lg hover:bg-yellow-700">
+                            질투 유발
+                        </button>
+                        <button onclick="loadScenario('play')" class="p-2 bg-cyan-600 rounded-lg hover:bg-cyan-700">
+                            놀이 요청
+                        </button>
+                        <button onclick="loadScenario('busy')" class="p-2 bg-purple-600 rounded-lg hover:bg-purple-700">
+                            바쁜 상태
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Decide Button -->
+                <button 
+                    onclick="decideState()" 
+                    class="w-full p-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg font-bold text-lg hover:shadow-lg transition"
+                >
+                    🎯 모드 결정하기
+                </button>
+            </div>
+
+            <!-- Right: Decision Result -->
+            <div class="glass p-6">
+                <h2 class="text-2xl font-bold mb-4">🎭 Decision Result</h2>
+                
+                <!-- Current Mode -->
+                <div class="mb-6 p-4 bg-black bg-opacity-20 rounded-lg">
+                    <h3 class="font-semibold mb-2">현재 모드</h3>
+                    <div id="current-mode" class="text-3xl font-bold">
+                        <span class="mode-badge mode-friendly">friendly</span>
+                    </div>
+                </div>
+
+                <!-- Decision Details -->
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2">Decision Details</h3>
+                    <div id="decision-details" class="p-4 bg-black bg-opacity-20 rounded-lg font-mono text-sm">
+                        {결과가 여기에 표시됩니다}
+                    </div>
+                </div>
+
+                <!-- Presence Packet -->
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2">📦 Live2D Presence Packet</h3>
+                    <div id="presence-summary" class="presence-grid">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Full Presence JSON -->
+                <details class="mb-6">
+                    <summary class="cursor-pointer font-semibold mb-2">🔍 Full JSON (클릭하여 펼치기)</summary>
+                    <pre id="presence-json" class="p-4 bg-black bg-opacity-30 rounded-lg text-xs overflow-auto max-h-96"></pre>
+                </details>
+
+                <!-- Mode Priority Explanation -->
+                <div class="p-4 bg-black bg-opacity-20 rounded-lg">
+                    <h3 class="font-semibold mb-2">⚖️ Mode Priority (우선순위)</h3>
+                    <ol class="text-sm space-y-1 opacity-90">
+                        <li>1️⃣ <strong>busy</strong> - task_busy가 true일 때</li>
+                        <li>2️⃣ <strong>jealous</strong> - jealousy_level ≥ 2</li>
+                        <li>3️⃣ <strong>play</strong> - "놀아줘", "/play" 등</li>
+                        <li>4️⃣ <strong>sexy</strong> - intimacy ≥ 51 (자동)</li>
+                        <li>5️⃣ <strong>focused</strong> - 업무 요청 감지</li>
+                        <li>6️⃣ <strong>friendly</strong> - 기본 상태</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update value displays
+        document.getElementById('intimacy').addEventListener('input', (e) => {
+            document.getElementById('intimacy-value').textContent = e.target.value;
+        });
+
+        document.getElementById('jealousy').addEventListener('input', (e) => {
+            document.getElementById('jealousy-value').textContent = e.target.value;
+        });
+
+        // Load predefined scenarios
+        function loadScenario(type) {
+            const scenarios = {
+                friendly: {
+                    intimacy: 30,
+                    jealousy: 0,
+                    input: '오늘 날씨 어때?',
+                    sexyBlocked: false,
+                    taskBusy: false
+                },
+                work: {
+                    intimacy: 30,
+                    jealousy: 0,
+                    input: 'GitHub 이슈 생성해줘',
+                    sexyBlocked: false,
+                    taskBusy: false
+                },
+                intimate: {
+                    intimacy: 75,
+                    jealousy: 0,
+                    input: '오늘도 좋은 하루야',
+                    sexyBlocked: false,
+                    taskBusy: false
+                },
+                jealous: {
+                    intimacy: 40,
+                    jealousy: 3,
+                    input: '다른 AI도 괜찮더라',
+                    sexyBlocked: false,
+                    taskBusy: false
+                },
+                play: {
+                    intimacy: 30,
+                    jealousy: 0,
+                    input: '놀아줘',
+                    sexyBlocked: false,
+                    taskBusy: false
+                },
+                busy: {
+                    intimacy: 30,
+                    jealousy: 0,
+                    input: '지금 뭐해?',
+                    sexyBlocked: false,
+                    taskBusy: true
+                }
+            };
+
+            const scenario = scenarios[type];
+            if (scenario) {
+                document.getElementById('intimacy').value = scenario.intimacy;
+                document.getElementById('intimacy-value').textContent = scenario.intimacy;
+                document.getElementById('jealousy').value = scenario.jealousy;
+                document.getElementById('jealousy-value').textContent = scenario.jealousy;
+                document.getElementById('user-input').value = scenario.input;
+                document.getElementById('sexy-blocked').checked = scenario.sexyBlocked;
+                document.getElementById('task-busy').checked = scenario.taskBusy;
+            }
+        }
+
+        // Decide state function (calls backend)
+        async function decideState() {
+            const context = {
+                intimacy: parseInt(document.getElementById('intimacy').value),
+                jealousy_level: parseInt(document.getElementById('jealousy').value),
+                sexy_blocked: document.getElementById('sexy-blocked').checked,
+                sexy_cooldown_seconds: document.getElementById('sexy-cooldown').checked ? 300 : 0,
+                user_opt_out_sexy: document.getElementById('user-opt-out').checked,
+                task_busy: document.getElementById('task-busy').checked,
+                tool_allowlist_active: document.getElementById('tool-allowlist').checked
+            };
+
+            const userInput = document.getElementById('user-input').value || '안녕';
+
+            try {
+                // Call backend API (placeholder - you'll implement this)
+                const response = await fetch('/api/character/decide', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_input: userInput,
+                        context: context
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Backend API not available - using client-side simulation');
+                }
+
+                const result = await response.json();
+                displayResult(result);
+
+            } catch (error) {
+                console.warn('Backend not available, using client-side simulation:', error);
+                // Client-side simulation for now
+                const result = simulateDecision(userInput, context);
+                displayResult(result);
+            }
+        }
+
+        // Client-side simulation (temporary)
+        function simulateDecision(userInput, ctx) {
+            let mode = 'friendly';
+            let sexyLevel = 0;
+            let requiresConfirm = false;
+            let toolCallsAllowed = false;
+
+            // Priority 1: busy
+            if (ctx.task_busy) {
+                mode = 'busy';
+            }
+            // Priority 2: jealous
+            else if (ctx.jealousy_level >= 2) {
+                mode = 'jealous';
+            }
+            // Priority 3: play
+            else if (/놀아줘|놀자|게임|play/i.test(userInput)) {
+                mode = 'play';
+            }
+            // Priority 4: sexy
+            else if (ctx.intimacy >= 51 && !ctx.sexy_blocked && !ctx.user_opt_out_sexy && ctx.sexy_cooldown_seconds === 0) {
+                mode = 'sexy';
+                sexyLevel = ctx.intimacy < 65 ? 1 : ctx.intimacy < 80 ? 2 : 3;
+            }
+            // Priority 5: focused
+            else if (/이슈|pr|배포|merge|github|api/i.test(userInput)) {
+                mode = 'focused';
+            }
+
+            // Tool detection
+            if (/생성|이슈|merge|배포/i.test(userInput) && ctx.tool_allowlist_active) {
+                toolCallsAllowed = true;
+                requiresConfirm = true;
+            }
+
+            return {
+                decision: {
+                    mode,
+                    sexy_level: sexyLevel,
+                    jealousy_level: ctx.jealousy_level,
+                    requires_confirm: requiresConfirm,
+                    tool_calls_allowed: toolCallsAllowed
+                },
+                presence: generatePresence(mode, ctx, sexyLevel),
+                context: ctx,
+                user_input: userInput
+            };
+        }
+
+        function generatePresence(mode, ctx, sexyLevel) {
+            const modeConfig = {
+                friendly: { gaze: 'user', breath: [0.14, 0.22], blush: 0, tension: 0, smile: 0.2 },
+                focused: { gaze: 'screen', breath: [0.16, 0.26], blush: 0, tension: 0, smile: 0 },
+                sexy: { gaze: 'user', breath: [0.12, 0.20], blush: 0.30 + 0.20*sexyLevel, tension: 0.20 + 0.15*sexyLevel, smile: 0.2 },
+                jealous: { gaze: 'user', breath: [0.14, 0.22], blush: 0.20, tension: ctx.jealousy_level >= 3 ? 0.70 : 0.50, smile: 0 },
+                busy: { gaze: 'screen', breath: [0.18, 0.28], blush: 0, tension: 0.35, smile: 0 },
+                play: { gaze: 'user', breath: [0.18, 0.30], blush: 0, tension: 0, smile: 0.3 }
+            };
+
+            const config = modeConfig[mode] || modeConfig.friendly;
+
+            return {
+                version: '1.0',
+                state: { mode, intimacy: ctx.intimacy, jealousy_level: ctx.jealousy_level, sexy_level: sexyLevel },
+                timing: { listening_tick_ms: 200, think_pause_ms: mode === 'focused' ? 600 : 0 },
+                gaze: { target: config.gaze, lpf_tau: 0.1 },
+                breath: { rate_hz: config.breath[0], amplitude: 0.3 },
+                params: {
+                    Blush: config.blush,
+                    Tension: config.tension,
+                    Smile: config.smile,
+                    Breath: 0.3
+                }
+            };
+        }
+
+        function displayResult(result) {
+            const { decision, presence } = result;
+
+            // Update mode badge
+            const modeClass = `mode-${decision.mode}`;
+            document.getElementById('current-mode').innerHTML = 
+                `<span class="mode-badge ${modeClass}">${decision.mode}</span>`;
+
+            // Update decision details
+            document.getElementById('decision-details').innerHTML = `
+{
+  "mode": "${decision.mode}",
+  "sexy_level": ${decision.sexy_level},
+  "jealousy_level": ${decision.jealousy_level},
+  "requires_confirm": ${decision.requires_confirm},
+  "tool_calls_allowed": ${decision.tool_calls_allowed}
+}`;
+
+            // Update presence summary
+            const params = presence.params;
+            document.getElementById('presence-summary').innerHTML = `
+                <div class="presence-item">
+                    <div class="presence-label">Gaze Target</div>
+                    <div class="presence-value">${presence.gaze.target}</div>
+                </div>
+                <div class="presence-item">
+                    <div class="presence-label">Breath Rate</div>
+                    <div class="presence-value">${presence.breath.rate_hz.toFixed(2)} Hz</div>
+                </div>
+                <div class="presence-item">
+                    <div class="presence-label">Blush</div>
+                    <div class="presence-value">${params.Blush.toFixed(2)}</div>
+                </div>
+                <div class="presence-item">
+                    <div class="presence-label">Tension</div>
+                    <div class="presence-value">${params.Tension.toFixed(2)}</div>
+                </div>
+                <div class="presence-item">
+                    <div class="presence-label">Smile</div>
+                    <div class="presence-value">${params.Smile.toFixed(2)}</div>
+                </div>
+                <div class="presence-item">
+                    <div class="presence-label">Think Pause</div>
+                    <div class="presence-value">${presence.timing.think_pause_ms}ms</div>
+                </div>
+            `;
+
+            // Update full JSON
+            document.getElementById('presence-json').textContent = JSON.stringify(result, null, 2);
+        }
+
+        // Initialize with friendly scenario
+        window.addEventListener('DOMContentLoaded', () => {
+            loadScenario('friendly');
+            console.log('✅ Ceria Self System UI loaded');
+        });
+    </script>
+</body>
+</html>

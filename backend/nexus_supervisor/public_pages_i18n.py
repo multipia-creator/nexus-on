@@ -99,6 +99,8 @@ TRANSLATIONS = {
     },
     "en": {
         "nav_home": "Home",
+        "nav_intro": "About",
+        "nav_modules": "Modules",
         "nav_pricing": "Pricing",
         "nav_dashboard": "Dashboard",
         "nav_canvas": "Canvas",
@@ -149,6 +151,78 @@ TRANSLATIONS = {
 def t(key: str, lang: str = "ko") -> str:
     """Translation helper."""
     return TRANSLATIONS.get(lang, TRANSLATIONS["ko"]).get(key, key)
+
+
+def render_live2d_component(page_state: str = 'idle') -> str:
+    """
+    Render Live2D character component with inline JavaScript.
+    
+    Args:
+        page_state: Initial character state (idle/listening/thinking/speaking/busy)
+    
+    Returns:
+        HTML string for Live2D component
+    """
+    return f'''
+    <!-- Live2D Character Container -->
+    <div id="live2d-container" class="live2d-container" data-status="{page_state}">
+        <!-- Character image will be injected by JavaScript -->
+    </div>
+
+    <!-- Live2D Styles -->
+    <link rel="stylesheet" href="/static/css/live2d-placeholder.css">
+
+    <!-- Live2D JavaScript (Inline) -->
+    <script>
+        // Live2D Placeholder Class (Inline)
+        class Live2DPlaceholder {{
+            constructor(containerId) {{
+                this.container = document.getElementById(containerId);
+                if (!this.container) {{
+                    console.error('Live2D container not found');
+                    return;
+                }}
+                
+                this.imageElement = document.createElement('img');
+                this.imageElement.className = 'live2d-character-image';
+                this.imageElement.alt = 'NEXUS AI Character';
+                this.imageElement.style.width = '100%';
+                this.imageElement.style.height = '100%';
+                this.imageElement.style.objectFit = 'contain';
+                this.container.appendChild(this.imageElement);
+                
+                this.currentState = 'idle';
+                this.setState('{page_state}');
+            }}
+            
+            setState(state) {{
+                if (this.currentState === state) return;
+                this.currentState = state;
+                this.imageElement.src = `/images/character/${{state}}.svg`;
+                this.container.setAttribute('data-status', state);
+                console.log('Live2D state changed:', state);
+            }}
+            
+            hide() {{ this.container.style.display = 'none'; }}
+            show() {{ this.container.style.display = 'block'; }}
+        }}
+        
+        // Initialize Live2D character on DOMContentLoaded
+        let live2dCharacter = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {{
+            try {{
+                live2dCharacter = new Live2DPlaceholder('live2d-container');
+                console.log('✅ Live2D character initialized:', '{page_state}');
+            }} catch (error) {{
+                console.error('❌ Failed to initialize Live2D:', error);
+            }}
+        }});
+        
+        // Make globally available for page interactions
+        window.nexusCharacter = function() {{ return live2dCharacter; }};
+    </script>
+    '''
 
 
 def render_world_class_styles() -> str:
@@ -609,7 +683,7 @@ def render_footer(lang: str = "ko") -> str:
 
 
 def landing_page(lang: str = "ko") -> str:
-    """Render world-class landing page with i18n support."""
+    """Render world-class landing page with i18n support and Live2D character."""
     return f"""
     <!DOCTYPE html>
     <html lang="{lang}">
@@ -619,17 +693,15 @@ def landing_page(lang: str = "ko") -> str:
         <title>NEXUS-ON | {t("hero_subtitle", lang)}</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="idle">
         {render_navigation("/", lang)}
+        
+        <!-- Live2D Character (Idle state for landing) -->
+        {render_live2d_component("idle")}
         
         <!-- HERO SECTION -->
         <section class="hero-world-class">
             <div class="hero-content">
-                <div class="hero-character">
-                    <div class="character-placeholder">🎭</div>
-                    <div class="character-state">Idle</div>
-                </div>
-                
                 <h1 class="hero-title">{t("hero_title", lang)}</h1>
                 <p class="hero-subtitle">{t("hero_subtitle", lang)}</p>
                 <p class="hero-tagline">{t("hero_tagline", lang)}</p>
@@ -665,6 +737,23 @@ def landing_page(lang: str = "ko") -> str:
         </section>
         
         {render_footer(lang)}
+        
+        <!-- Scroll-based state changes -->
+        <script>
+            window.addEventListener('scroll', function() {{
+                const scrollY = window.scrollY;
+                const character = window.nexusCharacter();
+                if (!character) return;
+                
+                if (scrollY < 300) {{
+                    character.setState('idle');
+                }} else if (scrollY < 600) {{
+                    character.setState('listening');
+                }} else {{
+                    character.setState('thinking');
+                }}
+            }});
+        </script>
     </body>
     </html>
     """
@@ -681,8 +770,11 @@ def pricing_page(lang: str = "ko") -> str:
         <title>{t("nav_pricing", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="thinking">
         {render_navigation("/pricing", lang)}
+        
+        <!-- Live2D Character (Thinking state for pricing) -->
+        {render_live2d_component("thinking")}
         
         <div class="container">
             <h1 class="section-title">{t("pricing_title", lang)}</h1>
@@ -712,8 +804,11 @@ def dashboard_preview_page(lang: str = "ko") -> str:
         <title>{t("nav_dashboard", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="busy">
         {render_navigation("/dashboard-preview", lang)}
+        
+        <!-- Live2D Character (Busy state for dashboard) -->
+        {render_live2d_component("busy")}
         
         <div class="container">
             <h1 class="section-title">{t("dashboard_title", lang)}</h1>
@@ -743,8 +838,11 @@ def canvas_preview_page(lang: str = "ko") -> str:
         <title>{t("nav_canvas", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="thinking">
         {render_navigation("/canvas-preview", lang)}
+        
+        <!-- Live2D Character (Thinking state for canvas) -->
+        {render_live2d_component("thinking")}
         
         <div class="container">
             <h1 class="section-title">{t("canvas_title", lang)}</h1>
@@ -774,8 +872,11 @@ def login_page(lang: str = "ko") -> str:
         <title>{t("nav_login", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="idle">
         {render_navigation("/login", lang)}
+        
+        <!-- Live2D Character (Idle state for login) -->
+        {render_live2d_component("idle")}
         
         <div class="container">
             <div style="text-align: center; padding: 100px 0;">
@@ -824,8 +925,11 @@ def intro_page(lang: str = "ko") -> str:
         <title>{t("nav_intro", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="listening">
         {render_navigation("/intro", lang)}
+        
+        <!-- Live2D Character (Listening state for intro) -->
+        {render_live2d_component("listening")}
         
         <div class="container">
             <h1 class="section-title">{t("intro_title", lang)}</h1>
@@ -906,8 +1010,11 @@ def modules_page(lang: str = "ko") -> str:
         <title>{t("nav_modules", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
     </head>
-    <body>
+    <body data-page-state="speaking">
         {render_navigation("/modules", lang)}
+        
+        <!-- Live2D Character (Speaking state for modules) -->
+        {render_live2d_component("speaking")}
         
         <div class="container">
             <h1 class="section-title">{t("modules_title", lang)}</h1>

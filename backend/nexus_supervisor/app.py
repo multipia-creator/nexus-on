@@ -18,6 +18,15 @@ from shared.settings import settings
 from shared.logging_utils import setup_logging
 from shared.credential_vault import CredentialVault
 from shared.tenant_ctx import TenantCtx
+
+# Import TTS service
+try:
+    from shared.tts_service import generate_tts, tts_service
+    TTS_ENABLED = True
+    logger.info("✅ TTS service enabled (Google Cloud TTS)")
+except ImportError:
+    TTS_ENABLED = False
+    logger.warning("⚠️ TTS service not available - install google-cloud-texttospeech")
 from shared.pii_mask import mask_sensitive
 from shared.llm_client import LLMClient
 from shared.task_store import TaskStore
@@ -1567,12 +1576,38 @@ def chat_send(
         response_text = payload.get("text", "")
         _emit_agent_status(tenant_id, "speaking", {"response": response_text[:80]})
         
-        # Emit TTS events for lip-sync simulation
-        # In production, this would be replaced with actual TTS service calls
-        _emit_tts(tenant_id, "tts_start", {"text": response_text, "voice": "ko-KR-Neural2-A"})
-        # Simulate TTS duration (in production, this comes from TTS service)
-        estimated_duration_ms = len(response_text) * 100  # ~100ms per character
-        _emit_tts(tenant_id, "tts_end", {"duration_ms": estimated_duration_ms})
+        # Generate high-quality TTS audio using Google Cloud TTS
+        if TTS_ENABLED and response_text:
+            tts_result = generate_tts(
+                text=response_text,
+                voice_name="ko-KR-Wavenet-A",  # High-quality Korean female voice
+                speaking_rate=1.0,
+                pitch=0.0
+            )
+            
+            if tts_result:
+                # Emit TTS start event with audio URL
+                _emit_tts(tenant_id, "tts_start", {
+                    "text": response_text,
+                    "audio_url": tts_result["audio_url"],
+                    "duration_ms": tts_result["duration_ms"],
+                    "voice": tts_result["voice"]
+                })
+                
+                # Emit TTS end event
+                _emit_tts(tenant_id, "tts_end", {
+                    "duration_ms": tts_result["duration_ms"]
+                })
+            else:
+                # Fallback: simulate TTS without actual audio
+                estimated_duration_ms = len(response_text) * 100
+                _emit_tts(tenant_id, "tts_start", {"text": response_text, "voice": "ko-KR-Wavenet-A"})
+                _emit_tts(tenant_id, "tts_end", {"duration_ms": estimated_duration_ms})
+        else:
+            # TTS disabled: just emit events without audio
+            estimated_duration_ms = len(response_text) * 100
+            _emit_tts(tenant_id, "tts_start", {"text": response_text, "voice": "ko-KR-Wavenet-A"})
+            _emit_tts(tenant_id, "tts_end", {"duration_ms": estimated_duration_ms})
         
         assistant = _mk_report(
             status="done",
@@ -1800,6 +1835,37 @@ def _emit_tts(tenant_id: str, event_type: str, data: Dict[str, Any]) -> None:
     }
     stream_store.append_event(tenant_id, event_type, payload)
     logger.debug(f"[{event_type}] {tenant_id}")
+
+
+@app.get("/tts/{filename}")
+async def serve_tts_audio(filename: str):
+    """
+    Serve TTS audio files.
+    
+    This endpoint serves generated TTS audio files from temporary storage.
+    Files are automatically cleaned up after 24 hours.
+    """
+    from pathlib import Path
+    from fastapi.responses import FileResponse
+    
+    # Security: validate filename format
+    if not filename.startswith("tts_") or not filename.endswith(".mp3"):
+        raise HTTPException(status_code=400, detail="Invalid filename format")
+    
+    if TTS_ENABLED:
+        audio_path = tts_service.temp_dir / filename
+        
+        if audio_path.exists():
+            return FileResponse(
+                audio_path,
+                media_type="audio/mpeg",
+                headers={
+                    "Cache-Control": "public, max-age=86400",  # Cache for 24 hours
+                    "Access-Control-Allow-Origin": "*",  # Allow CORS
+                }
+            )
+    
+    raise HTTPException(status_code=404, detail="Audio file not found")
 
 
 @app.get("/")

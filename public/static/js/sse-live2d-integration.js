@@ -243,31 +243,41 @@ class Live2DAgentIntegration {
             }
         };
 
-        // TTS event handlers (for future lip-sync integration)
+        // TTS event handlers - High-quality audio playback
         this.sseClient.onTTSStart = (data) => {
-            console.log('[Live2D Agent] TTS started:', data.text);
+            console.log('[Live2D Agent] TTS started:', data.text?.substring(0, 50));
             
-            // Speak the text using TTS Manager
-            if (window.ttsManager && data.text) {
-                // Set Live2D to speaking state
-                if (this.live2dManager) {
-                    this.live2dManager.setState('speaking');
-                }
-                
-                // Speak with TTS
+            // Set Live2D to speaking state
+            if (this.live2dManager) {
+                this.live2dManager.setState('speaking');
+            }
+            
+            // Play high-quality TTS audio if audio_url is provided
+            if (data.audio_url) {
+                // Use Web Audio API for high-quality playback
+                this.playTTSAudio(data.audio_url, data.duration_ms).catch(err => {
+                    console.error('[Live2D Agent] TTS audio playback error:', err);
+                    // Fallback: simulate speaking state
+                    setTimeout(() => {
+                        if (this.live2dManager) {
+                            this.live2dManager.setState('idle');
+                        }
+                    }, data.duration_ms || 2000);
+                });
+            } else if (window.ttsManager && data.text) {
+                // Fallback: Use Web Speech API (lower quality)
+                console.warn('[Live2D Agent] No audio_url, using Web Speech API fallback');
                 window.ttsManager.speak(data.text, {
                     lang: data.voice && data.voice.includes('en-') ? 'en-US' : 'ko-KR',
                     rate: 1.0,
                     pitch: 1.0,
                     volume: 0.8
                 }).catch(err => {
-                    console.error('[Live2D Agent] TTS error:', err);
+                    console.error('[Live2D Agent] Web Speech API error:', err);
                 });
             } else {
-                // Fallback: just set state without audio
-                if (this.live2dManager) {
-                    this.live2dManager.setState('speaking');
-                }
+                // No audio available: just set speaking state
+                console.warn('[Live2D Agent] No TTS audio available');
             }
         };
 
@@ -299,6 +309,55 @@ class Live2DAgentIntegration {
             // Future: Initialize UI with snapshot data
             // e.g., load existing asks, worklog, autopilot state
         };
+    }
+    
+    /**
+     * Play high-quality TTS audio using Web Audio API
+     * @param {string} audioUrl - URL to the TTS audio file
+     * @param {number} durationMs - Expected duration in milliseconds
+     * @returns {Promise<void>}
+     */
+    async playTTSAudio(audioUrl, durationMs) {
+        try {
+            console.log(`[Live2D Agent] Playing TTS audio: ${audioUrl}`);
+            
+            // Create audio element
+            const audio = new Audio(audioUrl);
+            audio.volume = 0.8;
+            
+            // Start playing
+            await audio.play();
+            
+            // Trigger lip-sync animation (if available)
+            if (this.live2dManager && typeof this.live2dManager.startLipSync === 'function') {
+                this.live2dManager.startLipSync(durationMs);
+            }
+            
+            // Wait for audio to finish
+            return new Promise((resolve, reject) => {
+                audio.onended = () => {
+                    console.log('[Live2D Agent] TTS audio playback finished');
+                    resolve();
+                };
+                
+                audio.onerror = (err) => {
+                    console.error('[Live2D Agent] Audio playback error:', err);
+                    reject(err);
+                };
+                
+                // Fallback timeout
+                setTimeout(() => {
+                    if (!audio.ended) {
+                        audio.pause();
+                        resolve();
+                    }
+                }, durationMs + 1000);
+            });
+            
+        } catch (error) {
+            console.error('[Live2D Agent] Failed to play TTS audio:', error);
+            throw error;
+        }
     }
 
     connect() {

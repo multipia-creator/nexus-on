@@ -14,6 +14,8 @@ import { pricingPage } from './pages/pricing'
 import { dashboardPreviewPage } from './pages/dashboard'
 import { canvasPreviewPage } from './pages/canvas'
 import { loginPage } from './pages/login'
+import { downloadPage } from './pages/download'
+import { downloadPage } from './pages/download'
 
 const app = new Hono()
 
@@ -151,6 +153,18 @@ app.get('/downloads/windows/', (c) => {
     </body>
     </html>`
   return c.html(html)
+})
+
+// Downloads/Windows Page
+app.get('/downloads/windows', (c) => {
+  const lang = getLang(c)
+  return c.html(downloadPage(lang))
+})
+
+// Windows download alias
+app.get('/downloads/windows/', (c) => {
+  const lang = getLang(c)
+  return c.html(downloadPage(lang))
 })
 
 // Landing Page (완벽 포팅 완료)

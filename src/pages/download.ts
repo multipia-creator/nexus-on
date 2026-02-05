@@ -7,7 +7,7 @@ import type { Language } from '../../shared/types'
 import { t } from '../../shared/i18n'
 import { renderNavigation } from '../components/navigation'
 import { renderFooter } from '../components/footer'
-import { globalStyles } from '../../shared/styles'
+import { getGlobalStyles } from '../../shared/styles'
 
 export function downloadPage(lang: Language = 'ko'): string {
   return `
@@ -16,10 +16,10 @@ export function downloadPage(lang: Language = 'ko'): string {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>NEXUS Engine - Windows ${t('download_title', lang)}</title>
+        <title>NEXUS Engine - Windows ${t('download_page_title', lang)}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-        <style>${globalStyles}</style>
+        <style>${renderWorldClassStyles()}</style>
     </head>
     <body class="bg-gray-50">
         ${renderNavigation(lang)}
@@ -31,7 +31,7 @@ export function downloadPage(lang: Language = 'ko'): string {
                     NEXUS Engine for Windows
                 </h1>
                 <p class="text-xl text-gray-600">
-                    ${t('download_subtitle', lang)}
+                    ${t('download_page_subtitle', lang)}
                 </p>
             </div>
 

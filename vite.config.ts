@@ -4,6 +4,7 @@ import adapter from '@hono/vite-dev-server/cloudflare'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  publicDir: 'public',  // Ensure public directory is copied to dist
   plugins: [
     build(),
     devServer({

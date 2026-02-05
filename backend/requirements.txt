@@ -8,8 +8,9 @@ python-multipart>=0.0.6
 redis>=5.0.0
 pika>=1.3.0
 
-# Google Cloud TTS (High-quality Korean voice)
-google-cloud-texttospeech>=2.14.0
+# TTS Services
+google-cloud-texttospeech>=2.14.0  # Google Cloud TTS (optional)
+elevenlabs>=1.0.0  # ElevenLabs TTS (recommended for Korean)
 
 # LLM Providers
 anthropic>=0.7.0

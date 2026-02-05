@@ -8,6 +8,10 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from typing import Any, Dict, Optional, List, Literal
 
+# Load .env file FIRST before any other imports
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
+
 import pika
 from fastapi import FastAPI, Header, HTTPException, Request, Body, Response, Query
 from fastapi.responses import PlainTextResponse, StreamingResponse, HTMLResponse
@@ -19,32 +23,51 @@ from shared.logging_utils import setup_logging
 from shared.credential_vault import CredentialVault
 from shared.tenant_ctx import TenantCtx
 
-# Import TTS service (with fallback to API Key method)
+# Import TTS service (ElevenLabs as primary, Google Cloud as fallback)
 TTS_ENABLED = False
 generate_tts = None
+tts_temp_dir = None
 
-# Try service account method first (recommended)
+# Try ElevenLabs first (recommended for Korean)
 try:
-    from shared.tts_service import generate_tts, tts_service
-    if tts_service.enabled:
+    from shared.tts_elevenlabs import generate_tts_elevenlabs, elevenlabs_tts_service
+    if elevenlabs_tts_service.enabled:
         TTS_ENABLED = True
-        logger.info("✅ TTS service enabled (Google Cloud TTS - Service Account)")
+        generate_tts = generate_tts_elevenlabs
+        tts_temp_dir = elevenlabs_tts_service.temp_dir
+        print("✅ TTS service enabled (ElevenLabs - Multilingual)")
 except ImportError:
-    logger.warning("⚠️ google-cloud-texttospeech not installed")
+    print("⚠️ elevenlabs package not installed")
+except Exception as e:
+    print(f"⚠️ ElevenLabs TTS initialization failed: {e}")
 
-# Fallback to API Key method (logger not yet defined, use print)
+# Fallback to Google Cloud TTS (service account)
 if not TTS_ENABLED:
     try:
-        from shared.tts_service_apikey import generate_tts_with_apikey
-        generate_tts = generate_tts_with_apikey
-        # Check if API key is available
-        if os.getenv("GOOGLE_CLOUD_API_KEY"):
+        from shared.tts_service import generate_tts, tts_service
+        if tts_service.enabled:
             TTS_ENABLED = True
+            tts_temp_dir = tts_service.temp_dir
+            print("✅ TTS service enabled (Google Cloud TTS - Service Account)")
+    except ImportError:
+        print("⚠️ google-cloud-texttospeech not installed")
+
+# Fallback to Google Cloud TTS (API Key)
+if not TTS_ENABLED:
+    try:
+        from shared.tts_service_apikey import generate_tts_with_apikey, tts_service_apikey
+        if tts_service_apikey.enabled:
+            TTS_ENABLED = True
+            generate_tts = generate_tts_with_apikey
+            tts_temp_dir = tts_service_apikey.temp_dir
             print("✅ TTS service enabled (Google Cloud TTS - API Key)")
         else:
-            print("⚠️ GOOGLE_CLOUD_API_KEY not set - TTS disabled")
+            print("⚠️ GOOGLE_CLOUD_API_KEY not set")
     except Exception as e:
         print(f"⚠️ TTS service fallback failed: {e}")
+
+if not TTS_ENABLED:
+    print("⚠️ All TTS services disabled - no API keys configured")
 from shared.pii_mask import mask_sensitive
 from shared.llm_client import LLMClient
 from shared.task_store import TaskStore
@@ -1887,8 +1910,8 @@ async def serve_tts_audio(filename: str):
     if not filename.startswith("tts_") or not filename.endswith(".mp3"):
         raise HTTPException(status_code=400, detail="Invalid filename format")
     
-    if TTS_ENABLED:
-        audio_path = tts_service.temp_dir / filename
+    if TTS_ENABLED and tts_temp_dir:
+        audio_path = tts_temp_dir / filename
         
         if audio_path.exists():
             return FileResponse(
@@ -1901,6 +1924,145 @@ async def serve_tts_audio(filename: str):
             )
     
     raise HTTPException(status_code=404, detail="Audio file not found")
+
+
+@app.post("/api/tts/generate")
+async def generate_tts_endpoint(request: Request):
+    """
+    Generate TTS audio with automatic fallback between providers.
+    
+    Priority: ElevenLabs → Google Cloud TTS (API Key) → Google Cloud TTS (Service Account)
+    
+    Request body:
+    {
+        "text": str,  # Required: Text to synthesize
+        "voice_id": str,  # Optional: For ElevenLabs (default: Rachel)
+        "voice_name": str,  # Optional: For Google Cloud (default: ko-KR-Wavenet-A)
+        "speaking_rate": float,  # Optional: Speed 0.5~2.0 (default: 1.0)
+        "stability": float,  # Optional: ElevenLabs stability 0.0~1.0 (default: 0.5)
+        "similarity_boost": float  # Optional: ElevenLabs similarity 0.0~1.0 (default: 0.75)
+    }
+    
+    Response:
+    {
+        "success": bool,
+        "audio_url": str,  # URL to download audio file
+        "duration_ms": int,  # Estimated duration in milliseconds
+        "text": str,  # Original text
+        "voice": str,  # Voice ID/name used
+        "provider": str  # "elevenlabs" or "google_cloud"
+    }
+    """
+    if not TTS_ENABLED:
+        raise HTTPException(status_code=503, detail="TTS service not available")
+    
+    try:
+        body = await request.json()
+        text = body.get("text")
+        
+        if not text:
+            raise HTTPException(status_code=400, detail="Missing 'text' field")
+        
+        result = None
+        provider = None
+        last_error = None
+        
+        # Try ElevenLabs first
+        try:
+            from shared.tts_elevenlabs import elevenlabs_tts_service
+            
+            if elevenlabs_tts_service.enabled:
+                voice_id = body.get("voice_id", "EXAVITQu4vr4xnSDxMaL")  # Rachel
+                speaking_rate = body.get("speaking_rate", 1.0)
+                stability = body.get("stability", 0.5)
+                similarity_boost = body.get("similarity_boost", 0.75)
+                
+                result = elevenlabs_tts_service.generate_speech(
+                    text=text,
+                    voice_id=voice_id,
+                    speaking_rate=speaking_rate,
+                    stability=stability,
+                    similarity_boost=similarity_boost
+                )
+                
+                if result:
+                    provider = "elevenlabs"
+                    logger.info(f"✅ TTS generated with ElevenLabs")
+                else:
+                    logger.warning("⚠️ ElevenLabs TTS failed, trying fallback...")
+        except Exception as e:
+            logger.warning(f"⚠️ ElevenLabs TTS error: {e}, trying fallback...")
+            last_error = str(e)
+        
+        # Fallback to Google Cloud TTS (API Key)
+        if not result:
+            try:
+                from shared.tts_service_apikey import tts_service_apikey
+                
+                if tts_service_apikey.enabled:
+                    voice_name = body.get("voice_name", "ko-KR-Wavenet-A")
+                    speaking_rate = body.get("speaking_rate", 1.0)
+                    pitch = body.get("pitch", 0.0)
+                    
+                    result = tts_service_apikey.generate_speech(
+                        text=text,
+                        voice_name=voice_name,
+                        speaking_rate=speaking_rate,
+                        pitch=pitch
+                    )
+                    
+                    if result:
+                        provider = "google_cloud_api_key"
+                        logger.info(f"✅ TTS generated with Google Cloud (API Key)")
+                    else:
+                        logger.warning("⚠️ Google Cloud TTS (API Key) failed, trying service account...")
+            except Exception as e:
+                logger.warning(f"⚠️ Google Cloud TTS (API Key) error: {e}")
+                last_error = str(e)
+        
+        # Fallback to Google Cloud TTS (Service Account)
+        if not result:
+            try:
+                from shared.tts_service import tts_service
+                
+                if tts_service.enabled:
+                    voice_name = body.get("voice_name", "ko-KR-Wavenet-A")
+                    speaking_rate = body.get("speaking_rate", 1.0)
+                    pitch = body.get("pitch", 0.0)
+                    
+                    result = tts_service.generate_speech(
+                        text=text,
+                        voice_name=voice_name,
+                        speaking_rate=speaking_rate,
+                        pitch=pitch
+                    )
+                    
+                    if result:
+                        provider = "google_cloud_service_account"
+                        logger.info(f"✅ TTS generated with Google Cloud (Service Account)")
+            except Exception as e:
+                logger.warning(f"⚠️ Google Cloud TTS (Service Account) error: {e}")
+                last_error = str(e)
+        
+        if not result:
+            error_msg = f"All TTS providers failed. Last error: {last_error}"
+            logger.error(f"❌ {error_msg}")
+            raise HTTPException(status_code=500, detail=error_msg)
+        
+        return {
+            "success": True,
+            "audio_url": result["audio_url"],
+            "duration_ms": result["duration_ms"],
+            "text": result["text"],
+            "voice": result.get("voice", "unknown"),
+            "provider": provider,
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ TTS generation error: {e}")
+        raise HTTPException(status_code=500, detail=f"TTS generation error: {str(e)}")
 
 
 @app.post("/api/character/decide")
@@ -2058,53 +2220,16 @@ def intro_page(lang: str = "ko"):
 
 
 @app.get("/developer")
-def developer_page():
-    """Developer page: text-only section about 서경대학교 남현우 교수."""
-    body = """
-<div class="container-narrow">
-  <h1>개발자 소개</h1>
-  
-  <div class="card">
-    <h2>서경대학교 남현우 교수</h2>
-    <p class="lead">
-      NEXUS-ON 프로젝트를 설계하고 개발하는 연구자이자 교육자입니다.
-    </p>
+def developer_page(lang: str = "ko"):
+    """
+    Developer page: Prof. Nam Hyunwoo profile and NEXUS-ON project vision.
     
-    <h3>연구 분야</h3>
-    <p>
-      • AI 에이전트 시스템과 Human-in-the-loop 인터페이스<br>
-      • 자율 시스템의 안전성과 신뢰성<br>
-      • 소프트웨어 공학과 AI의 융합<br>
-      • 한국어 문서 처리 및 RAG 시스템
-    </p>
-    
-    <h3>프로젝트 비전</h3>
-    <p>
-      NEXUS-ON은 AI가 사람을 대체하는 것이 아니라,<br>
-      사람과 AI가 협력하여 더 나은 결과를 만들어내는 것을 목표로 합니다.<br>
-      <br>
-      특히 한국어 문서(HWP 포함)를 자연스럽게 처리하고,<br>
-      로컬 환경에서도 안전하게 작동하는 시스템을 구축하는 데 중점을 두고 있습니다.
-    </p>
-    
-    <h3>개발 철학</h3>
-    <p>
-      • <strong>Local-first</strong>: 데이터와 제어권은 사용자에게<br>
-      • <strong>Human oversight</strong>: 중요한 결정은 반드시 사람이<br>
-      • <strong>Fail-safe</strong>: 실패해도 안전하게, 복구 가능하게<br>
-      • <strong>Open by design</strong>: 투명하고 확장 가능한 아키텍처
-    </p>
-  </div>
-  
-  <div class="card">
-    <p class="small">
-      연락: 서경대학교 컴퓨터공학과<br>
-      NEXUS-ON은 교육 및 연구 목적으로 개발된 오픈소스 프로젝트입니다.
-    </p>
-  </div>
-</div>
-"""
-    return HTMLResponse(render_page("Developer", body, "developer"))
+    This is a dedicated profile page separate from the intro page.
+    Contains detailed information about the developer and project philosophy.
+    """
+    # Use intro page for now (contains developer section)
+    # TODO: Create dedicated developer_page function in public_pages_i18n.py
+    return HTMLResponse(render_intro_page_i18n(lang))
 
 
 @app.get("/modules")

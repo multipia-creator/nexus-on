@@ -7,7 +7,9 @@ module.exports = {
       cwd: './backend',
       env: {
         PYTHONPATH: '/home/user/webapp/backend',
-        PYTHON_ENV: 'production'
+        PYTHON_ENV: 'production',
+        GOOGLE_CLOUD_API_KEY: 'AIzaSyAmteZ8s0n0OdfYahj77m8DkULsn4dwbmA',
+        YOUTUBE_API_KEY: 'AIzaSyCcEM6jZAocQeU7xyjifFLvWRcBOmkZV4I'
       },
       watch: false,
       instances: 1,

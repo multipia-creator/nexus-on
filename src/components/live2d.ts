@@ -18,10 +18,17 @@ export function renderLive2DComponent(pageState: Live2DState = 'idle'): string {
     <!-- PIXI.js v6.x (Required for Live2D - v6 has better compatibility) -->
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
     
-    <!-- Live2D Cubism Core -->
+    <!-- Live2D Cubism 2 SDK (for older models) -->
+    <script src="https://cdn.jsdelivr.net/npm/live2d-widget@3.1.4/lib/L2Dwidget.min.js"></script>
+    
+    <!-- Live2D Cubism 4 Core -->
     <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
     
-    <!-- pixi-live2d-display v0.4.0 (Stable version) -->
+    <!-- pixi-live2d-display v0.4.0 (Supports both Cubism 2 & 4) -->
+    <script>
+      // Register Cubism 4 runtime
+      window.LIVE2DCUBISMCORE = window.Live2DCubismCore;
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script></script>
 
     <!-- Live2D Manager -->

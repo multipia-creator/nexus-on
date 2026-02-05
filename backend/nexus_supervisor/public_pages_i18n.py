@@ -1433,7 +1433,7 @@ def landing_page(lang: str = "ko") -> str:
 
 
 def pricing_page(lang: str = "ko") -> str:
-    """Render pricing page with i18n."""
+    """Render interactive pricing page with 3 tiers."""
     return f"""
     <!DOCTYPE html>
     <html lang="{lang}">
@@ -1442,6 +1442,132 @@ def pricing_page(lang: str = "ko") -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{t("nav_pricing", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
+        <style>
+            .pricing-hero {{
+                background: var(--gradient-hero);
+                padding: var(--space-20) var(--space-6) var(--space-12);
+                text-align: center;
+            }}
+            
+            .pricing-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: var(--space-8);
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: var(--space-12) var(--space-6) var(--space-20);
+            }}
+            
+            .pricing-card {{
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                padding: var(--space-10);
+                border: 2px solid var(--border-default);
+                box-shadow: var(--shadow-lg);
+                transition: all var(--duration-slow) var(--ease-out);
+                position: relative;
+            }}
+            
+            .pricing-card.featured {{
+                border-color: var(--accent-primary);
+                transform: scale(1.05);
+                box-shadow: var(--shadow-2xl);
+            }}
+            
+            .pricing-card:hover {{
+                transform: translateY(-12px) scale(1.02);
+                box-shadow: var(--shadow-2xl);
+            }}
+            
+            .pricing-badge {{
+                position: absolute;
+                top: -12px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--gradient-gold);
+                color: white;
+                padding: 6px 24px;
+                border-radius: var(--radius-pill);
+                font-size: var(--text-xs);
+                font-weight: 700;
+                letter-spacing: 1px;
+                box-shadow: var(--shadow-lg);
+            }}
+            
+            .pricing-tier {{
+                font-size: var(--text-sm);
+                font-weight: 700;
+                color: var(--text-tertiary);
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                margin-bottom: var(--space-2);
+            }}
+            
+            .pricing-price {{
+                font-size: var(--text-4xl);
+                font-weight: 800;
+                color: var(--accent-primary);
+                margin-bottom: var(--space-2);
+            }}
+            
+            .pricing-period {{
+                font-size: var(--text-base);
+                color: var(--text-tertiary);
+                margin-bottom: var(--space-6);
+            }}
+            
+            .pricing-desc {{
+                font-size: var(--text-sm);
+                color: var(--text-secondary);
+                margin-bottom: var(--space-8);
+                min-height: 40px;
+            }}
+            
+            .pricing-features {{
+                list-style: none;
+                padding: 0;
+                margin: 0 0 var(--space-8) 0;
+            }}
+            
+            .pricing-features li {{
+                font-size: var(--text-sm);
+                color: var(--text-secondary);
+                padding: var(--space-2) 0;
+                line-height: 1.6;
+            }}
+            
+            .pricing-cta {{
+                display: block;
+                width: 100%;
+                padding: var(--space-4);
+                background: var(--gradient-accent);
+                color: white;
+                border-radius: var(--radius-md);
+                font-size: var(--text-base);
+                font-weight: 600;
+                text-align: center;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+                transition: all var(--duration-ui) var(--ease-out);
+                box-shadow: var(--shadow-md);
+            }}
+            
+            .pricing-cta:hover {{
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-lg);
+            }}
+            
+            @media (max-width: 768px) {{
+                .pricing-grid {{
+                    grid-template-columns: 1fr;
+                }}
+                
+                .pricing-card.featured {{
+                    transform: scale(1);
+                }}
+            }}
+        </style>
     </head>
     <body data-page-state="thinking">
         {render_navigation("/pricing", lang)}
@@ -1449,16 +1575,73 @@ def pricing_page(lang: str = "ko") -> str:
         <!-- Live2D Character (Thinking state for pricing) -->
         {render_live2d_component("thinking")}
         
-        <div class="container">
+        <!-- Hero Section -->
+        <section class="pricing-hero">
             <h1 class="section-title">{t("pricing_title", lang)}</h1>
             <p class="section-subtitle">{t("pricing_subtitle", lang)}</p>
+        </section>
+        
+        <!-- Pricing Grid -->
+        <section class="pricing-grid">
+            <!-- FREE Tier -->
+            <article class="pricing-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.1s both;">
+                <div class="pricing-tier">{t("pricing_free_title", lang)}</div>
+                <div class="pricing-price">{t("pricing_free_price", lang)}</div>
+                <div class="pricing-period">{t("pricing_free_period", lang)}</div>
+                <div class="pricing-desc">{t("pricing_free_desc", lang)}</div>
+                <ul class="pricing-features">
+                    <li>{t("pricing_free_feature1", lang)}</li>
+                    <li>{t("pricing_free_feature2", lang)}</li>
+                    <li>{t("pricing_free_feature3", lang)}</li>
+                    <li>{t("pricing_free_feature4", lang)}</li>
+                    <li>{t("pricing_free_feature5", lang)}</li>
+                    <li>{t("pricing_free_feature6", lang)}</li>
+                    <li>{t("pricing_free_feature7", lang)}</li>
+                    <li>{t("pricing_free_feature8", lang)}</li>
+                </ul>
+                <button class="pricing-cta">{t("hero_cta_primary", lang)}</button>
+            </article>
             
-            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
-                <div style="font-size: 64px; margin-bottom: 24px;">💳</div>
-                <p style="font-size: 18px;">{t("pricing_coming", lang)}</p>
-                <p>{t("pricing_plans", lang)}</p>
-            </div>
-        </div>
+            <!-- PLUS Tier (Featured) -->
+            <article class="pricing-card featured" style="animation: slide-in-up 0.6s var(--ease-out) 0.2s both;">
+                <div class="pricing-badge">{t("pricing_plus_badge", lang)}</div>
+                <div class="pricing-tier">{t("pricing_plus_title", lang)}</div>
+                <div class="pricing-price">{t("pricing_plus_price", lang)}</div>
+                <div class="pricing-period">{t("pricing_plus_period", lang)}</div>
+                <div class="pricing-desc">{t("pricing_plus_desc", lang)}</div>
+                <ul class="pricing-features">
+                    <li>{t("pricing_plus_feature1", lang)}</li>
+                    <li>{t("pricing_plus_feature2", lang)}</li>
+                    <li>{t("pricing_plus_feature3", lang)}</li>
+                    <li>{t("pricing_plus_feature4", lang)}</li>
+                    <li>{t("pricing_plus_feature5", lang)}</li>
+                    <li>{t("pricing_plus_feature6", lang)}</li>
+                    <li>{t("pricing_plus_feature7", lang)}</li>
+                    <li>{t("pricing_plus_feature8", lang)}</li>
+                </ul>
+                <button class="pricing-cta">{t("hero_cta_primary", lang)}</button>
+            </article>
+            
+            <!-- PRO Tier -->
+            <article class="pricing-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.3s both;">
+                <div class="pricing-badge" style="background: var(--gradient-accent);">{t("pricing_pro_badge", lang)}</div>
+                <div class="pricing-tier">{t("pricing_pro_title", lang)}</div>
+                <div class="pricing-price">{t("pricing_pro_price", lang)}</div>
+                <div class="pricing-period">{t("pricing_pro_period", lang)}</div>
+                <div class="pricing-desc">{t("pricing_pro_desc", lang)}</div>
+                <ul class="pricing-features">
+                    <li>{t("pricing_pro_feature1", lang)}</li>
+                    <li>{t("pricing_pro_feature2", lang)}</li>
+                    <li>{t("pricing_pro_feature3", lang)}</li>
+                    <li>{t("pricing_pro_feature4", lang)}</li>
+                    <li>{t("pricing_pro_feature5", lang)}</li>
+                    <li>{t("pricing_pro_feature6", lang)}</li>
+                    <li>{t("pricing_pro_feature7", lang)}</li>
+                    <li>{t("pricing_pro_feature8", lang)}</li>
+                </ul>
+                <button class="pricing-cta">{t("hero_cta_primary", lang)}</button>
+            </article>
+        </section>
         
         {render_footer(lang)}
     </body>
@@ -1753,75 +1936,31 @@ def intro_page(lang: str = "ko") -> str:
             </article>
         </section>
         
+        <!-- Developer Profile Section (Compact version) -->
         <div class="container">
+            <div style="background: var(--gradient-card); padding: var(--space-10); border-radius: var(--radius-xl); margin-top: var(--space-20); border: 2px solid var(--accent-soft); box-shadow: var(--shadow-xl);">
+                <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6); color: var(--text-primary); text-align: center;">
+                    👨‍💻 {t("developer_title", lang)}
+                </h2>
                 
-                <!-- Developer Profile Section -->
-                <div style="background: var(--gradient-card); padding: var(--space-10); border-radius: var(--radius-card); margin-top: var(--space-8); border: 2px solid var(--accent-soft);">
-                    <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6); color: var(--text-primary); text-align: center;">
-                        👨‍💻 {t("developer_title", lang)}
-                    </h2>
-                    
-                    <div style="text-align: center; margin-bottom: var(--space-8);">
-                        <h3 style="font-size: var(--text-xl); font-weight: 600; color: var(--accent-primary); margin-bottom: var(--space-2);">
-                            {t("developer_name", lang)}
-                        </h3>
-                        <p style="font-size: var(--text-base); color: var(--text-tertiary);">
-                            {t("developer_affiliation", lang)}
-                        </p>
-                    </div>
-                    
-                    <div style="margin-bottom: var(--space-8);">
-                        <h4 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
-                            🔬 {t("developer_research_title", lang)}
-                        </h4>
-                        <ul style="color: var(--text-secondary); line-height: 2; font-size: var(--text-sm); list-style: none; padding: 0;">
-                            <li>• {t("developer_research_1", lang)}</li>
-                            <li>• {t("developer_research_2", lang)}</li>
-                            <li>• {t("developer_research_3", lang)}</li>
-                            <li>• {t("developer_research_4", lang)}</li>
-                            <li>• {t("developer_research_5", lang)}</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="margin-bottom: var(--space-8);">
-                        <h4 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
-                            🎯 {t("developer_vision_title", lang)}
-                        </h4>
-                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: var(--text-sm);">
-                            {t("developer_vision_content", lang)}
-                        </p>
-                    </div>
-                    
-                    <div style="margin-bottom: var(--space-6);">
-                        <h4 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
-                            💡 {t("developer_philosophy_title", lang)}
-                        </h4>
-                        <ul style="color: var(--text-secondary); line-height: 2; font-size: var(--text-sm); list-style: none; padding: 0;">
-                            <li>✅ {t("developer_philosophy_1", lang)}</li>
-                            <li>✅ {t("developer_philosophy_2", lang)}</li>
-                            <li>✅ {t("developer_philosophy_3", lang)}</li>
-                            <li>✅ {t("developer_philosophy_4", lang)}</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="text-align: center; padding-top: var(--space-6); border-top: 1px solid rgba(0,0,0,0.1);">
-                        <h4 style="font-size: var(--text-base); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">
-                            📧 {t("developer_contact_title", lang)}
-                        </h4>
-                        <p style="font-size: var(--text-sm); color: var(--text-tertiary); margin-bottom: var(--space-2);">
-                            {t("developer_contact_dept", lang)}
-                        </p>
-                        <p style="font-size: var(--text-sm); color: var(--accent-primary);">
-                            <a href="https://github.com/multipia-creator/nexus-on" target="_blank" style="color: var(--accent-primary); text-decoration: none;">
-                                🔗 {t("developer_contact_project", lang)}
-                            </a>
-                        </p>
-                    </div>
+                <div style="text-align: center; margin-bottom: var(--space-4);">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; color: var(--accent-primary); margin-bottom: var(--space-2);">
+                        {t("developer_name", lang)}
+                    </h3>
+                    <p style="font-size: var(--text-base); color: var(--text-tertiary); margin-bottom: var(--space-6);">
+                        {t("developer_affiliation", lang)}
+                    </p>
+                    <a href="/developer?lang={lang}" style="display: inline-block; padding: var(--space-3) var(--space-8); background: var(--gradient-accent); color: white; border-radius: var(--radius-pill); text-decoration: none; font-weight: 600; font-size: var(--text-sm); transition: all var(--duration-ui) var(--ease-out); box-shadow: var(--shadow-md);">
+                        View Full Profile →
+                    </a>
                 </div>
-                
-                <div style="text-align: center; margin-top: var(--space-12);">
-                    <a href="/modules?lang={lang}" class="btn-glass-primary">{t("nav_modules", lang)}</a>
-                </div>
+            </div>
+            
+            <!-- CTA Section -->
+            <div style="text-align: center; margin-top: var(--space-20); margin-bottom: var(--space-12);">
+                <a href="/modules?lang={lang}" class="btn-glass-primary" style="font-size: var(--text-lg); padding: var(--space-5) var(--space-12);">
+                    {t("nav_modules", lang)} →
+                </a>
             </div>
         </div>
         
@@ -2103,35 +2242,83 @@ def developer_page(lang: str = "ko") -> str:
 
 
 def modules_page(lang: str = "ko") -> str:
-    """Render modules page with module cards."""
-    modules = load_modules_data()
+    """Render premium modules page with 8 module cards."""
+    
+    # Define 8 modules based on the image
+    modules = [
+        {
+            "key": "bot",
+            "icon": "🤖",
+            "status": "production",
+            "status_label": t("module_bot_status", lang)
+        },
+        {
+            "key": "shield",
+            "icon": "🛡️",
+            "status": "production",
+            "status_label": t("module_shield_status", lang)
+        },
+        {
+            "key": "filesearch",
+            "icon": "📚",
+            "status": "beta",
+            "status_label": t("module_filesearch_status", lang)
+        },
+        {
+            "key": "youtube",
+            "icon": "▶️",
+            "status": "production",
+            "status_label": t("module_youtube_status", lang)
+        },
+        {
+            "key": "fileedit",
+            "icon": "✏️",
+            "status": "beta",
+            "status_label": t("module_fileedit_status", lang)
+        },
+        {
+            "key": "users",
+            "icon": "👥",
+            "status": "production",
+            "status_label": t("module_users_status", lang)
+        },
+        {
+            "key": "monitor",
+            "icon": "🖥️",
+            "status": "beta",
+            "status_label": t("module_monitor_status", lang)
+        },
+        {
+            "key": "activity",
+            "icon": "📊",
+            "status": "alpha",
+            "status_label": t("module_activity_status", lang)
+        }
+    ]
     
     modules_html = ""
-    for module in modules:
-        status_color = {
-            "stable": "var(--status-green)",
-            "beta": "var(--status-yellow)",
-            "alpha": "var(--status-red)"
-        }.get(module.get("status", "alpha"), "var(--status-red)")
+    for idx, module in enumerate(modules):
+        status_colors = {
+            "production": "#10B981",  # Green
+            "beta": "#F59E0B",        # Orange
+            "alpha": "#EF4444"        # Red
+        }
+        status_color = status_colors.get(module["status"], "#6B7280")
+        
+        delay = (idx + 1) * 0.1
         
         modules_html += f"""
-        <div class="value-card" style="text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
-                <div style="font-size: 48px;">{module.get('icon', '📦')}</div>
-                <div style="background: {status_color}; color: white; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600;">
-                    {module.get('status_label', module.get('status', 'Unknown'))}
-                </div>
+        <article class="module-card" style="animation: scale-in 0.5s var(--ease-out) {delay}s both;">
+            <div class="module-header">
+                <span class="module-icon">{module['icon']}</span>
+                <span class="module-status" style="background: {status_color};">
+                    {module['status_label']}
+                </span>
             </div>
-            <h3 style="font-size: var(--text-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">
-                {module.get('name', 'Unknown Module')}
-            </h3>
-            <p style="font-size: var(--text-sm); color: var(--text-tertiary); margin-bottom: var(--space-4);">
-                {module.get('tagline', '')}
-            </p>
-            <p style="font-size: var(--text-base); color: var(--text-secondary); line-height: 1.6;">
-                {module.get('description', '')}
-            </p>
-        </div>
+            <h3 class="module-title">{t(f"module_{module['key']}_title", lang)}</h3>
+            <p class="module-subtitle">{t(f"module_{module['key']}_subtitle", lang)}</p>
+            <p class="module-desc">{t(f"module_{module['key']}_desc", lang)}</p>
+        </article>
         """
     
     return f"""
@@ -2142,6 +2329,105 @@ def modules_page(lang: str = "ko") -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{t("nav_modules", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
+        <style>
+            .modules-hero {{
+                background: var(--gradient-hero);
+                padding: var(--space-20) var(--space-6) var(--space-12);
+                text-align: center;
+            }}
+            
+            .modules-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+                gap: var(--space-6);
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: var(--space-12) var(--space-6) var(--space-20);
+            }}
+            
+            .module-card {{
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                padding: var(--space-8);
+                border: 1px solid var(--border-default);
+                box-shadow: var(--shadow-lg);
+                transition: all var(--duration-slow) var(--ease-out);
+                position: relative;
+                overflow: hidden;
+            }}
+            
+            .module-card::before {{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--gradient-accent);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform var(--duration-slow) var(--ease-out);
+            }}
+            
+            .module-card:hover {{
+                transform: translateY(-8px);
+                box-shadow: var(--shadow-2xl);
+                border-color: var(--accent-primary);
+            }}
+            
+            .module-card:hover::before {{
+                transform: scaleX(1);
+            }}
+            
+            .module-header {{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: var(--space-6);
+            }}
+            
+            .module-icon {{
+                font-size: 56px;
+                display: block;
+            }}
+            
+            .module-status {{
+                color: white;
+                padding: 6px 16px;
+                border-radius: var(--radius-pill);
+                font-size: var(--text-xs);
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                box-shadow: var(--shadow-sm);
+            }}
+            
+            .module-title {{
+                font-size: var(--text-2xl);
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: var(--space-2);
+            }}
+            
+            .module-subtitle {{
+                font-size: var(--text-base);
+                color: var(--text-tertiary);
+                font-weight: 500;
+                margin-bottom: var(--space-4);
+            }}
+            
+            .module-desc {{
+                font-size: var(--text-sm);
+                color: var(--text-secondary);
+                line-height: 1.7;
+            }}
+            
+            @media (max-width: 768px) {{
+                .modules-grid {{
+                    grid-template-columns: 1fr;
+                }}
+            }}
+        </style>
     </head>
     <body data-page-state="speaking">
         {render_navigation("/modules", lang)}
@@ -2149,20 +2435,21 @@ def modules_page(lang: str = "ko") -> str:
         <!-- Live2D Character (Speaking state for modules) -->
         {render_live2d_component("speaking")}
         
-        <div class="container">
+        <!-- Hero Section -->
+        <section class="modules-hero">
             <h1 class="section-title">{t("modules_title", lang)}</h1>
             <p class="section-subtitle">{t("modules_subtitle", lang)}</p>
-            
-            <div style="text-align: center; margin-bottom: var(--space-12);">
-                <span style="background: var(--gradient-accent); color: white; padding: var(--space-2) var(--space-6); border-radius: var(--radius-pill); font-weight: 600;">
-                    {len(modules)} {t("modules_count", lang)}
+            <div style="margin-top: var(--space-6);">
+                <span style="background: var(--gradient-accent); color: white; padding: var(--space-3) var(--space-8); border-radius: var(--radius-pill); font-weight: 700; font-size: var(--text-lg); box-shadow: var(--shadow-lg);">
+                    8 {t("modules_count", lang)}
                 </span>
             </div>
-            
-            <div class="core-values-grid">
-                {modules_html}
-            </div>
-        </div>
+        </section>
+        
+        <!-- Modules Grid -->
+        <section class="modules-grid">
+            {modules_html}
+        </section>
         
         {render_footer(lang)}
     </body>

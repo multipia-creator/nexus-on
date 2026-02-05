@@ -170,6 +170,184 @@ export function modulesPage(lang: Language = 'ko'): string {
             ${modulesHTML}
         </section>
         
+        <!-- Workflow Library Section -->
+        <div class="container" style="margin-top: var(--space-20); margin-bottom: var(--space-20);">
+            <div style="text-align: center; margin-bottom: var(--space-12);">
+                <h2 style="font-size: var(--text-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-4);">
+                    💼 ${t('modules_workflow_title', lang)}
+                </h2>
+                <p style="font-size: var(--text-lg); color: var(--text-secondary);">
+                    ${t('modules_workflow_subtitle', lang)}
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6);">
+                <div class="module-card">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                        ${t('modules_workflow_email', lang)}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+                        ${t('modules_workflow_email_desc', lang)}
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${t('modules_workflow_email_modules', lang).split(', ').map(m => 
+                            `<span style="background: var(--accent-soft); color: var(--accent-primary); padding: 4px 12px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600;">${m}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                        ${t('modules_workflow_doc', lang)}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+                        ${t('modules_workflow_doc_desc', lang)}
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${t('modules_workflow_doc_modules', lang).split(', ').map(m => 
+                            `<span style="background: var(--accent-soft); color: var(--accent-primary); padding: 4px 12px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600;">${m}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                        ${t('modules_workflow_youtube', lang)}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+                        ${t('modules_workflow_youtube_desc', lang)}
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${t('modules_workflow_youtube_modules', lang).split(', ').map(m => 
+                            `<span style="background: var(--accent-soft); color: var(--accent-primary); padding: 4px 12px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600;">${m}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                        ${t('modules_workflow_security', lang)}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+                        ${t('modules_workflow_security_desc', lang)}
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${t('modules_workflow_security_modules', lang).split(', ').map(m => 
+                            `<span style="background: var(--accent-soft); color: var(--accent-primary); padding: 4px 12px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600;">${m}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                        ${t('modules_workflow_team', lang)}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+                        ${t('modules_workflow_team_desc', lang)}
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${t('modules_workflow_team_modules', lang).split(', ').map(m => 
+                            `<span style="background: var(--accent-soft); color: var(--accent-primary); padding: 4px 12px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600;">${m}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="module-card">
+                    <h3 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                        ${t('modules_workflow_monitoring', lang)}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+                        ${t('modules_workflow_monitoring_desc', lang)}
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                        ${t('modules_workflow_monitoring_modules', lang).split(', ').map(m => 
+                            `<span style="background: var(--accent-soft); color: var(--accent-primary); padding: 4px 12px; border-radius: var(--radius-md); font-size: var(--text-xs); font-weight: 600;">${m}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Comparison Table Section -->
+        <div class="container" style="margin-bottom: var(--space-20);">
+            <div style="text-align: center; margin-bottom: var(--space-12);">
+                <h2 style="font-size: var(--text-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-4);">
+                    📊 ${t('modules_comparison_title', lang)}
+                </h2>
+                <p style="font-size: var(--text-lg); color: var(--text-secondary);">
+                    ${t('modules_comparison_subtitle', lang)}
+                </p>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);">
+                    <thead style="background: var(--gradient-accent); color: white;">
+                        <tr>
+                            <th style="padding: var(--space-4); text-align: left; font-weight: 700; border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                ${t('modules_comparison_feature', lang)}
+                            </th>
+                            <th style="padding: var(--space-4); text-align: center; font-weight: 700; border-bottom: 2px solid rgba(255,255,255,0.2); background: rgba(139, 92, 246, 0.9);">
+                                ${t('modules_comparison_nexus', lang)}
+                            </th>
+                            <th style="padding: var(--space-4); text-align: center; font-weight: 700; border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                ${t('modules_comparison_copilot', lang)}
+                            </th>
+                            <th style="padding: var(--space-4); text-align: center; font-weight: 700; border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                ${t('modules_comparison_chatgpt', lang)}
+                            </th>
+                            <th style="padding: var(--space-4); text-align: center; font-weight: 700; border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                ${t('modules_comparison_claude', lang)}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-default);">
+                            <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${t('modules_comparison_live2d', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; background: rgba(139, 92, 246, 0.05); font-size: 24px;">${t('modules_comparison_yes', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-default);">
+                            <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${t('modules_comparison_korean', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; background: rgba(139, 92, 246, 0.05); font-size: 24px;">${t('modules_comparison_yes', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_partial', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_partial', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_partial', lang)}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-default);">
+                            <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${t('modules_comparison_local', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; background: rgba(139, 92, 246, 0.05); font-size: 24px;">${t('modules_comparison_yes', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-default);">
+                            <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${t('modules_comparison_hitl', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; background: rgba(139, 92, 246, 0.05); font-size: 24px;">${t('modules_comparison_yes', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-default);">
+                            <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${t('modules_comparison_modules', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; background: rgba(139, 92, 246, 0.05); font-size: 24px;">${t('modules_comparison_yes', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_partial', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: var(--space-4); font-weight: 600; color: var(--text-primary);">${t('modules_comparison_monitoring', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; background: rgba(139, 92, 246, 0.05); font-size: 24px;">${t('modules_comparison_yes', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                            <td style="padding: var(--space-4); text-align: center; font-size: 24px;">${t('modules_comparison_no', lang)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
         ${renderFooter(lang)}
     </body>
     </html>

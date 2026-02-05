@@ -191,6 +191,73 @@ export function introPage(lang: Language = 'ko'): string {
             </article>
         </section>
         
+        <!-- Product Philosophy Section -->
+        <div class="container" style="margin-top: var(--space-20);">
+            <div class="intro-hero" style="padding: var(--space-12) var(--space-6);">
+                <h2 style="font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-4);">
+                    💡 ${t('intro_philosophy_title', lang)}
+                </h2>
+                <p style="font-size: var(--text-lg); color: var(--text-secondary); margin-bottom: var(--space-10);">
+                    ${t('intro_philosophy_subtitle', lang)}
+                </p>
+                
+                <div class="features-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6);">
+                    <div class="feature-card">
+                        <h3 class="feature-title">🤝 ${t('intro_philosophy_hitl', lang)}</h3>
+                        <p class="feature-content">${t('intro_philosophy_hitl_desc', lang)}</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">✅ ${t('intro_philosophy_approvals', lang)}</h3>
+                        <p class="feature-content">${t('intro_philosophy_approvals_desc', lang)}</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3 class="feature-title">💰 ${t('intro_philosophy_cost', lang)}</h3>
+                        <p class="feature-content">${t('intro_philosophy_cost_desc', lang)}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ceria System States Section -->
+        <div class="container" style="margin-top: var(--space-16);">
+            <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%); padding: var(--space-12); border-radius: var(--radius-2xl); border: 2px solid var(--accent-soft);">
+                <h2 style="font-size: var(--text-3xl); font-weight: 700; text-align: center; margin-bottom: var(--space-4); color: var(--text-primary);">
+                    🎭 ${t('intro_ceria_title', lang)}
+                </h2>
+                <p style="font-size: var(--text-lg); color: var(--text-secondary); text-align: center; margin-bottom: var(--space-10);">
+                    ${t('intro_ceria_subtitle', lang)}
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+                    <div style="background: white; padding: var(--space-6); border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-default);">
+                        <div style="font-size: 36px; margin-bottom: var(--space-2);">😌</div>
+                        <h4 style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">${t('intro_ceria_idle', lang)}</h4>
+                        <p style="font-size: var(--text-sm); color: var(--text-tertiary);">${t('intro_ceria_idle_desc', lang)}</p>
+                    </div>
+                    <div style="background: white; padding: var(--space-6); border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-default);">
+                        <div style="font-size: 36px; margin-bottom: var(--space-2);">👂</div>
+                        <h4 style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">${t('intro_ceria_listening', lang)}</h4>
+                        <p style="font-size: var(--text-sm); color: var(--text-tertiary);">${t('intro_ceria_listening_desc', lang)}</p>
+                    </div>
+                    <div style="background: white; padding: var(--space-6); border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-default);">
+                        <div style="font-size: 36px; margin-bottom: var(--space-2);">🤔</div>
+                        <h4 style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">${t('intro_ceria_thinking', lang)}</h4>
+                        <p style="font-size: var(--text-sm); color: var(--text-tertiary);">${t('intro_ceria_thinking_desc', lang)}</p>
+                    </div>
+                    <div style="background: white; padding: var(--space-6); border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-default);">
+                        <div style="font-size: 36px; margin-bottom: var(--space-2);">🗣️</div>
+                        <h4 style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">${t('intro_ceria_speaking', lang)}</h4>
+                        <p style="font-size: var(--text-sm); color: var(--text-tertiary);">${t('intro_ceria_speaking_desc', lang)}</p>
+                    </div>
+                    <div style="background: white; padding: var(--space-6); border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-default);">
+                        <div style="font-size: 36px; margin-bottom: var(--space-2);">⚙️</div>
+                        <h4 style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2);">${t('intro_ceria_busy', lang)}</h4>
+                        <p style="font-size: var(--text-sm); color: var(--text-tertiary);">${t('intro_ceria_busy_desc', lang)}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Developer Profile Section (Compact version) -->
         <div class="container">
             <div style="background: var(--gradient-card); padding: var(--space-10); border-radius: var(--radius-xl); margin-top: var(--space-20); border: 2px solid var(--accent-soft); box-shadow: var(--shadow-xl);">

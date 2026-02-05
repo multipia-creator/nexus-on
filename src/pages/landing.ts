@@ -90,10 +90,21 @@ export function landingPage(lang: Language = 'ko'): string {
                 <div class="download-container">
                     <div class="download-main">
                         <div class="download-icon">💻</div>
-                        <a href="/downloads/windows" class="btn-glass-primary btn-lg">
+                        <a href="https://github.com/multipia-creator/nexus-on/tree/main/public/downloads/windows" 
+                           class="btn-glass-primary btn-lg" target="_blank">
                             ${t('download_cta', lang)}
                         </a>
                         <p class="download-info">${t('download_install_time', lang)}</p>
+                        <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;">
+                            <a href="https://github.com/multipia-creator/nexus-on/blob/main/public/downloads/windows/bootstrap.ps1" 
+                               class="btn-glass-secondary" target="_blank" style="font-size: 14px; padding: 8px 16px;">
+                                📜 PowerShell Script
+                            </a>
+                            <a href="https://github.com/multipia-creator/nexus-on/blob/main/public/downloads/windows/INSTALLATION_GUIDE.md" 
+                               class="btn-glass-secondary" target="_blank" style="font-size: 14px; padding: 8px 16px;">
+                                📖 Installation Guide
+                            </a>
+                        </div>
                     </div>
                     
                     <div class="download-requirements">

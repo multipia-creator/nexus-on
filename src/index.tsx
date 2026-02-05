@@ -8,8 +8,9 @@ const app = new Hono<HonoEnv>()
 // CORS 설정 (API 엔드포인트용)
 app.use('/api/*', cors())
 
-// 렌더러 설정
-app.use(renderer)
+// 렌더러 설정 (only for root and API routes)
+app.use('/', renderer)
+app.use('/api/*', renderer)
 
 // 메인 페이지
 app.get('/', (c) => {

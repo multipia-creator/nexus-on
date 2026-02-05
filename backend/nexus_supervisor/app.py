@@ -14,7 +14,8 @@ load_dotenv()  # Load environment variables from .env file
 
 import pika
 from fastapi import FastAPI, Header, HTTPException, Request, Body, Response, Query
-from fastapi.responses import PlainTextResponse, StreamingResponse, HTMLResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse, HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
@@ -99,6 +100,18 @@ setup_logging()
 logger = logging.getLogger("nexus_supervisor")
 
 app = FastAPI(title="NEXUS Supervisor", version="1.13.0")
+
+# Mount static files for Live2D and other assets
+# Place this BEFORE other routes to serve static files directly
+import os
+from pathlib import Path
+
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    logger.info(f"✅ Static files mounted from {static_dir}")
+else:
+    logger.warning(f"⚠️ Static directory not found: {static_dir}")
 
 store = TaskStore(settings.redis_url, settings.task_ttl_seconds)
 nonce_store = NonceStore(settings.redis_url, settings.callback_nonce_ttl_seconds, settings.callback_nonce_store_path)
@@ -2217,6 +2230,25 @@ def landing_page(lang: str = "ko"):
 def intro_page(lang: str = "ko"):
     """Intro page: purpose + core values + architecture + developer section."""
     return HTMLResponse(render_intro_page_i18n(lang))
+
+
+@app.get("/live2d-test")
+def live2d_test_page():
+    """
+    Live2D Haru Model Test Page.
+    
+    Interactive test page for the Live2D character model with:
+    - 26 animations (idle + 25 motions)
+    - Auto eye blinking
+    - Lip-sync support (ParamMouthOpenY)
+    - Physics simulation
+    """
+    # Serve the static HTML file
+    static_file = Path(__file__).parent.parent / "static" / "live2d-test.html"
+    if static_file.exists():
+        return FileResponse(static_file, media_type="text/html")
+    else:
+        raise HTTPException(status_code=404, detail="Live2D test page not found")
 
 
 @app.get("/developer")

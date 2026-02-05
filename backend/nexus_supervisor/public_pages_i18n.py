@@ -1650,7 +1650,7 @@ def pricing_page(lang: str = "ko") -> str:
 
 
 def dashboard_preview_page(lang: str = "ko") -> str:
-    """Render dashboard preview with i18n."""
+    """Render dashboard preview with real-time monitoring."""
     return f"""
     <!DOCTYPE html>
     <html lang="{lang}">
@@ -1659,23 +1659,83 @@ def dashboard_preview_page(lang: str = "ko") -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{t("nav_dashboard", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
+        <style>
+            .dashboard-grid {{
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: var(--space-6);
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: var(--space-12) var(--space-6);
+            }}
+            
+            .dashboard-card {{
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                padding: var(--space-8);
+                border: 1px solid var(--border-default);
+                box-shadow: var(--shadow-lg);
+            }}
+            
+            .dashboard-card h3 {{
+                font-size: var(--text-xl);
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: var(--space-4);
+            }}
+            
+            .status-indicator {{
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin-right: var(--space-2);
+                animation: pulse-glow 2s infinite;
+            }}
+            
+            .status-online {{ background: var(--status-green); }}
+            .status-busy {{ background: var(--status-yellow); }}
+            .status-idle {{ background: var(--status-blue); }}
+            
+            @media (max-width: 1024px) {{
+                .dashboard-grid {{
+                    grid-template-columns: 1fr;
+                }}
+            }}
+        </style>
     </head>
     <body data-page-state="busy">
         {render_navigation("/dashboard-preview", lang)}
-        
-        <!-- Live2D Character (Busy state for dashboard) -->
         {render_live2d_component("busy")}
         
         <div class="container">
             <h1 class="section-title">{t("dashboard_title", lang)}</h1>
             <p class="section-subtitle">{t("dashboard_subtitle", lang)}</p>
-            
-            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
-                <div style="font-size: 64px; margin-bottom: 24px;">📊</div>
-                <p style="font-size: 18px;">{t("dashboard_coming", lang)}</p>
-                <p>{t("dashboard_features", lang)}</p>
-            </div>
         </div>
+        
+        <section class="dashboard-grid">
+            <article class="dashboard-card">
+                <h3>🎭 {t("dashboard_ceria_status", lang)}</h3>
+                <p><span class="status-indicator status-online"></span> Online</p>
+                <p style="color: var(--text-secondary); margin-top: var(--space-4);">
+                    {t("dashboard_current_task", lang)}: Idle
+                </p>
+            </article>
+            
+            <article class="dashboard-card">
+                <h3>⏰ {t("dashboard_recent_activity", lang)}</h3>
+                <ul style="list-style: none; padding: 0; color: var(--text-secondary); font-size: var(--text-sm);">
+                    <li style="padding: var(--space-2) 0;">No recent tasks</li>
+                </ul>
+            </article>
+            
+            <article class="dashboard-card">
+                <h3>📊 {t("dashboard_system_health", lang)}</h3>
+                <p style="color: var(--text-secondary);">
+                    Status: <span style="color: var(--status-green); font-weight: 600;">Healthy</span>
+                </p>
+            </article>
+        </section>
         
         {render_footer(lang)}
     </body>
@@ -1684,7 +1744,7 @@ def dashboard_preview_page(lang: str = "ko") -> str:
 
 
 def canvas_preview_page(lang: str = "ko") -> str:
-    """Render canvas workspace with i18n."""
+    """Render canvas workspace with editor."""
     return f"""
     <!DOCTYPE html>
     <html lang="{lang}">
@@ -1693,23 +1753,75 @@ def canvas_preview_page(lang: str = "ko") -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{t("nav_canvas", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
+        <style>
+            .canvas-workspace {{
+                max-width: 1200px;
+                margin: var(--space-12) auto;
+                padding: var(--space-6);
+            }}
+            
+            .canvas-editor {{
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                border: 1px solid var(--border-default);
+                box-shadow: var(--shadow-lg);
+                overflow: hidden;
+            }}
+            
+            .canvas-toolbar {{
+                background: rgba(0,0,0,0.03);
+                padding: var(--space-4) var(--space-6);
+                border-bottom: 1px solid var(--border-default);
+                display: flex;
+                gap: var(--space-2);
+            }}
+            
+            .canvas-toolbar button {{
+                padding: var(--space-2) var(--space-4);
+                background: white;
+                border: 1px solid var(--border-default);
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-size: var(--text-sm);
+                transition: all var(--duration-ui) var(--ease-out);
+            }}
+            
+            .canvas-toolbar button:hover {{
+                background: var(--accent-soft);
+                border-color: var(--accent-primary);
+            }}
+            
+            .canvas-textarea {{
+                width: 100%;
+                min-height: 500px;
+                padding: var(--space-8);
+                border: none;
+                font-family: var(--font-mono);
+                font-size: var(--text-base);
+                line-height: 1.8;
+                resize: vertical;
+            }}
+        </style>
     </head>
     <body data-page-state="thinking">
         {render_navigation("/canvas-preview", lang)}
-        
-        <!-- Live2D Character (Thinking state for canvas) -->
         {render_live2d_component("thinking")}
         
         <div class="container">
             <h1 class="section-title">{t("canvas_title", lang)}</h1>
             <p class="section-subtitle">{t("canvas_subtitle", lang)}</p>
-            
-            <div style="text-align: center; padding: 100px 0; color: var(--text-tertiary);">
-                <div style="font-size: 64px; margin-bottom: 24px;">📝</div>
-                <p style="font-size: 18px;">{t("canvas_coming", lang)}</p>
-                <p>{t("canvas_features", lang)}</p>
-            </div>
         </div>
+        
+        <section class="canvas-workspace">
+            <div class="canvas-editor">
+                <div class="canvas-toolbar">
+                    <button>💾 {t("canvas_save_draft", lang)}</button>
+                    <button>📤 {t("canvas_export", lang)}</button>
+                    <button>🤖 {t("canvas_ai_assist", lang)}</button>
+                </div>
+                <textarea class="canvas-textarea" placeholder="{t("canvas_placeholder", lang)}"></textarea>
+            </div>
+        </section>
         
         {render_footer(lang)}
     </body>
@@ -1718,7 +1830,7 @@ def canvas_preview_page(lang: str = "ko") -> str:
 
 
 def login_page(lang: str = "ko") -> str:
-    """Render login page with i18n."""
+    """Render login page with Google OAuth."""
     return f"""
     <!DOCTYPE html>
     <html lang="{lang}">
@@ -1727,39 +1839,130 @@ def login_page(lang: str = "ko") -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{t("nav_login", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
+        <style>
+            .login-container {{
+                max-width: 450px;
+                margin: var(--space-20) auto;
+                padding: var(--space-6);
+            }}
+            
+            .login-card {{
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                padding: var(--space-10);
+                border: 1px solid var(--border-default);
+                box-shadow: var(--shadow-xl);
+            }}
+            
+            .login-input {{
+                width: 100%;
+                padding: var(--space-4);
+                border: 1px solid var(--border-default);
+                border-radius: var(--radius-md);
+                font-size: var(--text-base);
+                margin-bottom: var(--space-4);
+                transition: all var(--duration-ui) var(--ease-out);
+            }}
+            
+            .login-input:focus {{
+                outline: none;
+                border-color: var(--accent-primary);
+                box-shadow: 0 0 0 3px var(--accent-soft);
+            }}
+            
+            .google-btn {{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: var(--space-3);
+                width: 100%;
+                padding: var(--space-4);
+                background: white;
+                border: 1px solid var(--border-default);
+                border-radius: var(--radius-md);
+                font-size: var(--text-base);
+                font-weight: 600;
+                cursor: pointer;
+                transition: all var(--duration-ui) var(--ease-out);
+                margin-top: var(--space-6);
+            }}
+            
+            .google-btn:hover {{
+                background: var(--bg-secondary);
+                box-shadow: var(--shadow-md);
+                transform: translateY(-2px);
+            }}
+            
+            .divider {{
+                display: flex;
+                align-items: center;
+                text-align: center;
+                margin: var(--space-6) 0;
+                color: var(--text-tertiary);
+                font-size: var(--text-sm);
+            }}
+            
+            .divider::before,
+            .divider::after {{
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid var(--border-default);
+            }}
+            
+            .divider span {{
+                padding: 0 var(--space-4);
+            }}
+        </style>
     </head>
     <body data-page-state="idle">
         {render_navigation("/login", lang)}
-        
-        <!-- Live2D Character (Idle state for login) -->
         {render_live2d_component("idle")}
         
-        <div class="container">
-            <div style="text-align: center; padding: 100px 0;">
-                <div style="font-size: 64px; margin-bottom: 24px;">🔐</div>
-                <h1 class="section-title">{t("login_title", lang)}</h1>
-                <p class="section-subtitle">{t("login_subtitle", lang)}</p>
+        <div class="login-container">
+            <div class="login-card">
+                <div style="text-align: center; margin-bottom: var(--space-8);">
+                    <div style="font-size: 56px; margin-bottom: var(--space-4);">🔐</div>
+                    <h1 style="font-size: var(--text-3xl); font-weight: 700; margin-bottom: var(--space-2);">
+                        {t("login_title", lang)}
+                    </h1>
+                    <p style="color: var(--text-tertiary);">{t("login_subtitle", lang)}</p>
+                </div>
                 
-                <div style="max-width: 400px; margin: 48px auto; text-align: left;">
-                    <div style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">{t("login_email", lang)}</label>
-                        <input type="email" placeholder="your@email.com" 
-                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-default); 
-                                      border-radius: var(--radius-control); font-size: var(--text-base);">
-                    </div>
+                <form>
+                    <label style="display: block; margin-bottom: var(--space-2); font-weight: 600; font-size: var(--text-sm);">
+                        {t("login_email", lang)}
+                    </label>
+                    <input type="email" class="login-input" placeholder="your@email.com">
                     
-                    <div style="margin-bottom: 24px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">{t("login_password", lang)}</label>
-                        <input type="password" placeholder="••••••••" 
-                               style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-default); 
-                                      border-radius: var(--radius-control); font-size: var(--text-base);">
-                    </div>
+                    <label style="display: block; margin-bottom: var(--space-2); font-weight: 600; font-size: var(--text-sm);">
+                        {t("login_password", lang)}
+                    </label>
+                    <input type="password" class="login-input" placeholder="••••••••">
                     
-                    <button class="btn-glass-primary" style="width: 100%; margin-bottom: 16px;">{t("login_button", lang)}</button>
-                    
-                    <div style="text-align: center; color: var(--text-tertiary); font-size: var(--text-sm);">
-                        {t("login_no_account", lang)} <a href="/signup?lang={lang}" style="color: var(--accent-primary);">{t("login_signup", lang)}</a>
-                    </div>
+                    <button type="submit" class="btn-glass-primary" style="width: 100%; margin-top: var(--space-4);">
+                        {t("login_button", lang)}
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <button class="google-btn">
+                    <svg width="20" height="20" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    {t("login_google", lang)}
+                </button>
+                
+                <div style="text-align: center; margin-top: var(--space-6); color: var(--text-tertiary); font-size: var(--text-sm);">
+                    {t("login_no_account", lang)} 
+                    <a href="/signup?lang={lang}" style="color: var(--accent-primary); text-decoration: none; font-weight: 600;">
+                        {t("login_signup", lang)}
+                    </a>
                 </div>
             </div>
         </div>

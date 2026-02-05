@@ -102,6 +102,105 @@ TRANSLATIONS = {
         "modules_subtitle": "8개의 핵심 모듈로 구성된 강력한 AI 에이전트",
         "modules_count": "개 모듈",
         
+        # Intro Page - World-class differentiators
+        "intro_worldclass_title": "세계 최고 수준의 AI 비서",
+        "intro_worldclass_subtitle": "NEXUS-ON이 다른 AI 비서와 차별화되는 이유",
+        "intro_feature1_title": "🎭 Live2D 캐릭터 비서",
+        "intro_feature1_content": "단순한 챗봇이 아닙니다. 화면에 항상 존재하는 Live2D 캐릭터가 5가지 상태(Idle, Listening, Thinking, Speaking, Busy)로 현재 작업을 시각적으로 표현합니다. Haru 모델 기반으로 실시간 애니메이션과 립싱크를 지원합니다.",
+        "intro_feature2_title": "🛡️ Human-in-the-loop 승인 시스템",
+        "intro_feature2_content": "ShieldCheck 시스템이 모든 작업을 위험도에 따라 GREEN/YELLOW/RED로 분류합니다. 파일 삭제나 외부 공유 같은 위험한 작업은 반드시 사용자 승인이 필요하며, Two-phase commit 프로토콜로 안전성을 보장합니다.",
+        "intro_feature3_title": "📚 한국어 네이티브 지원",
+        "intro_feature3_content": "HWP(한글 파일)을 외부 변환 없이 직접 처리하는 FileSearch 엔진을 탑재했습니다. Token overlap 기반 RAG로 한국어 학술 워크플로우에 최적화되어 있으며, 매일 03:00 KST에 자동으로 문서를 색인합니다.",
+        "intro_feature4_title": "🔄 멀티 에이전트 오케스트레이션",
+        "intro_feature4_content": "8개의 전문화된 모듈(Bot, ShieldCheck, FileSearch, Youtube, FileEdit, Users, MonitorCheck, Activity)이 협업하여 복잡한 작업을 자동으로 수행합니다. Claude Sonnet 4.5 기반으로 멀티스텝 작업을 지능적으로 처리합니다.",
+        "intro_feature5_title": "🏠 Local-first 아키텍처",
+        "intro_feature5_content": "모든 데이터는 로컬에서 처리되며 클라우드 업로드 없이 안전합니다. Multi-tenant 지원으로 조직 단위 배포가 가능하며, org-id 및 project-id 기반 격리로 데이터 유출을 원천 차단합니다.",
+        "intro_feature6_title": "🎯 실시간 작업 모니터링",
+        "intro_feature6_content": "SSE(Server-Sent Events)를 통해 세리아의 모든 행동을 실시간으로 추적합니다. Live2D 캐릭터가 작업 상태를 즉시 반영하며, RED 작업 시 Alert glow(빨간 테두리)로 승인 대기를 시각화합니다.",
+        
+        # Modules Page - Individual modules
+        "module_bot_title": "Bot",
+        "module_bot_subtitle": "Character Assistant Core",
+        "module_bot_desc": "Live2D 캐릭터 + Claude Sonnet 4.5 대화형 에이전트. NEXUS의 심장부로, 4가지 애니메이션 상태를 통해 시각적 피드백을 제공하며 멀티턴 컨텍스트를 유지합니다.",
+        "module_bot_status": "Production Ready",
+        
+        "module_shield_title": "ShieldCheck",
+        "module_shield_subtitle": "Human-in-the-loop Approval System",
+        "module_shield_desc": "위험 기반 승인 워크플로우 (GREEN/YELLOW/RED). 자동 실행, 알림, 명시적 승인의 3단계 게이트로 NEXUS가 무분별하게 행동하지 않도록 보호합니다.",
+        "module_shield_status": "Production Ready",
+        
+        "module_filesearch_title": "FileSearch",
+        "module_filesearch_subtitle": "RAG Engine (Token Overlap)",
+        "module_filesearch_desc": "Token overlap 기반 검색으로 한국어 HWP 네이티브 지원. RAG 엔진은 한국어 학술 워크플로우에 최적화되어 있으며, 매일 03:00 KST 자동 색인으로 증거 추적이 가능합니다.",
+        "module_filesearch_status": "Beta - Active Development",
+        
+        "module_youtube_title": "Youtube",
+        "module_youtube_subtitle": "YouTube Integration",
+        "module_youtube_desc": "연구 및 학습 워크플로우를 위한 완전한 YouTube 통합. YouTube Data API v3로 검색, 큐 관리, 내장 플레이어를 지원하며 Live2D 캐릭터가 Speaking 상태로 비디오 콘텐츠를 설명합니다.",
+        "module_youtube_status": "Production Ready",
+        
+        "module_fileedit_title": "FileEdit",
+        "module_fileedit_subtitle": "Canvas Workspace",
+        "module_fileedit_desc": "멀티포맷 내보내기를 지원하는 협업 워크스페이스. 로컬 draft 저장소(서버 업로드 없음)로 문서를 작성하고 편집하며, Live2D 캐릭터가 Thinking 상태로 긴 draft 작업 시 표시됩니다.",
+        "module_fileedit_status": "Beta - Under Refinement",
+        
+        "module_users_title": "Users",
+        "module_users_subtitle": "Multi-tenant Context",
+        "module_users_desc": "팀 배포를 위한 엔터프라이즈급 멀티테넌시. org-id 및 project-id로 범위를 지정하며, 테넌트별 API 키로 자격 증명을 격리합니다. 비용 태깅과 감사 추적으로 완전한 책임성을 보장합니다.",
+        "module_users_status": "Production Ready",
+        
+        "module_monitor_title": "MonitorCheck",
+        "module_monitor_subtitle": "Windows Agent",
+        "module_monitor_desc": "Windows 환경 모니터링 에이전트 (베타). 시스템 상태를 추적하고 Live2D 캐릭터와 통합하여 시스템 이벤트를 실시간으로 보고합니다.",
+        "module_monitor_status": "Beta - Windows Agent",
+        
+        "module_activity_title": "Activity",
+        "module_activity_subtitle": "Activity Metrics",
+        "module_activity_desc": "알파 단계의 활동 메트릭 추적 시스템. 세리아의 모든 행동을 로깅하고 분석하여 사용 패턴과 효율성을 측정합니다.",
+        "module_activity_status": "Alpha - Metrics Only",
+        
+        # Pricing Page
+        "pricing_free_title": "FREE",
+        "pricing_free_price": "₩0",
+        "pricing_free_period": "영원히 무료",
+        "pricing_free_desc": "개인 사용자를 위한 기본 기능",
+        "pricing_free_feature1": "✅ Live2D 캐릭터 비서 (Haru 모델)",
+        "pricing_free_feature2": "✅ 기본 대화 (Claude Sonnet 4)",
+        "pricing_free_feature3": "✅ 로컬 파일 처리 (최대 100개)",
+        "pricing_free_feature4": "✅ ShieldCheck 승인 시스템",
+        "pricing_free_feature5": "✅ 한국어/영어 지원",
+        "pricing_free_feature6": "❌ 고급 모듈 (Youtube, FileSearch)",
+        "pricing_free_feature7": "❌ 팀 협업 기능",
+        "pricing_free_feature8": "❌ API 접근",
+        
+        "pricing_plus_title": "PLUS",
+        "pricing_plus_price": "₩29,000",
+        "pricing_plus_period": "/월",
+        "pricing_plus_desc": "전문가를 위한 고급 기능",
+        "pricing_plus_badge": "인기",
+        "pricing_plus_feature1": "✅ FREE의 모든 기능",
+        "pricing_plus_feature2": "✅ Claude Sonnet 4.5 (최신 모델)",
+        "pricing_plus_feature3": "✅ 모든 8개 모듈 사용 가능",
+        "pricing_plus_feature4": "✅ FileSearch RAG 엔진 (무제한)",
+        "pricing_plus_feature5": "✅ Youtube 통합 (1시간 캐싱)",
+        "pricing_plus_feature6": "✅ Canvas 워크스페이스 (무제한)",
+        "pricing_plus_feature7": "✅ 우선 지원 (24시간 응답)",
+        "pricing_plus_feature8": "❌ 팀 멀티테넌시",
+        
+        "pricing_pro_title": "PRO",
+        "pricing_pro_price": "₩99,000",
+        "pricing_pro_period": "/월",
+        "pricing_pro_desc": "조직을 위한 엔터프라이즈 솔루션",
+        "pricing_pro_badge": "추천",
+        "pricing_pro_feature1": "✅ PLUS의 모든 기능",
+        "pricing_pro_feature2": "✅ Multi-tenant 지원 (무제한 org/project)",
+        "pricing_pro_feature3": "✅ 팀 협업 (최대 50명)",
+        "pricing_pro_feature4": "✅ API 접근 (REST + SSE)",
+        "pricing_pro_feature5": "✅ 커스텀 Live2D 모델 지원",
+        "pricing_pro_feature6": "✅ 전용 서버 인스턴스",
+        "pricing_pro_feature7": "✅ 감사 로그 및 비용 태깅",
+        "pricing_pro_feature8": "✅ VIP 지원 (1시간 응답)",
+        
         # Developer Profile Section
         "developer_title": "개발자 소개",
         "developer_name": "남현우 교수",
@@ -179,6 +278,129 @@ TRANSLATIONS = {
         "login_button": "Sign In",
         "login_no_account": "Don't have an account?",
         "login_signup": "Sign Up",
+        "login_google": "Sign in with Google",
+        
+        # Intro Page - World-class differentiators
+        "intro_worldclass_title": "World-Class AI Assistant",
+        "intro_worldclass_subtitle": "What makes NEXUS-ON different from other AI assistants",
+        "intro_feature1_title": "🎭 Live2D Character Assistant",
+        "intro_feature1_content": "Not just a chatbot. A Live2D character always present on screen displays current tasks through 5 states (Idle, Listening, Thinking, Speaking, Busy). Based on Haru model with real-time animation and lip-sync support.",
+        "intro_feature2_title": "🛡️ Human-in-the-loop Approval System",
+        "intro_feature2_content": "ShieldCheck system classifies all tasks by risk level: GREEN/YELLOW/RED. Dangerous operations like file deletion or external sharing require user approval, with Two-phase commit protocol ensuring safety.",
+        "intro_feature3_title": "📚 Native Korean Support",
+        "intro_feature3_content": "FileSearch engine processes HWP (Hangul files) directly without external conversion. Token overlap-based RAG optimized for Korean academic workflows, with automatic indexing at 03:00 KST daily.",
+        "intro_feature4_title": "🔄 Multi-Agent Orchestration",
+        "intro_feature4_content": "8 specialized modules (Bot, ShieldCheck, FileSearch, Youtube, FileEdit, Users, MonitorCheck, Activity) collaborate to automatically handle complex tasks. Claude Sonnet 4.5-based intelligent multi-step processing.",
+        "intro_feature5_title": "🏠 Local-first Architecture",
+        "intro_feature5_content": "All data processed locally, safe without cloud uploads. Multi-tenant support enables organization-wide deployment, with org-id and project-id-based isolation preventing data leaks.",
+        "intro_feature6_title": "🎯 Real-time Task Monitoring",
+        "intro_feature6_content": "Track all of Ceria's actions in real-time via SSE (Server-Sent Events). Live2D character immediately reflects task status, with Alert glow (red border) visualizing approval pending for RED tasks.",
+        
+        # Modules Page - Individual modules
+        "module_bot_title": "Bot",
+        "module_bot_subtitle": "Character Assistant Core",
+        "module_bot_desc": "Live2D character + Claude Sonnet 4.5 conversational agent. Heart of NEXUS providing visual feedback through 4 animation states while maintaining multi-turn context.",
+        "module_bot_status": "Production Ready",
+        
+        "module_shield_title": "ShieldCheck",
+        "module_shield_subtitle": "Human-in-the-loop Approval System",
+        "module_shield_desc": "Risk-based approval workflow (GREEN/YELLOW/RED). 3-tier gates of auto-execute, notify, and explicit approval protect NEXUS from reckless actions.",
+        "module_shield_status": "Production Ready",
+        
+        "module_filesearch_title": "FileSearch",
+        "module_filesearch_subtitle": "RAG Engine (Token Overlap)",
+        "module_filesearch_desc": "Token overlap-based retrieval with native Korean HWP support. RAG engine optimized for Korean academic workflows, with automatic indexing at 03:00 KST daily enabling evidence tracking.",
+        "module_filesearch_status": "Beta - Active Development",
+        
+        "module_youtube_title": "Youtube",
+        "module_youtube_subtitle": "YouTube Integration",
+        "module_youtube_desc": "Full YouTube integration for research and learning workflows. YouTube Data API v3 supports search, queue management, and embedded player, with Live2D character in Speaking state describing video content.",
+        "module_youtube_status": "Production Ready",
+        
+        "module_fileedit_title": "FileEdit",
+        "module_fileedit_subtitle": "Canvas Workspace",
+        "module_fileedit_desc": "Collaborative workspace supporting multi-format export. Local draft storage (no server uploads) for document creation and editing, with Live2D character in Thinking state during long drafts.",
+        "module_fileedit_status": "Beta - Under Refinement",
+        
+        "module_users_title": "Users",
+        "module_users_subtitle": "Multi-tenant Context",
+        "module_users_desc": "Enterprise-grade multi-tenancy for team deployments. Scoped by org-id and project-id, with per-tenant API keys isolating credentials. Cost tagging and audit trails ensure full accountability.",
+        "module_users_status": "Production Ready",
+        
+        "module_monitor_title": "MonitorCheck",
+        "module_monitor_subtitle": "Windows Agent",
+        "module_monitor_desc": "Windows environment monitoring agent (beta). Tracks system status and integrates with Live2D character to report system events in real-time.",
+        "module_monitor_status": "Beta - Windows Agent",
+        
+        "module_activity_title": "Activity",
+        "module_activity_subtitle": "Activity Metrics",
+        "module_activity_desc": "Alpha-stage activity metrics tracking system. Logs and analyzes all of Ceria's actions to measure usage patterns and efficiency.",
+        "module_activity_status": "Alpha - Metrics Only",
+        
+        # Pricing Page
+        "pricing_free_title": "FREE",
+        "pricing_free_price": "$0",
+        "pricing_free_period": "Forever free",
+        "pricing_free_desc": "Essential features for individual users",
+        "pricing_free_feature1": "✅ Live2D Character Assistant (Haru model)",
+        "pricing_free_feature2": "✅ Basic conversation (Claude Sonnet 4)",
+        "pricing_free_feature3": "✅ Local file processing (up to 100 files)",
+        "pricing_free_feature4": "✅ ShieldCheck approval system",
+        "pricing_free_feature5": "✅ Korean/English support",
+        "pricing_free_feature6": "❌ Advanced modules (Youtube, FileSearch)",
+        "pricing_free_feature7": "❌ Team collaboration",
+        "pricing_free_feature8": "❌ API access",
+        
+        "pricing_plus_title": "PLUS",
+        "pricing_plus_price": "$29",
+        "pricing_plus_period": "/month",
+        "pricing_plus_desc": "Advanced features for professionals",
+        "pricing_plus_badge": "Popular",
+        "pricing_plus_feature1": "✅ All FREE features",
+        "pricing_plus_feature2": "✅ Claude Sonnet 4.5 (latest model)",
+        "pricing_plus_feature3": "✅ All 8 modules available",
+        "pricing_plus_feature4": "✅ FileSearch RAG engine (unlimited)",
+        "pricing_plus_feature5": "✅ Youtube integration (1hr caching)",
+        "pricing_plus_feature6": "✅ Canvas workspace (unlimited)",
+        "pricing_plus_feature7": "✅ Priority support (24hr response)",
+        "pricing_plus_feature8": "❌ Team multi-tenancy",
+        
+        "pricing_pro_title": "PRO",
+        "pricing_pro_price": "$99",
+        "pricing_pro_period": "/month",
+        "pricing_pro_desc": "Enterprise solution for organizations",
+        "pricing_pro_badge": "Recommended",
+        "pricing_pro_feature1": "✅ All PLUS features",
+        "pricing_pro_feature2": "✅ Multi-tenant support (unlimited org/project)",
+        "pricing_pro_feature3": "✅ Team collaboration (up to 50 members)",
+        "pricing_pro_feature4": "✅ API access (REST + SSE)",
+        "pricing_pro_feature5": "✅ Custom Live2D model support",
+        "pricing_pro_feature6": "✅ Dedicated server instance",
+        "pricing_pro_feature7": "✅ Audit logs & cost tagging",
+        "pricing_pro_feature8": "✅ VIP support (1hr response)",
+        
+        # Dashboard Page
+        "dashboard_realtime_title": "실시간 모니터링",
+        "dashboard_ceria_status": "세리아 상태",
+        "dashboard_current_task": "현재 작업",
+        "dashboard_approval_queue": "승인 대기",
+        "dashboard_recent_activity": "최근 활동",
+        "dashboard_system_health": "시스템 상태",
+        "dashboard_task_history": "작업 이력",
+        "dashboard_no_tasks": "진행 중인 작업이 없습니다",
+        "dashboard_pending_approvals": "개 승인 대기",
+        
+        # Canvas Page
+        "canvas_workspace_title": "작업 공간",
+        "canvas_ai_suggestions": "AI 제안",
+        "canvas_export": "내보내기",
+        "canvas_save_draft": "임시 저장",
+        "canvas_format_markdown": "Markdown",
+        "canvas_format_pdf": "PDF",
+        "canvas_format_docx": "DOCX",
+        "canvas_placeholder": "여기에 내용을 작성하세요... (Markdown 지원)",
+        "canvas_ai_assist": "AI 어시스턴트",
+        "canvas_ask_ceria": "세리아에게 질문하기",
         
         # Developer Profile Section
         "developer_title": "About Developer",
@@ -204,6 +426,29 @@ TRANSLATIONS = {
         "developer_contact_lab": "Contents System Lab (AI, Blockchain, IoT, XR)",
         "developer_contact_website": "DXPIA.com",
         "developer_contact_project": "NEXUS-ON Open Source Project",
+        
+        # Dashboard Page (English)
+        "dashboard_realtime_title": "Real-time Monitoring",
+        "dashboard_ceria_status": "Ceria Status",
+        "dashboard_current_task": "Current Task",
+        "dashboard_approval_queue": "Approval Queue",
+        "dashboard_recent_activity": "Recent Activity",
+        "dashboard_system_health": "System Health",
+        "dashboard_task_history": "Task History",
+        "dashboard_no_tasks": "No tasks in progress",
+        "dashboard_pending_approvals": "pending approvals",
+        
+        # Canvas Page (English)
+        "canvas_workspace_title": "Workspace",
+        "canvas_ai_suggestions": "AI Suggestions",
+        "canvas_export": "Export",
+        "canvas_save_draft": "Save Draft",
+        "canvas_format_markdown": "Markdown",
+        "canvas_format_pdf": "PDF",
+        "canvas_format_docx": "DOCX",
+        "canvas_placeholder": "Start writing here... (Markdown supported)",
+        "canvas_ai_assist": "AI Assistant",
+        "canvas_ask_ceria": "Ask Ceria",
     }
 }
 
@@ -321,61 +566,88 @@ def render_world_class_styles() -> str:
       @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
       
       :root {
+        /* Dark Navigation Colors */
+        --nav-bg: #1A1A1A;
+        --nav-text: #FFFFFF;
+        --nav-text-dim: #B4B4B4;
+        --nav-border: rgba(255, 255, 255, 0.1);
+        
         /* Colors */
         --bg-primary: #FFFFFF;
         --bg-secondary: #F7F7F8;
+        --bg-dark: #0A0A0A;
         --text-primary: #111111;
         --text-secondary: #3C3C43;
         --text-tertiary: #6B6B73;
-        --accent-primary: #2563EB;
-        --accent-hover: #1D4ED8;
+        --accent-primary: #3B82F6;
+        --accent-hover: #2563EB;
         --accent-soft: #EFF6FF;
+        --accent-gold: #F59E0B;
         --border-default: #E6E6EA;
         --border-strong: #D1D1D6;
         
         /* Gradients */
         --gradient-hero: linear-gradient(135deg, #FFFFFF 0%, #EFF6FF 30%, #DBEAFE 100%);
-        --gradient-accent: linear-gradient(90deg, #2563EB 0%, #3B82F6 100%);
-        --gradient-card-hover: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(59, 130, 246, 0.1) 100%);
+        --gradient-accent: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        --gradient-gold: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+        --gradient-card-hover: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.12) 100%);
+        --gradient-dark: linear-gradient(135deg, #1A1A1A 0%, #0A0A0A 100%);
         
         /* Status Colors */
-        --status-green: #16A34A;
+        --status-green: #10B981;
         --status-yellow: #F59E0B;
-        --status-red: #DC2626;
+        --status-red: #EF4444;
+        --status-blue: #3B82F6;
         
         /* Typography */
         --font-sans: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        --font-mono: "SF Mono", "Consolas", "Monaco", monospace;
+        --text-4xl: 56px;
         --text-3xl: 48px;
-        --text-2xl: 32px;
+        --text-2xl: 36px;
         --text-xl: 24px;
         --text-lg: 18px;
-        --text-base: 14px;
-        --text-sm: 12px;
+        --text-base: 16px;
+        --text-sm: 14px;
+        --text-xs: 12px;
         
         /* Spacing */
+        --space-1: 4px;
         --space-2: 8px;
         --space-3: 12px;
         --space-4: 16px;
+        --space-5: 20px;
         --space-6: 24px;
         --space-8: 32px;
+        --space-10: 40px;
         --space-12: 48px;
         --space-16: 64px;
         --space-20: 80px;
+        --space-24: 96px;
         
         /* Radius */
-        --radius-card: 18px;
-        --radius-control: 12px;
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --radius-card: 24px;
         --radius-pill: 999px;
         
         /* Shadow */
+        --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
         --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
         --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
         --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
+        --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.20);
         
         /* Motion */
+        --duration-fast: 120ms;
         --duration-ui: 180ms;
+        --duration-slow: 280ms;
         --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+        --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
       }
       
       * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -396,8 +668,8 @@ def render_world_class_styles() -> str:
       }
       
       @keyframes pulse-glow {
-        0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
-        50% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.6); }
+        0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
       }
       
       @keyframes slide-in-up {
@@ -405,69 +677,167 @@ def render_world_class_styles() -> str:
         to { opacity: 1; transform: translateY(0); }
       }
       
-      /* Navigation */
+      @keyframes slide-in-left {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes slide-in-right {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes scale-in {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      
+      @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+      }
+      
+      /* Navigation - Dark Premium Theme */
       nav {
-        background: rgba(255, 255, 255, 0.8);
+        background: var(--nav-bg);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--border-default);
-        padding: var(--space-4) var(--space-6);
+        border-bottom: 1px solid var(--nav-border);
+        padding: var(--space-4) var(--space-8);
         display: flex;
         align-items: center;
         gap: var(--space-6);
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: 1000;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
       }
       
       .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
         font-size: var(--text-xl);
         font-weight: 700;
-        background: var(--gradient-accent);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: var(--nav-text);
         text-decoration: none;
         margin-right: auto;
-      }
-      
-      .nav-link {
-        color: var(--text-secondary);
-        text-decoration: none;
-        font-size: var(--text-base);
-        font-weight: 500;
-        padding: var(--space-2) var(--space-4);
-        border-radius: var(--radius-control);
         transition: all var(--duration-ui) var(--ease-out);
       }
       
+      .nav-brand:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.2);
+      }
+      
+      .nav-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: var(--gradient-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        transition: all var(--duration-ui) var(--ease-out);
+      }
+      
+      .nav-brand:hover .nav-logo {
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+        transform: rotate(5deg) scale(1.05);
+      }
+      
+      .nav-logo img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+      }
+      
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+      
+      .nav-link {
+        color: var(--nav-text-dim);
+        text-decoration: none;
+        font-size: var(--text-sm);
+        font-weight: 500;
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--radius-md);
+        transition: all var(--duration-ui) var(--ease-out);
+        position: relative;
+      }
+      
       .nav-link:hover {
-        background: var(--accent-soft);
-        color: var(--accent-primary);
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--nav-text);
         transform: translateY(-2px);
       }
       
       .nav-link.active {
         background: var(--gradient-accent);
         color: #FFFFFF;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      }
+      
+      .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -16px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--accent-primary);
+        box-shadow: 0 0 8px var(--accent-primary);
       }
       
       /* Language Toggle Button */
       .lang-toggle {
         padding: var(--space-2) var(--space-4);
-        border: 2px solid var(--accent-primary);
-        background: white;
-        color: var(--accent-primary);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--nav-text);
         border-radius: var(--radius-pill);
-        font-size: var(--text-sm);
+        font-size: var(--text-xs);
         font-weight: 600;
         cursor: pointer;
         transition: all var(--duration-ui) var(--ease-out);
+        backdrop-filter: blur(10px);
       }
       
       .lang-toggle:hover {
-        background: var(--accent-primary);
-        color: white;
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
         transform: scale(1.05);
+      }
+      
+      @media (max-width: 768px) {
+        nav {
+          padding: var(--space-3) var(--space-4);
+          gap: var(--space-3);
+        }
+        
+        .nav-links {
+          display: none; /* Hide on mobile - implement hamburger menu later */
+        }
+        
+        .nav-logo {
+          width: 32px;
+          height: 32px;
+        }
+        
+        .nav-logo img {
+          width: 20px;
+          height: 20px;
+        }
       }
       
       /* Hero Section */
@@ -833,7 +1203,7 @@ def render_world_class_styles() -> str:
 
 
 def render_navigation(current_page: str = "", lang: str = "ko") -> str:
-    """Render navigation with language toggle."""
+    """Render premium dark navigation with logo."""
     nav_items = [
         (t("nav_home", lang), "/"),
         (t("nav_intro", lang), "/intro"),
@@ -848,11 +1218,27 @@ def render_navigation(current_page: str = "", lang: str = "ko") -> str:
     lang_label = "EN" if lang == "ko" else "한국어"
     
     nav_html = "<nav>"
-    nav_html += '<a href="/" class="nav-brand">NEXUS-ON</a>'
+    # Brand with logo
+    nav_html += '''
+    <a href="/" class="nav-brand">
+        <div class="nav-logo">
+            <img src="/static/images/nexus-on-logo.png" alt="NEXUS-ON" />
+        </div>
+        <span>NEXUS-ON</span>
+    </a>
+    '''
+    
+    # Navigation links
+    nav_html += '<div class="nav-links">'
     for label, path in nav_items:
         active_class = "active" if path == current_page else ""
         nav_html += f'<a href="{path}?lang={lang}" class="nav-link {active_class}">{label}</a>'
+    nav_html += '</div>'
+    
+    # Language toggle
     nav_html += f'<button class="lang-toggle" onclick="toggleLanguage()">{lang_label}</button>'
+    
+    # Language toggle script
     nav_html += """
     <script>
     function toggleLanguage() {
@@ -1202,7 +1588,7 @@ def login_page(lang: str = "ko") -> str:
 
 
 def intro_page(lang: str = "ko") -> str:
-    """Render introduction page with i18n."""
+    """Render world-class introduction page with 6 differentiators."""
     return f"""
     <!DOCTYPE html>
     <html lang="{lang}">
@@ -1211,6 +1597,104 @@ def intro_page(lang: str = "ko") -> str:
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{t("nav_intro", lang)} - NEXUS-ON</title>
         {render_world_class_styles()}
+        <style>
+            .intro-hero {{
+                background: var(--gradient-hero);
+                padding: var(--space-20) var(--space-6);
+                text-align: center;
+            }}
+            
+            .intro-hero h1 {{
+                font-size: var(--text-4xl);
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: var(--space-6);
+                background: var(--gradient-accent);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }}
+            
+            .intro-hero p {{
+                font-size: var(--text-xl);
+                color: var(--text-secondary);
+                max-width: 800px;
+                margin: 0 auto var(--space-12);
+                line-height: 1.8;
+            }}
+            
+            .features-grid {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+                gap: var(--space-8);
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: var(--space-12) var(--space-6);
+            }}
+            
+            .feature-card {{
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                padding: var(--space-10);
+                box-shadow: var(--shadow-lg);
+                border: 1px solid var(--border-default);
+                transition: all var(--duration-slow) var(--ease-out);
+                position: relative;
+                overflow: hidden;
+            }}
+            
+            .feature-card::before {{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--gradient-accent);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform var(--duration-slow) var(--ease-out);
+            }}
+            
+            .feature-card:hover {{
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: var(--shadow-2xl);
+                border-color: var(--accent-primary);
+            }}
+            
+            .feature-card:hover::before {{
+                transform: scaleX(1);
+            }}
+            
+            .feature-icon {{
+                font-size: 48px;
+                margin-bottom: var(--space-4);
+                display: block;
+            }}
+            
+            .feature-title {{
+                font-size: var(--text-2xl);
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: var(--space-4);
+            }}
+            
+            .feature-content {{
+                font-size: var(--text-base);
+                color: var(--text-secondary);
+                line-height: 1.8;
+            }}
+            
+            @media (max-width: 768px) {{
+                .features-grid {{
+                    grid-template-columns: 1fr;
+                }}
+                
+                .intro-hero h1 {{
+                    font-size: var(--text-3xl);
+                }}
+            }}
+        </style>
     </head>
     <body data-page-state="listening">
         {render_navigation("/intro", lang)}
@@ -1218,31 +1702,58 @@ def intro_page(lang: str = "ko") -> str:
         <!-- Live2D Character (Listening state for intro) -->
         {render_live2d_component("listening")}
         
-        <div class="container">
-            <h1 class="section-title">{t("intro_title", lang)}</h1>
-            <p class="section-subtitle">{t("intro_subtitle", lang)}</p>
+        <!-- Hero Section -->
+        <section class="intro-hero">
+            <h1>{t("intro_worldclass_title", lang)}</h1>
+            <p>{t("intro_worldclass_subtitle", lang)}</p>
+        </section>
+        
+        <!-- Features Grid -->
+        <section class="features-grid">
+            <!-- Feature 1: Live2D Character -->
+            <article class="feature-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.1s both;">
+                <span class="feature-icon">{t("intro_feature1_title", lang).split()[0]}</span>
+                <h2 class="feature-title">{' '.join(t("intro_feature1_title", lang).split()[1:])}</h2>
+                <p class="feature-content">{t("intro_feature1_content", lang)}</p>
+            </article>
             
-            <div style="max-width: 900px; margin: 0 auto;">
-                <div style="background: var(--bg-secondary); padding: var(--space-8); border-radius: var(--radius-card); margin-bottom: var(--space-8);">
-                    <h2 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-4); color: var(--text-primary);">
-                        {t("intro_section1_title", lang)}
-                    </h2>
-                    <p style="color: var(--text-secondary); line-height: 1.75; font-size: var(--text-base);">
-                        {t("intro_section1_content", lang)}
-                    </p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); padding: var(--space-8); border-radius: var(--radius-card);">
-                    <h2 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-4); color: var(--text-primary);">
-                        {t("intro_section2_title", lang)}
-                    </h2>
-                    <ul style="color: var(--text-secondary); line-height: 2; font-size: var(--text-base); list-style: none; padding: 0;">
-                        <li>✅ {t("intro_diff1", lang)}</li>
-                        <li>✅ {t("intro_diff2", lang)}</li>
-                        <li>✅ {t("intro_diff3", lang)}</li>
-                        <li>✅ {t("intro_diff4", lang)}</li>
-                    </ul>
-                </div>
+            <!-- Feature 2: ShieldCheck -->
+            <article class="feature-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.2s both;">
+                <span class="feature-icon">{t("intro_feature2_title", lang).split()[0]}</span>
+                <h2 class="feature-title">{' '.join(t("intro_feature2_title", lang).split()[1:])}</h2>
+                <p class="feature-content">{t("intro_feature2_content", lang)}</p>
+            </article>
+            
+            <!-- Feature 3: Korean Native -->
+            <article class="feature-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.3s both;">
+                <span class="feature-icon">{t("intro_feature3_title", lang).split()[0]}</span>
+                <h2 class="feature-title">{' '.join(t("intro_feature3_title", lang).split()[1:])}</h2>
+                <p class="feature-content">{t("intro_feature3_content", lang)}</p>
+            </article>
+            
+            <!-- Feature 4: Multi-Agent -->
+            <article class="feature-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.4s both;">
+                <span class="feature-icon">{t("intro_feature4_title", lang).split()[0]}</span>
+                <h2 class="feature-title">{' '.join(t("intro_feature4_title", lang).split()[1:])}</h2>
+                <p class="feature-content">{t("intro_feature4_content", lang)}</p>
+            </article>
+            
+            <!-- Feature 5: Local-first -->
+            <article class="feature-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.5s both;">
+                <span class="feature-icon">{t("intro_feature5_title", lang).split()[0]}</span>
+                <h2 class="feature-title">{' '.join(t("intro_feature5_title", lang).split()[1:])}</h2>
+                <p class="feature-content">{t("intro_feature5_content", lang)}</p>
+            </article>
+            
+            <!-- Feature 6: Real-time Monitoring -->
+            <article class="feature-card" style="animation: slide-in-up 0.6s var(--ease-out) 0.6s both;">
+                <span class="feature-icon">{t("intro_feature6_title", lang).split()[0]}</span>
+                <h2 class="feature-title">{' '.join(t("intro_feature6_title", lang).split()[1:])}</h2>
+                <p class="feature-content">{t("intro_feature6_content", lang)}</p>
+            </article>
+        </section>
+        
+        <div class="container">
                 
                 <!-- Developer Profile Section -->
                 <div style="background: var(--gradient-card); padding: var(--space-10); border-radius: var(--radius-card); margin-top: var(--space-8); border: 2px solid var(--accent-soft);">

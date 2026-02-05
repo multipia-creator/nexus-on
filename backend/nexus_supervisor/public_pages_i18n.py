@@ -63,7 +63,7 @@ TRANSLATIONS = {
         "value3_desc": "한국어 네이티브 지원.<br>HWP 파일을 완벽하게 처리합니다.",
         
         "footer_text": "잠들지 않는 당신만의 AI 캐릭터 비서",
-        "footer_dev": "개발: 남현우 교수, 서경대학교",
+        "footer_dev": "개발: 남현우 교수, 서경대학교 VD_비주얼디자인전공",
         
         "pricing_title": "가격 플랜",
         "pricing_subtitle": "당신의 필요에 맞는 플랜을 선택하세요.<br>언제든지 업그레이드 가능합니다.",
@@ -105,13 +105,15 @@ TRANSLATIONS = {
         # Developer Profile Section
         "developer_title": "개발자 소개",
         "developer_name": "남현우 교수",
-        "developer_affiliation": "서경대학교 컴퓨터공학과",
+        "developer_affiliation": "서경대학교 디자인학부 VD_비주얼디자인전공 콘텐츠시스템",
+        "developer_specialty": "AI, Blockchain, IoT, XR",
+        "developer_website": "DXPIA.com",
         "developer_research_title": "연구 분야",
-        "developer_research_1": "AI 에이전트 시스템 및 멀티 에이전트 오케스트레이션",
-        "developer_research_2": "Human-in-the-loop AI 인터페이스 설계",
-        "developer_research_3": "자율 시스템의 안전성 및 신뢰성",
-        "developer_research_4": "소프트웨어 공학과 AI 융합",
-        "developer_research_5": "한국어 문서 처리 및 RAG 시스템",
+        "developer_research_1": "ICT 전략 & 콘텐츠 시스템 디자인",
+        "developer_research_2": "AI 에이전트 시스템 및 Human-in-the-loop 인터페이스",
+        "developer_research_3": "Blockchain 기반 ART NFT 플랫폼",
+        "developer_research_4": "IoT 기반 뷰티 AI 서비스 시스템",
+        "developer_research_5": "XR(VR/AR/MR) 및 메타버스 콘텐츠 전략",
         "developer_vision_title": "프로젝트 비전",
         "developer_vision_content": "NEXUS-ON은 인간-AI 협업의 새로운 패러다임을 제시합니다. Local-first 아키텍처로 데이터 안전을 보장하고, HWP를 포함한 한국어 문서를 완벽하게 처리하며, 항상 사용자의 통제 하에서 작동하는 투명하고 신뢰할 수 있는 AI 비서를 목표로 합니다.",
         "developer_philosophy_title": "개발 철학",
@@ -120,7 +122,9 @@ TRANSLATIONS = {
         "developer_philosophy_3": "Fail-safe: 오류 발생 시 안전한 기본 상태로 복귀",
         "developer_philosophy_4": "Open by design: 교육 및 연구를 위한 오픈소스 프로젝트",
         "developer_contact_title": "연락처",
-        "developer_contact_dept": "서경대학교 컴퓨터공학과",
+        "developer_contact_dept": "서경대학교 디자인학부 VD_비주얼디자인전공",
+        "developer_contact_lab": "콘텐츠시스템 Lab (AI, Blockchain, IoT, XR)",
+        "developer_contact_website": "DXPIA.com",
         "developer_contact_project": "NEXUS-ON 오픈소스 프로젝트",
     },
     "en": {
@@ -151,7 +155,7 @@ TRANSLATIONS = {
         "value3_desc": "Native Korean language support.<br>Handles HWP files perfectly.",
         
         "footer_text": "Your AI Character Assistant That Never Sleeps",
-        "footer_dev": "Developed by Prof. Nam Hyunwoo, Seokyeong University",
+        "footer_dev": "Developed by Prof. Nam Hyunwoo, Seokyeong University VD_Visual Design",
         
         "pricing_title": "Pricing Plans",
         "pricing_subtitle": "Choose the plan that fits your needs.<br>Upgrade anytime.",
@@ -179,13 +183,15 @@ TRANSLATIONS = {
         # Developer Profile Section
         "developer_title": "About Developer",
         "developer_name": "Prof. Nam Hyunwoo",
-        "developer_affiliation": "Seokyeong University, Computer Science Dept.",
+        "developer_affiliation": "Seokyeong University, VD_Visual Design, Contents System",
+        "developer_specialty": "AI, Blockchain, IoT, XR",
+        "developer_website": "DXPIA.com",
         "developer_research_title": "Research Interests",
-        "developer_research_1": "AI Agent Systems & Multi-agent Orchestration",
-        "developer_research_2": "Human-in-the-loop AI Interface Design",
-        "developer_research_3": "Safety and Reliability of Autonomous Systems",
-        "developer_research_4": "Software Engineering & AI Integration",
-        "developer_research_5": "Korean Document Processing & RAG Systems",
+        "developer_research_1": "ICT Strategy & Contents System Design",
+        "developer_research_2": "AI Agent Systems & Human-in-the-loop Interface",
+        "developer_research_3": "Blockchain-based ART NFT Platform",
+        "developer_research_4": "IoT-based Beauty AI Service System",
+        "developer_research_5": "XR(VR/AR/MR) & Metaverse Contents Strategy",
         "developer_vision_title": "Project Vision",
         "developer_vision_content": "NEXUS-ON presents a new paradigm of human-AI collaboration. With a local-first architecture ensuring data safety, perfect processing of Korean documents including HWP, and transparent operation always under user control, we aim to create a trustworthy AI assistant.",
         "developer_philosophy_title": "Development Philosophy",
@@ -194,7 +200,9 @@ TRANSLATIONS = {
         "developer_philosophy_3": "Fail-safe: Return to safe default state on errors",
         "developer_philosophy_4": "Open by design: Open-source project for education and research",
         "developer_contact_title": "Contact",
-        "developer_contact_dept": "Seokyeong University, Computer Science Dept.",
+        "developer_contact_dept": "Seokyeong University, VD_Visual Design",
+        "developer_contact_lab": "Contents System Lab (AI, Blockchain, IoT, XR)",
+        "developer_contact_website": "DXPIA.com",
         "developer_contact_project": "NEXUS-ON Open Source Project",
     }
 }
@@ -1384,6 +1392,38 @@ def developer_page(lang: str = "ko") -> str:
                 font-size: var(--text-base);
                 color: var(--text-tertiary);
                 text-align: center;
+                line-height: 1.6;
+            }}
+            
+            .profile-specialty {{
+                font-size: var(--text-sm);
+                color: var(--accent-primary);
+                font-weight: 600;
+                text-align: center;
+                margin-top: var(--space-2);
+                padding: var(--space-1) var(--space-3);
+                background: var(--accent-soft);
+                border-radius: var(--radius-pill);
+                display: inline-block;
+            }}
+            
+            .profile-website {{
+                font-size: var(--text-sm);
+                color: var(--accent-primary);
+                text-align: center;
+                margin-top: var(--space-2);
+            }}
+            
+            .profile-website a {{
+                color: var(--accent-primary);
+                text-decoration: none;
+                font-weight: 600;
+                transition: all var(--duration-ui) var(--ease-out);
+            }}
+            
+            .profile-website a:hover {{
+                color: var(--accent-secondary);
+                text-decoration: underline;
             }}
             
             .profile-info-section {{
@@ -1480,6 +1520,12 @@ def developer_page(lang: str = "ko") -> str:
                     </div>
                     <h2 class="profile-name">{t("developer_name", lang)}</h2>
                     <p class="profile-affiliation">{t("developer_affiliation", lang)}</p>
+                    <div class="profile-specialty">
+                        {t("developer_specialty", lang)}
+                    </div>
+                    <div class="profile-website">
+                        🌐 <a href="https://dxpia.com" target="_blank">{t("developer_website", lang)}</a>
+                    </div>
                 </div>
                 
                 <!-- Right Column: Profile Information -->
@@ -1520,6 +1566,12 @@ def developer_page(lang: str = "ko") -> str:
                             <div class="contact-link">
                                 🏫 {t("developer_contact_dept", lang)}
                             </div>
+                            <div class="contact-link">
+                                🔬 {t("developer_contact_lab", lang)}
+                            </div>
+                            <a href="https://dxpia.com" target="_blank" class="contact-link">
+                                🌐 {t("developer_contact_website", lang)}
+                            </a>
                             <a href="https://github.com/multipia-creator/nexus-on" target="_blank" class="contact-link">
                                 🔗 {t("developer_contact_project", lang)}
                             </a>

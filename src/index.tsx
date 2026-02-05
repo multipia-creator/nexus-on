@@ -21,6 +21,9 @@ const app = new Hono()
 app.use('/static/*', serveStatic({ root: './public' }))
 app.use('/live2d/*', serveStatic({ root: './public' }))
 
+// Serve Windows download files
+app.use('/downloads/*', serveStatic({ root: './public' }))
+
 // Serve HTML test files
 app.use('/*.html', serveStatic({ root: './public' }))
 

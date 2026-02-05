@@ -34,13 +34,29 @@ export function renderLive2DComponent(pageState: Live2DState = 'idle'): string {
     <script>
         let live2dManager = null;
         
-        window.addEventListener('DOMContentLoaded', () => {
+        // Wait for all scripts to load
+        function initLive2D() {
             try {
                 const container = document.getElementById('live2d-container');
                 if (!container) {
                     console.error('❌ Live2D container not found');
                     return;
                 }
+
+                // Check dependencies
+                if (typeof PIXI === 'undefined') {
+                    console.error('❌ PIXI not loaded, retrying in 500ms...');
+                    setTimeout(initLive2D, 500);
+                    return;
+                }
+
+                if (typeof PIXI.live2d === 'undefined') {
+                    console.error('❌ PIXI.live2d not loaded, retrying in 500ms...');
+                    setTimeout(initLive2D, 500);
+                    return;
+                }
+
+                console.log('✅ All dependencies loaded, initializing Live2D...');
 
                 // Show loading state
                 container.classList.add('loading');
@@ -60,7 +76,7 @@ export function renderLive2DComponent(pageState: Live2DState = 'idle'): string {
                                 container.classList.remove('loading');
                                 console.log('✅ Live2D initialized with state: ${pageState}');
                             }
-                        }, 1000);
+                        }, 2000);
                         
                     } catch (error) {
                         console.error('❌ Live2D initialization error:', error);
@@ -72,7 +88,16 @@ export function renderLive2DComponent(pageState: Live2DState = 'idle'): string {
             } catch (error) {
                 console.error('❌ Live2D setup error:', error);
             }
-        });
+        }
+        
+        // Start initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(initLive2D, 1000);
+            });
+        } else {
+            setTimeout(initLive2D, 1000);
+        }
         
         // Make globally available for state changes
         window.nexusCharacter = function() {

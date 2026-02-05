@@ -21,6 +21,9 @@ const app = new Hono()
 app.use('/static/*', serveStatic({ root: './public' }))
 app.use('/live2d/*', serveStatic({ root: './public' }))
 
+// Serve HTML test files
+app.use('/*.html', serveStatic({ root: './public' }))
+
 // Helper: Get language from query params
 function getLang(c: any): Language {
   const lang = c.req.query('lang')

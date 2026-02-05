@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live2D Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        #live2d-container {
+            width: 300px;
+            height: 400px;
+            margin: 20px auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+        }
+        .status {
+            text-align: center;
+            color: white;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎭 Live2D Test</h1>
+    <div class="status" id="status">Initializing...</div>
+    <div id="live2d-container"></div>
+
+    <!-- PIXI.js -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.min.js"></script>
+    
+    <!-- Live2D Cubism Core -->
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    
+    <!-- pixi-live2d-display -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.5.0/dist/index.min.js"></script>
+
+    <script>
+        const status = document.getElementById('status');
+        
+        function log(msg) {
+            console.log(msg);
+            status.textContent = msg;
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                log('Checking PIXI...');
+                if (typeof PIXI === 'undefined') {
+                    throw new Error('PIXI not loaded');
+                }
+                log('✅ PIXI loaded');
+
+                log('Checking Live2D...');
+                if (typeof PIXI.live2d === 'undefined') {
+                    throw new Error('PIXI.live2d not loaded');
+                }
+                log('✅ PIXI.live2d loaded');
+
+                log('Creating PIXI app...');
+                const app = new PIXI.Application({
+                    width: 300,
+                    height: 400,
+                    transparent: true,
+                    backgroundAlpha: 0,
+                    antialias: true
+                });
+
+                document.getElementById('live2d-container').appendChild(app.view);
+                log('✅ PIXI app created');
+
+                log('Loading model...');
+                const model = await PIXI.live2d.Live2DModel.from('/live2d/haru_greeter_t05.model3.json');
+                log('✅ Model loaded!');
+
+                const scale = Math.min(app.screen.width / model.width, app.screen.height / model.height) * 0.8;
+                model.scale.set(scale);
+                model.x = app.screen.width / 2;
+                model.y = app.screen.height / 2;
+                model.anchor.set(0.5, 0.5);
+
+                app.stage.addChild(model);
+                log('✅ Live2D is working! Click to play motion.');
+
+                model.buttonMode = true;
+                model.interactive = true;
+                model.on('pointerdown', () => {
+                    const motions = model.internalModel.motionManager.definitions;
+                    const randomIndex = Math.floor(Math.random() * motions.length);
+                    model.motion(randomIndex);
+                    log('Playing random motion!');
+                });
+
+            } catch (error) {
+                log('❌ Error: ' + error.message);
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>

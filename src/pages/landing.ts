@@ -81,6 +81,129 @@ export function landingPage(lang: Language = 'ko'): string {
             </div>
         </section>
         
+        <!-- WINDOWS 11 ENGINE DOWNLOAD SECTION -->
+        <section class="download-section">
+            <div class="container">
+                <h2 class="section-title">${t('download_title', lang)}</h2>
+                <p class="section-subtitle">${t('download_subtitle', lang)}</p>
+                
+                <div class="download-container">
+                    <div class="download-main">
+                        <div class="download-icon">💻</div>
+                        <a href="/downloads/windows" class="btn-glass-primary btn-lg">
+                            ${t('download_cta', lang)}
+                        </a>
+                        <p class="download-info">${t('download_install_time', lang)}</p>
+                    </div>
+                    
+                    <div class="download-requirements">
+                        <h3>${t('download_requirements', lang)}</h3>
+                        <ul class="requirements-list">
+                            <li>✅ ${t('download_req_os', lang)}</li>
+                            <li>✅ ${t('download_req_ram', lang)}</li>
+                            <li>✅ ${t('download_req_disk', lang)}</li>
+                            <li>✅ ${t('download_req_python', lang)}</li>
+                        </ul>
+                        <a href="/docs/windows-installation" class="download-guide-link">
+                            📖 ${t('download_guide', lang)}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <style>
+            .download-section {
+                padding: var(--space-20) var(--space-6);
+                background: linear-gradient(135deg, #f5f7fa 0%, #e3e7ed 100%);
+            }
+            
+            .download-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-8);
+                max-width: 1000px;
+                margin: var(--space-12) auto 0;
+            }
+            
+            .download-main {
+                background: var(--gradient-card);
+                border-radius: var(--radius-xl);
+                padding: var(--space-12);
+                text-align: center;
+                border: 1px solid var(--border-default);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .download-icon {
+                font-size: 80px;
+                margin-bottom: var(--space-6);
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            .btn-lg {
+                font-size: var(--text-lg);
+                padding: var(--space-6) var(--space-12);
+            }
+            
+            .download-info {
+                margin-top: var(--space-4);
+                color: var(--text-secondary);
+                font-size: var(--text-sm);
+            }
+            
+            .download-requirements {
+                background: white;
+                border-radius: var(--radius-xl);
+                padding: var(--space-8);
+                border: 1px solid var(--border-default);
+            }
+            
+            .download-requirements h3 {
+                font-size: var(--text-xl);
+                font-weight: 700;
+                margin-bottom: var(--space-6);
+                color: var(--text-primary);
+            }
+            
+            .requirements-list {
+                list-style: none;
+                padding: 0;
+                margin: 0 0 var(--space-6) 0;
+            }
+            
+            .requirements-list li {
+                padding: var(--space-3) 0;
+                color: var(--text-secondary);
+                font-size: var(--text-base);
+                line-height: 1.6;
+            }
+            
+            .download-guide-link {
+                display: inline-block;
+                color: var(--accent-primary);
+                text-decoration: none;
+                font-weight: 600;
+                transition: all var(--duration-ui) var(--ease-out);
+            }
+            
+            .download-guide-link:hover {
+                color: var(--accent-secondary);
+                transform: translateX(4px);
+            }
+            
+            @media (max-width: 768px) {
+                .download-container {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+        
         ${renderFooter(lang)}
         
         <!-- Chat Input & Voice Interaction -->

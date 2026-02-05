@@ -27,6 +27,18 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     hero_cta_primary: "무료로 시작하기",
     hero_cta_secondary: "데모 보기",
     
+    // Windows Engine Download Section
+    download_title: "Windows 11 엔진 다운로드",
+    download_subtitle: "로컬 PC에서 NEXUS-ON을 실행하세요",
+    download_cta: "Windows 엔진 다운로드",
+    download_requirements: "시스템 요구사항",
+    download_req_os: "Windows 11 (64-bit)",
+    download_req_ram: "최소 8GB RAM (16GB 권장)",
+    download_req_disk: "5GB 디스크 공간",
+    download_req_python: "Python 3.10+ (자동 설치)",
+    download_install_time: "설치 시간: 약 5분",
+    download_guide: "설치 가이드 보기",
+    
     value1_title: "항상 화면에 존재",
     value1_desc: "화면에 항상 존재하는 Live2D 캐릭터 비서.<br>5가지 상태로 현재 작업을 시각적으로 표현합니다.",
     value2_title: "자율적이지만 통제 가능",
@@ -240,6 +252,18 @@ export const TRANSLATIONS: Record<Language, Record<string, string>> = {
     hero_tagline: "A Live2D character is always present on your screen, working autonomously<br>but always seeking your approval for important decisions.",
     hero_cta_primary: "Start Free",
     hero_cta_secondary: "Watch Demo",
+    
+    // Windows Engine Download Section
+    download_title: "Download Windows 11 Engine",
+    download_subtitle: "Run NEXUS-ON on your local PC",
+    download_cta: "Download Windows Engine",
+    download_requirements: "System Requirements",
+    download_req_os: "Windows 11 (64-bit)",
+    download_req_ram: "Minimum 8GB RAM (16GB recommended)",
+    download_req_disk: "5GB disk space",
+    download_req_python: "Python 3.10+ (auto-install)",
+    download_install_time: "Installation time: ~5 minutes",
+    download_guide: "View Installation Guide",
     
     value1_title: "Always Visible",
     value1_desc: "A Live2D character assistant always present on screen.<br>5 states visually represent current tasks.",

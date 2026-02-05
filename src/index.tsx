@@ -5,8 +5,10 @@
 
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/cloudflare-workers'
-import { landingPage } from './pages/landing'
 import type { Language } from '../shared/types'
+import { landingPage } from './pages/landing'
+import { introPage } from './pages/intro'
+import { developerPage } from './pages/developer'
 
 const app = new Hono()
 
@@ -26,49 +28,16 @@ app.get('/', (c) => {
   return c.html(landingPage(lang))
 })
 
-// Intro Page (6 World-class differentiators)
+// Intro Page (완벽 포팅 완료 - 6 differentiators)
 app.get('/intro', (c) => {
   const lang = getLang(c)
-  return c.html(`
-    <!DOCTYPE html>
-    <html>
-    <head><title>소개 - NEXUS-ON</title></head>
-    <body style="font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto;">
-      <h1>🎯 소개 페이지</h1>
-      <p>6가지 World-class 차별화 포인트를 소개합니다.</p>
-      <ul>
-        <li>🎭 Live2D 캐릭터 비서</li>
-        <li>🛡️ Human-in-the-loop 승인 시스템</li>
-        <li>📚 한국어 네이티브 지원</li>
-        <li>🔄 멀티 에이전트 오케스트레이션</li>
-        <li>🏠 Local-first 아키텍처</li>
-        <li>🎯 실시간 작업 모니터링</li>
-      </ul>
-      <p><a href="/?lang=${lang}">← 홈으로 돌아가기</a></p>
-    </body>
-    </html>
-  `)
+  return c.html(introPage(lang))
 })
 
-// Developer Page
+// Developer Page (완벽 포팅 완료 - 프로필, 연구, 비전, 철학)
 app.get('/developer', (c) => {
   const lang = getLang(c)
-  return c.html(`
-    <!DOCTYPE html>
-    <html>
-    <head><title>개발자 소개 - NEXUS-ON</title></head>
-    <body style="font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto;">
-      <h1>👨‍💼 개발자 소개</h1>
-      <h2>남현우 교수</h2>
-      <p>서경대학교 디자인학부 VD_비주얼디자인전공</p>
-      <h3>전문 분야</h3>
-      <p>AI, Blockchain, IoT, XR</p>
-      <h3>웹사이트</h3>
-      <p><a href="https://dxpia.com" target="_blank">DXPIA.com</a></p>
-      <p><a href="/?lang=${lang}">← 홈으로 돌아가기</a></p>
-    </body>
-    </html>
-  `)
+  return c.html(developerPage(lang))
 })
 
 // Modules Page (8 modules)

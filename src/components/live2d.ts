@@ -15,14 +15,14 @@ export function renderLive2DComponent(pageState: Live2DState = 'idle'): string {
     <!-- Live2D Styles -->
     <link rel="stylesheet" href="/static/css/live2d.css">
 
-    <!-- PIXI.js v7.x (Required for Live2D) -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.2/dist/pixi.min.js"></script>
+    <!-- PIXI.js v6.x (Required for Live2D - v6 has better compatibility) -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
     
     <!-- Live2D Cubism Core -->
     <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
     
-    <!-- pixi-live2d-display (CDN with Cubism 4 support) -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.5.0/dist/index.min.js"></script></script>
+    <!-- pixi-live2d-display (Cubism 4 support) -->
+    <script src="https://cdn.jsdelivr.net/gh/guansss/pixi-live2d-display/dist/index.min.js"></script></script>
 
     <!-- Live2D Manager -->
     <script src="/static/js/live2d-loader.js"></script>

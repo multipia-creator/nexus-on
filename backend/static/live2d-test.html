@@ -141,23 +141,41 @@
         </div>
     </div>
 
-    <!-- PIXI.js -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
+    <!-- PIXI.js v7 (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
     
-    <!-- Live2D Cubism Core -->
+    <!-- Live2D Cubism Core (CDN) -->
     <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
     
-    <!-- pixi-live2d-display -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.5.0/dist/index.min.js"></script>
+    <!-- pixi-live2d-display (LOCAL - more reliable) -->
+    <script src="/static/js/pixi-live2d-display.min.js"></script>
     
     <script>
         let app;
         let model;
         
+        // Wait for all scripts to load
+        window.addEventListener('load', function() {
+            console.log('PIXI:', typeof PIXI);
+            console.log('PIXI.live2d:', typeof PIXI.live2d);
+            console.log('Live2DModel:', PIXI.live2d ? typeof PIXI.live2d.Live2DModel : 'undefined');
+            
+            // Initialize after libraries loaded
+            setTimeout(initLive2D, 500);
+        });
+        
         // Live2D 초기화
         async function initLive2D() {
             try {
                 updateStatus('🔧 PIXI.js 초기화 중...');
+                
+                // Check if libraries are loaded
+                if (typeof PIXI === 'undefined') {
+                    throw new Error('PIXI.js not loaded');
+                }
+                if (!PIXI.live2d || !PIXI.live2d.Live2DModel) {
+                    throw new Error('pixi-live2d-display not loaded properly. PIXI.live2d=' + typeof PIXI.live2d);
+                }
                 
                 // PIXI Application 생성
                 app = new PIXI.Application({
@@ -171,8 +189,8 @@
                 
                 updateStatus('📦 Live2D 모델 로딩 중...');
                 
-                // Live2D 모델 로드
-                model = await PIXI.live2d.Live2DModel.from('/live2d/haru_greeter_t05.model3.json', {
+                // Live2D 모델 로드 (correct path with /static/)
+                model = await PIXI.live2d.Live2DModel.from('/static/live2d/haru_greeter_t05.model3.json', {
                     autoInteract: true,  // 자동 상호작용
                     autoHitTest: true    // 자동 히트 테스트
                 });

@@ -101,6 +101,27 @@ TRANSLATIONS = {
         "modules_title": "모듈 시스템",
         "modules_subtitle": "8개의 핵심 모듈로 구성된 강력한 AI 에이전트",
         "modules_count": "개 모듈",
+        
+        # Developer Profile Section
+        "developer_title": "개발자 소개",
+        "developer_name": "남현우 교수",
+        "developer_affiliation": "서경대학교 컴퓨터공학과",
+        "developer_research_title": "연구 분야",
+        "developer_research_1": "AI 에이전트 시스템 및 멀티 에이전트 오케스트레이션",
+        "developer_research_2": "Human-in-the-loop AI 인터페이스 설계",
+        "developer_research_3": "자율 시스템의 안전성 및 신뢰성",
+        "developer_research_4": "소프트웨어 공학과 AI 융합",
+        "developer_research_5": "한국어 문서 처리 및 RAG 시스템",
+        "developer_vision_title": "프로젝트 비전",
+        "developer_vision_content": "NEXUS-ON은 인간-AI 협업의 새로운 패러다임을 제시합니다. Local-first 아키텍처로 데이터 안전을 보장하고, HWP를 포함한 한국어 문서를 완벽하게 처리하며, 항상 사용자의 통제 하에서 작동하는 투명하고 신뢰할 수 있는 AI 비서를 목표로 합니다.",
+        "developer_philosophy_title": "개발 철학",
+        "developer_philosophy_1": "Local-first: 클라우드 업로드 없는 안전한 데이터 처리",
+        "developer_philosophy_2": "Human oversight: 중요한 결정은 항상 사용자 승인",
+        "developer_philosophy_3": "Fail-safe: 오류 발생 시 안전한 기본 상태로 복귀",
+        "developer_philosophy_4": "Open by design: 교육 및 연구를 위한 오픈소스 프로젝트",
+        "developer_contact_title": "연락처",
+        "developer_contact_dept": "서경대학교 컴퓨터공학과",
+        "developer_contact_project": "NEXUS-ON 오픈소스 프로젝트",
     },
     "en": {
         "nav_home": "Home",
@@ -154,6 +175,27 @@ TRANSLATIONS = {
         "login_button": "Sign In",
         "login_no_account": "Don't have an account?",
         "login_signup": "Sign Up",
+        
+        # Developer Profile Section
+        "developer_title": "About Developer",
+        "developer_name": "Prof. Nam Hyunwoo",
+        "developer_affiliation": "Seokyeong University, Computer Science Dept.",
+        "developer_research_title": "Research Interests",
+        "developer_research_1": "AI Agent Systems & Multi-agent Orchestration",
+        "developer_research_2": "Human-in-the-loop AI Interface Design",
+        "developer_research_3": "Safety and Reliability of Autonomous Systems",
+        "developer_research_4": "Software Engineering & AI Integration",
+        "developer_research_5": "Korean Document Processing & RAG Systems",
+        "developer_vision_title": "Project Vision",
+        "developer_vision_content": "NEXUS-ON presents a new paradigm of human-AI collaboration. With a local-first architecture ensuring data safety, perfect processing of Korean documents including HWP, and transparent operation always under user control, we aim to create a trustworthy AI assistant.",
+        "developer_philosophy_title": "Development Philosophy",
+        "developer_philosophy_1": "Local-first: Secure data processing without cloud uploads",
+        "developer_philosophy_2": "Human oversight: Critical decisions always require user approval",
+        "developer_philosophy_3": "Fail-safe: Return to safe default state on errors",
+        "developer_philosophy_4": "Open by design: Open-source project for education and research",
+        "developer_contact_title": "Contact",
+        "developer_contact_dept": "Seokyeong University, Computer Science Dept.",
+        "developer_contact_project": "NEXUS-ON Open Source Project",
     }
 }
 
@@ -1194,9 +1236,300 @@ def intro_page(lang: str = "ko") -> str:
                     </ul>
                 </div>
                 
+                <!-- Developer Profile Section -->
+                <div style="background: var(--gradient-card); padding: var(--space-10); border-radius: var(--radius-card); margin-top: var(--space-8); border: 2px solid var(--accent-soft);">
+                    <h2 style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6); color: var(--text-primary); text-align: center;">
+                        👨‍💻 {t("developer_title", lang)}
+                    </h2>
+                    
+                    <div style="text-align: center; margin-bottom: var(--space-8);">
+                        <h3 style="font-size: var(--text-xl); font-weight: 600; color: var(--accent-primary); margin-bottom: var(--space-2);">
+                            {t("developer_name", lang)}
+                        </h3>
+                        <p style="font-size: var(--text-base); color: var(--text-tertiary);">
+                            {t("developer_affiliation", lang)}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-8);">
+                        <h4 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                            🔬 {t("developer_research_title", lang)}
+                        </h4>
+                        <ul style="color: var(--text-secondary); line-height: 2; font-size: var(--text-sm); list-style: none; padding: 0;">
+                            <li>• {t("developer_research_1", lang)}</li>
+                            <li>• {t("developer_research_2", lang)}</li>
+                            <li>• {t("developer_research_3", lang)}</li>
+                            <li>• {t("developer_research_4", lang)}</li>
+                            <li>• {t("developer_research_5", lang)}</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-8);">
+                        <h4 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                            🎯 {t("developer_vision_title", lang)}
+                        </h4>
+                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: var(--text-sm);">
+                            {t("developer_vision_content", lang)}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-6);">
+                        <h4 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">
+                            💡 {t("developer_philosophy_title", lang)}
+                        </h4>
+                        <ul style="color: var(--text-secondary); line-height: 2; font-size: var(--text-sm); list-style: none; padding: 0;">
+                            <li>✅ {t("developer_philosophy_1", lang)}</li>
+                            <li>✅ {t("developer_philosophy_2", lang)}</li>
+                            <li>✅ {t("developer_philosophy_3", lang)}</li>
+                            <li>✅ {t("developer_philosophy_4", lang)}</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center; padding-top: var(--space-6); border-top: 1px solid rgba(0,0,0,0.1);">
+                        <h4 style="font-size: var(--text-base); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">
+                            📧 {t("developer_contact_title", lang)}
+                        </h4>
+                        <p style="font-size: var(--text-sm); color: var(--text-tertiary); margin-bottom: var(--space-2);">
+                            {t("developer_contact_dept", lang)}
+                        </p>
+                        <p style="font-size: var(--text-sm); color: var(--accent-primary);">
+                            <a href="https://github.com/multipia-creator/nexus-on" target="_blank" style="color: var(--accent-primary); text-decoration: none;">
+                                🔗 {t("developer_contact_project", lang)}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                
                 <div style="text-align: center; margin-top: var(--space-12);">
                     <a href="/modules?lang={lang}" class="btn-glass-primary">{t("nav_modules", lang)}</a>
                 </div>
+            </div>
+        </div>
+        
+        {render_footer(lang)}
+    </body>
+    </html>
+    """
+
+
+def developer_page(lang: str = "ko") -> str:
+    """
+    Render dedicated developer profile page with 2-column layout.
+    
+    Layout:
+    - Left: Profile image placeholder
+    - Right: Detailed profile information
+    """
+    return f"""
+    <!DOCTYPE html>
+    <html lang="{lang}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{t("developer_title", lang)} - NEXUS-ON</title>
+        {render_world_class_styles()}
+        <style>
+            .developer-profile {{
+                max-width: 1200px;
+                margin: var(--space-20) auto;
+                padding: var(--space-6);
+            }}
+            
+            .profile-container {{
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                gap: var(--space-10);
+                background: var(--gradient-card);
+                border-radius: var(--radius-card);
+                padding: var(--space-10);
+                box-shadow: var(--shadow-xl);
+                border: 2px solid var(--accent-soft);
+            }}
+            
+            @media (max-width: 768px) {{
+                .profile-container {{
+                    grid-template-columns: 1fr;
+                    gap: var(--space-6);
+                }}
+            }}
+            
+            .profile-image-section {{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--space-4);
+            }}
+            
+            .profile-image-placeholder {{
+                width: 280px;
+                height: 280px;
+                background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+                border-radius: var(--radius-card);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 120px;
+                box-shadow: var(--shadow-lg);
+            }}
+            
+            .profile-name {{
+                font-size: var(--text-2xl);
+                font-weight: 700;
+                color: var(--accent-primary);
+                text-align: center;
+                margin-top: var(--space-2);
+            }}
+            
+            .profile-affiliation {{
+                font-size: var(--text-base);
+                color: var(--text-tertiary);
+                text-align: center;
+            }}
+            
+            .profile-info-section {{
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-8);
+            }}
+            
+            .info-block {{
+                background: rgba(255, 255, 255, 0.5);
+                padding: var(--space-6);
+                border-radius: var(--radius-md);
+                border-left: 4px solid var(--accent-primary);
+            }}
+            
+            .info-block h3 {{
+                font-size: var(--text-xl);
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: var(--space-4);
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+            }}
+            
+            .info-block ul {{
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }}
+            
+            .info-block li {{
+                color: var(--text-secondary);
+                line-height: 1.8;
+                font-size: var(--text-sm);
+                padding: var(--space-1) 0;
+            }}
+            
+            .info-block li::before {{
+                content: "▸";
+                color: var(--accent-primary);
+                font-weight: bold;
+                display: inline-block;
+                width: 1em;
+                margin-right: var(--space-2);
+            }}
+            
+            .info-block p {{
+                color: var(--text-secondary);
+                line-height: 1.75;
+                font-size: var(--text-sm);
+                margin: 0;
+            }}
+            
+            .contact-links {{
+                display: flex;
+                flex-direction: column;
+                gap: var(--space-2);
+            }}
+            
+            .contact-link {{
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+                color: var(--accent-primary);
+                text-decoration: none;
+                font-size: var(--text-sm);
+                transition: all var(--duration-ui) var(--ease-out);
+            }}
+            
+            .contact-link:hover {{
+                transform: translateX(4px);
+                color: var(--accent-secondary);
+            }}
+            
+            .back-button {{
+                text-align: center;
+                margin-top: var(--space-10);
+            }}
+        </style>
+    </head>
+    <body data-page-state="friendly">
+        {render_navigation("/developer", lang)}
+        
+        <!-- Live2D Character (Friendly state) -->
+        {render_live2d_component("friendly")}
+        
+        <div class="developer-profile">
+            <div class="profile-container">
+                <!-- Left Column: Profile Image -->
+                <div class="profile-image-section">
+                    <div class="profile-image-placeholder">
+                        👨‍💻
+                    </div>
+                    <h2 class="profile-name">{t("developer_name", lang)}</h2>
+                    <p class="profile-affiliation">{t("developer_affiliation", lang)}</p>
+                </div>
+                
+                <!-- Right Column: Profile Information -->
+                <div class="profile-info-section">
+                    <!-- Research Interests -->
+                    <div class="info-block">
+                        <h3>🔬 {t("developer_research_title", lang)}</h3>
+                        <ul>
+                            <li>{t("developer_research_1", lang)}</li>
+                            <li>{t("developer_research_2", lang)}</li>
+                            <li>{t("developer_research_3", lang)}</li>
+                            <li>{t("developer_research_4", lang)}</li>
+                            <li>{t("developer_research_5", lang)}</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Project Vision -->
+                    <div class="info-block">
+                        <h3>🎯 {t("developer_vision_title", lang)}</h3>
+                        <p>{t("developer_vision_content", lang)}</p>
+                    </div>
+                    
+                    <!-- Development Philosophy -->
+                    <div class="info-block">
+                        <h3>💡 {t("developer_philosophy_title", lang)}</h3>
+                        <ul>
+                            <li>{t("developer_philosophy_1", lang)}</li>
+                            <li>{t("developer_philosophy_2", lang)}</li>
+                            <li>{t("developer_philosophy_3", lang)}</li>
+                            <li>{t("developer_philosophy_4", lang)}</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="info-block">
+                        <h3>📧 {t("developer_contact_title", lang)}</h3>
+                        <div class="contact-links">
+                            <div class="contact-link">
+                                🏫 {t("developer_contact_dept", lang)}
+                            </div>
+                            <a href="https://github.com/multipia-creator/nexus-on" target="_blank" class="contact-link">
+                                🔗 {t("developer_contact_project", lang)}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="back-button">
+                <a href="/?lang={lang}" class="btn-glass-primary">← {t("nav_home", lang)}</a>
             </div>
         </div>
         

@@ -1,0 +1,130 @@
+/* Live2D Character Placeholder Styles */
+
+.live2d-container {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none; /* Don't block clicks */
+  
+  /* GPU 가속 */
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  
+  /* 기본 트랜지션 */
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+/* Desktop: 우측 상단 */
+@media (min-width: 1024px) {
+  .live2d-container {
+    top: 80px;
+    right: 40px;
+    width: 280px;
+    height: 320px;
+  }
+}
+
+/* Mobile: 하단 우측, 50% 축소 */
+@media (max-width: 1023px) {
+  .live2d-container {
+    bottom: 80px;
+    right: 20px;
+    width: 140px;
+    height: 160px;
+  }
+}
+
+/* 상태별 효과 */
+.live2d-container[data-status="idle"] {
+  opacity: 0.9;
+}
+
+.live2d-container[data-status="listening"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.4));
+}
+
+.live2d-container[data-status="thinking"] {
+  opacity: 0.95;
+  filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.4));
+}
+
+.live2d-container[data-status="speaking"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.4));
+  animation: speaking-pulse 0.8s ease-in-out infinite;
+}
+
+.live2d-container[data-status="busy"] {
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.6));
+  animation: busy-pulse 2s ease-in-out infinite;
+}
+
+/* 애니메이션 */
+@keyframes speaking-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes busy-pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.85; 
+    transform: scale(1.03);
+  }
+}
+
+/* Character image */
+.live2d-character-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 180ms ease-out;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .live2d-container {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .live2d-container[data-status="speaking"],
+  .live2d-container[data-status="busy"] {
+    animation: none !important;
+  }
+}
+
+/* Loading state */
+.live2d-container.loading {
+  opacity: 0.5;
+}
+
+.live2d-container.loading::after {
+  content: '...';
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: #64748B;
+  font-size: 20px;
+  animation: loading-dots 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Hide on very small screens */
+@media (max-width: 480px) {
+  .live2d-container {
+    width: 100px;
+    height: 114px;
+    bottom: 60px;
+    right: 10px;
+  }
+}

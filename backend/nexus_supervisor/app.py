@@ -87,6 +87,7 @@ from shared.node_store import NodeStore
 from nexus_supervisor.public_pages_i18n import (
     landing_page as render_landing_page_i18n,
     intro_page as render_intro_page_i18n,
+    developer_page as render_developer_page_i18n,
     pricing_page as render_pricing_page_i18n,
     dashboard_preview_page as render_dashboard_page_i18n,
     canvas_preview_page as render_canvas_page_i18n,
@@ -2251,17 +2252,26 @@ def live2d_test_page():
         raise HTTPException(status_code=404, detail="Live2D test page not found")
 
 
+@app.get("/live2d-simple")
+def live2d_simple_test():
+    """Simple Live2D model file test (no rendering, just file access test)."""
+    static_file = Path(__file__).parent.parent / "static" / "live2d-simple-test.html"
+    if static_file.exists():
+        return FileResponse(static_file, media_type="text/html")
+    else:
+        raise HTTPException(status_code=404, detail="Live2D simple test page not found")
+
+
 @app.get("/developer")
 def developer_page(lang: str = "ko"):
     """
     Developer page: Prof. Nam Hyunwoo profile and NEXUS-ON project vision.
     
-    This is a dedicated profile page separate from the intro page.
-    Contains detailed information about the developer and project philosophy.
+    This is a dedicated profile page with 2-column layout:
+    - Left: Profile image placeholder
+    - Right: Research interests, project vision, philosophy, contact
     """
-    # Use intro page for now (contains developer section)
-    # TODO: Create dedicated developer_page function in public_pages_i18n.py
-    return HTMLResponse(render_intro_page_i18n(lang))
+    return HTMLResponse(render_developer_page_i18n(lang))
 
 
 @app.get("/modules")

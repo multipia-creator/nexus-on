@@ -1,0 +1,242 @@
+[
+  {
+    "module_id": "m001",
+    "name": "Character Assistant Core",
+    "version": "1.0",
+    "status": "stable",
+    "status_label": "Production Ready",
+    "icon": "Bot",
+    "tagline": "Live2D Character + Claude Sonnet 4.5 conversational agent",
+    "description": "The heart of NEXUS. A Live2D character-driven conversational AI powered by Claude Sonnet 4.5. Provides visual feedback through 4 animation states (Idle, Speaking, Listening, Thinking) while maintaining multi-turn context across sessions. Real-time streaming via SSE keeps the UI synchronized with agent activity.",
+    "key_features": [
+      "Live2D character with 4 animation states (Idle/Speaking/Listening/Thinking)",
+      "Multi-provider LLM gateway (Claude Sonnet 4.5, GPT-4, Gemini)",
+      "Streaming responses via Server-Sent Events (SSE)",
+      "Session-based context management with multi-tenant isolation",
+      "Automatic report deduplication and correlation tracking"
+    ],
+    "use_cases": [
+      "Research assistance with persistent conversation context",
+      "Document analysis across multiple Korean HWP/PDF files",
+      "Team collaboration with shared sessions and visual status",
+      "Complex multi-step tasks with visible agent state transitions"
+    ],
+    "tech_stack": ["FastAPI", "Redis", "Pika (RabbitMQ)", "Claude API", "Live2D Cubism SDK"],
+    "performance": {
+      "target_fps": 60,
+      "animation_latency": "< 180ms",
+      "sse_update_rate": "real-time"
+    },
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m002",
+    "name": "Human-in-the-loop Approval System",
+    "version": "1.0",
+    "status": "stable",
+    "status_label": "Production Ready",
+    "icon": "ShieldCheck",
+    "tagline": "Risk-based approval workflow with GREEN/YELLOW/RED gates",
+    "description": "Built-in approval gates ensure NEXUS never acts recklessly. Every action is assessed for risk: GREEN (auto-execute), YELLOW (notify), RED (require explicit approval). Two-phase commit protocol prevents external sharing or file deletion without user consent. Live2D character shows Alert glow (red) when approval is pending.",
+    "key_features": [
+      "Three-tier risk assessment (GREEN/YELLOW/RED)",
+      "Two-phase commit for RED actions (external share, file ops)",
+      "202 Accepted pattern with SSE-driven UI updates",
+      "Visual feedback via Live2D character (Alert glow)",
+      "Approval queue with timeout and retry logic"
+    ],
+    "use_cases": [
+      "Autonomous document processing with safety checks",
+      "External file sharing with mandatory user approval",
+      "Team workflows where critical actions need oversight",
+      "Research environments with sensitive data protection"
+    ],
+    "tech_stack": ["FastAPI", "RabbitMQ (approval queue)", "Redis (state)", "SSE"],
+    "security": {
+      "red_actions": ["external.share", "file.delete", "email.send"],
+      "timeout": "5 minutes",
+      "audit_log": "full trail with correlation_id"
+    },
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m003",
+    "name": "RAG Engine (Token Overlap)",
+    "version": "0.9",
+    "status": "beta",
+    "status_label": "Beta - Active Development",
+    "icon": "FileSearch",
+    "tagline": "Token overlap-based retrieval with native Korean HWP support",
+    "description": "Retrieval-Augmented Generation engine optimized for Korean academic workflows. Supports HWP (Hangul Word Processor) files natively via external conversion fallback. Token overlap-based ranking (simple but effective). Automatic ingestion scheduled at 03:00 KST daily. Evidence tracking includes doc_id, chunk_id, page, and offset for full traceability.",
+    "key_features": [
+      "Native Korean HWP document support (external conversion)",
+      "Token overlap-based retrieval (fast, no embeddings needed)",
+      "Automatic daily ingestion (03:00 KST)",
+      "Evidence tracking (doc_id, chunk_id, page, offset)",
+      "Local-first architecture (no cloud uploads)"
+    ],
+    "use_cases": [
+      "Academic literature review with Korean papers",
+      "Corporate document search (internal HWP files)",
+      "Research note aggregation and retrieval",
+      "Legal document analysis with citation tracking"
+    ],
+    "tech_stack": ["Redis (index)", "PyPDF2", "python-docx", "HWP converter (external)"],
+    "limitations": [
+      "Token-based ranking (not semantic embeddings)",
+      "HWP requires external conversion (fallback to sibling PDF/TXT)",
+      "Max 1000 documents in P0 version"
+    ],
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m004",
+    "name": "YouTube Integration",
+    "version": "1.0",
+    "status": "stable",
+    "status_label": "Production Ready",
+    "icon": "Youtube",
+    "tagline": "Search, queue, and embedded playback with tenant isolation",
+    "description": "Full YouTube integration for research and learning workflows. Search via YouTube Data API v3 with 1-hour caching. Queue management with Redis-based persistence (tenant+session isolated). Embedded player support. Live2D character shows Speaking state when describing video content.",
+    "key_features": [
+      "YouTube search with 1-hour cache (API quota optimization)",
+      "Queue management (add, remove, clear, sync)",
+      "Tenant+session isolated queues (multi-user support)",
+      "Embedded player with iframe support",
+      "Live2D character describes videos when queued"
+    ],
+    "use_cases": [
+      "Research video library curation",
+      "Learning playlists for team onboarding",
+      "Conference talk archiving and sharing",
+      "Educational content recommendation"
+    ],
+    "tech_stack": ["YouTube Data API v3", "Redis (queue + cache)", "FastAPI"],
+    "quotas": {
+      "daily_api_calls": "10,000",
+      "cache_duration": "1 hour",
+      "queue_limit": "100 videos per session"
+    },
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m005",
+    "name": "Canvas Workspace",
+    "version": "0.8",
+    "status": "beta",
+    "status_label": "Beta - Under Refinement",
+    "icon": "FileEdit",
+    "tagline": "Local draft storage with multi-format export",
+    "description": "Collaborative workspace for drafting and editing documents. Local storage in browser (no server uploads). Multi-format export (Markdown, TXT, JSON). Live2D character shows Thinking state during long drafts. Designed for researchers who need quick note-taking with full data control.",
+    "key_features": [
+      "Browser-based local storage (no server sync)",
+      "Multi-format export (Markdown, TXT, JSON)",
+      "Auto-save every 5 seconds",
+      "Collaborative editing ready (future: WebSocket sync)",
+      "Live2D character provides writing feedback"
+    ],
+    "use_cases": [
+      "Research note drafting during literature review",
+      "Meeting minutes with AI-assisted summarization",
+      "Brainstorming sessions with structured output",
+      "Personal knowledge base (PKM) workflows"
+    ],
+    "tech_stack": ["LocalStorage API", "Markdown parser", "FastAPI (export endpoint)"],
+    "roadmap": [
+      "Real-time collaborative editing (WebSocket)",
+      "Version history and diff tracking",
+      "AI-assisted writing suggestions"
+    ],
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m006",
+    "name": "Multi-tenant Context",
+    "version": "1.0",
+    "status": "stable",
+    "status_label": "Production Ready",
+    "icon": "Users",
+    "tagline": "Org-id and project-id scoping with credential isolation",
+    "description": "Enterprise-grade multi-tenancy for team deployments. Every request is scoped by org-id and project-id headers. Credential vault isolates API keys per tenant. Cost tagging and audit trails ensure full accountability. Live2D character remains tenant-specific (no cross-tenant state leaks).",
+    "key_features": [
+      "Org-id and project-id based context scoping",
+      "Credential vault with per-tenant API key isolation",
+      "Cost tagging for LLM usage tracking",
+      "Full audit trail with correlation_id propagation",
+      "Zero cross-tenant data leakage (Redis namespacing)"
+    ],
+    "use_cases": [
+      "University research labs with multiple projects",
+      "Corporate teams with department-level isolation",
+      "Consulting firms managing client workspaces",
+      "SaaS deployment with per-organization billing"
+    ],
+    "tech_stack": ["Redis (namespaced)", "FastAPI (header middleware)", "Credential vault"],
+    "security": {
+      "isolation_level": "strict (Redis prefix + header validation)",
+      "audit_retention": "90 days",
+      "pii_masking": "automatic (email, phone, API keys)"
+    },
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m007",
+    "name": "Node Management (Windows Pairing)",
+    "version": "0.9",
+    "status": "beta",
+    "status_label": "Beta - Windows Agent",
+    "icon": "MonitorCheck",
+    "tagline": "Windows node pairing with command queue and report upload",
+    "description": "Extends NEXUS to Windows desktop environments. Node pairing via 6-digit code (5-minute TTL). Command queue with HTTP long polling (outbound-only, no inbound ports). Supports local folder ingestion and report upload. Live2D character shows Busy glow when node is executing tasks.",
+    "key_features": [
+      "6-digit enrollment code with 5-minute TTL",
+      "HTTP long polling for command delivery (no inbound ports)",
+      "Local folder scan and text extraction",
+      "Report upload with SSE real-time UI updates",
+      "Auto-ingest to RAG engine on task completion"
+    ],
+    "use_cases": [
+      "Local file indexing from Windows desktop",
+      "Intranet document ingestion without cloud upload",
+      "Airgapped environments (polling-based communication)",
+      "Personal knowledge base from local folders"
+    ],
+    "tech_stack": ["Python (node agent)", "FastAPI (supervisor)", "Redis (node state)"],
+    "limitations": [
+      "Windows only (Linux/Mac planned for v1.0)",
+      "Polling interval: 30 seconds (not real-time)",
+      "Max 10 nodes per org-id"
+    ],
+    "last_updated": "2026-02-04"
+  },
+  {
+    "module_id": "m008",
+    "name": "Observability Stack",
+    "version": "0.7",
+    "status": "alpha",
+    "status_label": "Alpha - Metrics Only",
+    "icon": "Activity",
+    "tagline": "Prometheus metrics with correlation_id propagation",
+    "description": "Monitoring and observability for production deployments. Prometheus metrics for task creation, LLM calls, callback rates, and queue failures. Correlation_id propagation ensures full request traceability. PII masking in logs (email, phone, API keys). Live2D character state transitions are logged for debugging.",
+    "key_features": [
+      "Prometheus metrics (/metrics endpoint)",
+      "Correlation_id propagation across services",
+      "PII masking in audit logs (regex-based)",
+      "Key metrics: task_create, llm_generate, callback_total",
+      "Live2D state transitions logged for debugging"
+    ],
+    "use_cases": [
+      "Production deployment monitoring",
+      "Cost tracking per tenant (LLM usage)",
+      "SLA compliance verification",
+      "Debugging multi-step agent workflows"
+    ],
+    "tech_stack": ["Prometheus", "Python logging", "Redis (metric storage)"],
+    "roadmap": [
+      "Grafana dashboards (pre-built)",
+      "Alert rules (high error rate, slow response)",
+      "Distributed tracing (OpenTelemetry)"
+    ],
+    "last_updated": "2026-02-04"
+  }
+]

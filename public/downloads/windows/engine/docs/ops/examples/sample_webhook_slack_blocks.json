@@ -1,0 +1,48 @@
+{
+  "text": "[NEXUS] comment+issue fallback failed (status 403)",
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "[NEXUS] comment+issue fallback failed (status 403)"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Top failing check:* <https://github.com/org/repo/actions/runs/999999999|CI / unit (failure)>"
+      }
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "PR"
+          },
+          "url": "https://github.com/org/repo/pull/123"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Checks"
+          },
+          "url": "https://github.com/org/repo/pull/123/checks"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "Run"
+          },
+          "url": "https://github.com/org/repo/actions/runs/999999999"
+        }
+      ]
+    }
+  ]
+}

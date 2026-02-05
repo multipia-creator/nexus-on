@@ -1,0 +1,213 @@
+[
+  {
+    "category": "AI Assistant Platforms",
+    "product": "Claude Projects (Anthropic)",
+    "company": "Anthropic PBC",
+    "positioning": "Safety-first conversational AI with artifacts and extended context",
+    "strengths": [
+      "State-of-the-art reasoning (Claude Sonnet 4.5)",
+      "Extended context window (200K tokens)",
+      "Artifacts for structured outputs",
+      "Constitutional AI for safety"
+    ],
+    "ideal_for": [
+      "General-purpose reasoning and analysis",
+      "Long-document processing",
+      "Teams needing cloud-based AI"
+    ],
+    "limitations": [
+      "No local deployment option",
+      "No built-in approval system for autonomous actions",
+      "No visual character interface",
+      "Rate limits on API usage",
+      "English-centric (limited Korean HWP support)"
+    ],
+    "price_tier": "$$$ (API-based, per-token)",
+    "deployment": "Cloud only (no self-hosted)",
+    "license": "Proprietary",
+    "last_updated": "2026-02-04"
+  },
+  {
+    "category": "AI Assistant Platforms",
+    "product": "ChatGPT Enterprise (OpenAI)",
+    "company": "OpenAI",
+    "positioning": "Enterprise-grade conversational AI with custom GPTs and DALL-E integration",
+    "strengths": [
+      "Wide model selection (GPT-4, o1-preview)",
+      "Custom GPTs for team workflows",
+      "DALL-E image generation",
+      "Enterprise admin controls"
+    ],
+    "ideal_for": [
+      "Corporate teams needing cloud AI",
+      "Multi-modal workflows (text + image)",
+      "Custom GPT marketplace users"
+    ],
+    "limitations": [
+      "No transparent approval workflow for autonomous tasks",
+      "No visual character feedback",
+      "Cloud-only deployment",
+      "Limited RAG customization",
+      "No native Korean HWP support"
+    ],
+    "price_tier": "$$$ (per-user, annual contract)",
+    "deployment": "Cloud only (managed service)",
+    "license": "Proprietary",
+    "last_updated": "2026-02-04"
+  },
+  {
+    "category": "Autonomous Agent Frameworks",
+    "product": "LangChain + LangGraph",
+    "company": "LangChain AI",
+    "positioning": "Developer framework for building autonomous LLM applications",
+    "strengths": [
+      "Flexible agent orchestration",
+      "Wide integration ecosystem (100+ connectors)",
+      "Open source foundation",
+      "Active community support"
+    ],
+    "ideal_for": [
+      "Developers building custom AI agents",
+      "Teams with engineering resources",
+      "Research prototypes"
+    ],
+    "limitations": [
+      "No built-in UI or visual feedback",
+      "Requires significant custom development",
+      "Steep learning curve for non-developers",
+      "No approval gates out-of-box",
+      "Not end-user ready"
+    ],
+    "price_tier": "$ (OSS + infrastructure costs)",
+    "deployment": "Self-hosted (custom deployment)",
+    "license": "MIT (open source)",
+    "last_updated": "2026-02-04"
+  },
+  {
+    "category": "Autonomous Agent Frameworks",
+    "product": "AutoGPT",
+    "company": "Significant Gravitas",
+    "positioning": "Self-prompting autonomous AI agent",
+    "strengths": [
+      "Autonomous multi-step task execution",
+      "Plugin system for extensibility",
+      "Community-driven development",
+      "Free and open source"
+    ],
+    "ideal_for": [
+      "Experimental autonomous workflows",
+      "Developers exploring agent capabilities",
+      "Non-critical automation tasks"
+    ],
+    "limitations": [
+      "Unstable outputs (unpredictable behavior)",
+      "No approval gates (acts without consent)",
+      "High token consumption (expensive)",
+      "Not production-ready for critical tasks",
+      "No visual feedback or character interface"
+    ],
+    "price_tier": "$$ (OSS + high API costs)",
+    "deployment": "Self-hosted (Python)",
+    "license": "MIT (open source)",
+    "last_updated": "2026-02-04"
+  },
+  {
+    "category": "RAG Solutions",
+    "product": "Pinecone + LangChain",
+    "company": "Pinecone Systems",
+    "positioning": "Vector database for semantic search and RAG",
+    "strengths": [
+      "High-quality vector search",
+      "Managed service (no infrastructure)",
+      "Scalable to billions of vectors",
+      "Fast query performance"
+    ],
+    "ideal_for": [
+      "Semantic search applications",
+      "Large-scale RAG deployments",
+      "Teams needing managed vector DB"
+    ],
+    "limitations": [
+      "External dependency (cloud service)",
+      "Cost scales with usage (vector count)",
+      "No native Korean HWP support",
+      "Requires embedding generation (additional cost)",
+      "No character interface or visual feedback"
+    ],
+    "price_tier": "$$$ (hosted, usage-based)",
+    "deployment": "Cloud only (managed)",
+    "license": "Proprietary",
+    "last_updated": "2026-02-04"
+  },
+  {
+    "category": "Human-in-the-loop Tools",
+    "product": "Scale AI Rapid",
+    "company": "Scale AI",
+    "positioning": "Annotation platform for ML training data",
+    "strengths": [
+      "Professional annotation workflows",
+      "Quality control systems",
+      "Large labeling marketplace",
+      "Enterprise-grade SLAs"
+    ],
+    "ideal_for": [
+      "ML training data labeling",
+      "Computer vision annotation",
+      "NLP dataset curation"
+    ],
+    "limitations": [
+      "Focused on data labeling (not agent approval)",
+      "Not designed for general agent oversight",
+      "High cost per task",
+      "No autonomous execution capabilities",
+      "No character interface"
+    ],
+    "price_tier": "$$$ (per-task, contract)",
+    "deployment": "Cloud only (managed)",
+    "license": "Proprietary",
+    "last_updated": "2026-02-04"
+  },
+  {
+    "category": "Integrated Character Assistant Platforms",
+    "product": "NEXUS-ON",
+    "company": "Seokyeong University (Prof. Nam Hyunwoo)",
+    "positioning": "Local-first autonomous AI assistant with Live2D character and mandatory human oversight",
+    "strengths": [
+      "Live2D character with 4 animation states (Idle/Speaking/Listening/Thinking)",
+      "Built-in approval gates (GREEN/YELLOW/RED risk workflow)",
+      "Local deployment with full data control",
+      "Multi-LLM support (Claude Sonnet 4.5, GPT-4, Gemini)",
+      "Native Korean HWP document support",
+      "Real-time SSE updates for all operations",
+      "Multi-tenant architecture with credential isolation",
+      "Visual feedback for every agent action",
+      "Always-on availability with background execution"
+    ],
+    "ideal_for": [
+      "Researchers handling sensitive documents locally",
+      "Teams requiring transparent approval workflows",
+      "Korean academic and enterprise users (HWP support)",
+      "Privacy-conscious power users needing data control",
+      "Multi-step autonomous tasks with human oversight",
+      "Organizations wanting visual agent feedback"
+    ],
+    "limitations": [
+      "Self-hosted setup required (not SaaS)",
+      "Token-based RAG (not semantic embeddings)",
+      "Early adopter stage (active development)",
+      "Windows Node agent in beta (Mac/Linux planned)",
+      "Max 1000 documents in P0 RAG version"
+    ],
+    "price_tier": "$ (self-hosted OSS, LLM API costs only)",
+    "deployment": "Docker Compose (local) or Render/Railway (cloud)",
+    "license": "Open Source (MIT or Apache 2.0 planned)",
+    "tech_highlights": {
+      "visual_ui": "Live2D character (280x320px, 60fps)",
+      "autonomy": "Multi-step task execution with context retention",
+      "control": "Mandatory approval for RED actions (two-phase commit)",
+      "local_first": "All data stored locally, multi-LLM gateway",
+      "korean_native": "HWP file support with automatic conversion fallback"
+    },
+    "last_updated": "2026-02-04"
+  }
+]

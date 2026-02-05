@@ -1,0 +1,48 @@
+# NEXUS-ON Windows Engine Dependencies
+# Install: pip install -r requirements.txt
+
+# Core Framework
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+python-dotenv==1.0.1
+
+# HTTP & Async
+httpx==0.27.2
+aiofiles==24.1.0
+websockets==13.1
+
+# Redis & RabbitMQ
+redis==5.2.0
+pika==1.3.2
+
+# LLM Providers
+anthropic==0.39.0
+openai==1.54.4
+
+# TTS Providers
+elevenlabs==1.9.0
+google-cloud-texttospeech==2.18.0
+
+# Document Processing
+pypdf==5.1.0
+python-docx==1.1.2
+openpyxl==3.1.5
+
+# RAG & Embeddings
+sentence-transformers==3.3.1
+faiss-cpu==1.9.0
+numpy==1.26.4
+
+# Security & Auth
+cryptography==43.0.3
+pyjwt==2.9.0
+
+# Monitoring & Logging
+prometheus-client==0.21.0
+structlog==24.4.0
+
+# Utilities
+pyyaml==6.0.2
+jinja2==3.1.4
+python-multipart==0.0.17

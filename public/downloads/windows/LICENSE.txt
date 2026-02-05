@@ -1,0 +1,16 @@
+NEXUS-ON Educational License
+
+Copyright (c) 2026 Prof. Nam Hyunwoo, Seokyeong University
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), for
+educational and research purposes only.
+
+RESTRICTIONS:
+1. Commercial use is prohibited without explicit written permission
+2. Redistribution requires attribution
+3. Modifications must be clearly marked
+
+For commercial licensing, contact: namhw@skuniv.ac.kr
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

@@ -1,0 +1,33 @@
+<!-- Live2D Character Container - Universal Component -->
+<div id="live2d-container" class="live2d-container" data-status="idle">
+    <!-- Character image will be injected by JavaScript -->
+</div>
+
+<!-- Live2D Styles -->
+<link rel="stylesheet" href="/static/css/live2d-placeholder.css">
+
+<!-- Live2D JavaScript -->
+<script type="module">
+    // Import Live2D Placeholder class
+    import { Live2DPlaceholder } from '/static/js/live2d-placeholder.js';
+    
+    // Initialize Live2D character
+    let live2dCharacter = null;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            live2dCharacter = new Live2DPlaceholder('live2d-container');
+            
+            // Set initial state based on page
+            const initialState = document.body.getAttribute('data-page-state') || 'idle';
+            live2dCharacter.setState(initialState);
+            
+            console.log('Live2D character initialized:', initialState);
+        } catch (error) {
+            console.error('Failed to initialize Live2D:', error);
+        }
+    });
+    
+    // Make globally available for page-specific interactions
+    window.nexusCharacter = () => live2dCharacter;
+</script>

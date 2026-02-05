@@ -1,0 +1,38 @@
+services:
+  # Backend API Server
+  - type: web
+    name: nexus-backend
+    runtime: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: cd backend && pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn nexus_supervisor.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.11
+      - key: PORT
+        generateValue: true
+      - key: REDIS_URL
+        fromDatabase:
+          name: nexus-redis
+          property: connectionString
+      # TTS API Keys (optional - add manually in Render dashboard)
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        sync: false
+      # LLM API Keys (optional - add manually in Render dashboard)
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
+    healthCheckPath: /health
+
+databases:
+  # Redis for caching and session management
+  - name: nexus-redis
+    databaseName: nexus_redis
+    plan: free

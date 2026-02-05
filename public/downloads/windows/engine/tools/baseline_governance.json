@@ -1,0 +1,16 @@
+{
+  "version": "1",
+  "approvers": [
+    "admin",
+    "ops-lead"
+  ],
+  "require_token": false,
+  "token_sha256": "",
+  "require_two_person": true,
+  "approvers2": [
+    "admin",
+    "ops-lead"
+  ],
+  "require_two_tokens": false,
+  "token2_sha256": ""
+}

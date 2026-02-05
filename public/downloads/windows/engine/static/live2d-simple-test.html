@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live2D 하루 모델 테스트 - NEXUS-ON (Simple)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container { text-align: center; max-width: 900px; padding: 20px; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        #canvas { background: rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .controls { margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+        button { background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.3); color: white; padding: 12px 24px; border-radius: 12px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; }
+        button:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+        .status { margin-top: 1rem; padding: 1rem; background: rgba(0, 0, 0, 0.2); border-radius: 8px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Live2D 하루 모델 (Simple Test)</h1>
+        <canvas id="canvas" width="800" height="600"></canvas>
+        
+        <div class="controls">
+            <button onclick="testModel()">🔄 모델 테스트</button>
+        </div>
+        
+        <div class="status" id="status">준비 중...</div>
+    </div>
+
+    <script>
+        function updateStatus(msg) {
+            document.getElementById('status').textContent = msg;
+            console.log('[Live2D]', msg);
+        }
+
+        async function testModel() {
+            updateStatus('테스트 시작...');
+            
+            // Test 1: 모델 파일 접근
+            try {
+                const response = await fetch('/static/live2d/haru_greeter_t05.model3.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatus(`✅ 모델 파일 로드 성공! (버전: ${data.Version})`);
+                    console.log('Model data:', data);
+                } else {
+                    updateStatus(`❌ 모델 파일 로드 실패: ${response.status}`);
+                }
+            } catch (error) {
+                updateStatus(`❌ 오류: ${error.message}`);
+            }
+        }
+
+        // Auto test on load
+        window.addEventListener('DOMContentLoaded', testModel);
+    </script>
+</body>
+</html>

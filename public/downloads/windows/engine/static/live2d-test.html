@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live2D 하루 모델 테스트 - NEXUS-ON</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 900px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        #live2d-canvas {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .controls {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info {
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .info p {
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+        
+        .status {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .loading {
+            font-size: 1.5rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Live2D 하루 모델 테스트</h1>
+        <p class="subtitle">NEXUS-ON 세리아 AI 캐릭터 시스템</p>
+        
+        <canvas id="live2d-canvas" width="800" height="600"></canvas>
+        
+        <div class="controls">
+            <button onclick="playMotion(0)">🌟 Idle</button>
+            <button onclick="playMotion(1)">👋 인사</button>
+            <button onclick="playMotion(2)">😊 미소</button>
+            <button onclick="playMotion(3)">💭 생각</button>
+            <button onclick="playMotion(4)">🎤 말하기</button>
+            <button onclick="playRandomMotion()">🎲 랜덤</button>
+        </div>
+        
+        <div class="info">
+            <p><strong>모델 정보</strong></p>
+            <p>이름: Haru Greeter Pro</p>
+            <p>애니메이션: 26개</p>
+            <p>립싱크: ✅ 지원 (ParamMouthOpenY)</p>
+            <p>눈 깜빡임: ✅ 자동 (ParamEyeLOpen, ParamEyeROpen)</p>
+            
+            <div class="status" id="status">
+                <span class="loading">⏳ Live2D 로딩 중...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PIXI.js v7 (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
+    
+    <!-- Live2D Cubism Core (CDN) -->
+    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+    
+    <!-- pixi-live2d-display (LOCAL - more reliable) -->
+    <script src="/static/js/pixi-live2d-display.min.js"></script>
+    
+    <script>
+        let app;
+        let model;
+        
+        // Wait for all scripts to load
+        window.addEventListener('load', function() {
+            console.log('PIXI:', typeof PIXI);
+            console.log('PIXI.live2d:', typeof PIXI.live2d);
+            console.log('Live2DModel:', PIXI.live2d ? typeof PIXI.live2d.Live2DModel : 'undefined');
+            
+            // Initialize after libraries loaded
+            setTimeout(initLive2D, 500);
+        });
+        
+        // Live2D 초기화
+        async function initLive2D() {
+            try {
+                updateStatus('🔧 PIXI.js 초기화 중...');
+                
+                // Check if libraries are loaded
+                if (typeof PIXI === 'undefined') {
+                    throw new Error('PIXI.js not loaded');
+                }
+                if (!PIXI.live2d || !PIXI.live2d.Live2DModel) {
+                    throw new Error('pixi-live2d-display not loaded properly. PIXI.live2d=' + typeof PIXI.live2d);
+                }
+                
+                // PIXI Application 생성
+                app = new PIXI.Application({
+                    view: document.getElementById('live2d-canvas'),
+                    width: 800,
+                    height: 600,
+                    backgroundColor: 0x000000,
+                    backgroundAlpha: 0,
+                    antialias: true
+                });
+                
+                updateStatus('📦 Live2D 모델 로딩 중...');
+                
+                // Live2D 모델 로드 (correct path with /static/)
+                model = await PIXI.live2d.Live2DModel.from('/static/live2d/haru_greeter_t05.model3.json', {
+                    autoInteract: true,  // 자동 상호작용
+                    autoHitTest: true    // 자동 히트 테스트
+                });
+                
+                updateStatus('✅ 모델 로드 완료!');
+                
+                // 모델 스케일 및 위치 조정
+                const scale = Math.min(
+                    app.screen.width / model.width,
+                    app.screen.height / model.height
+                ) * 0.8;
+                
+                model.scale.set(scale);
+                model.x = app.screen.width / 2;
+                model.y = app.screen.height / 2;
+                model.anchor.set(0.5, 0.5);
+                
+                // 스테이지에 추가
+                app.stage.addChild(model);
+                
+                updateStatus(`🎉 준비 완료! (애니메이션: ${model.internalModel.motionManager.definitions.length}개)`);
+                
+                // 자동 눈 깜빡임 활성화
+                if (model.internalModel.eyeBlink) {
+                    updateStatus('👁️ 자동 눈 깜빡임 활성화됨');
+                }
+                
+                // Idle 애니메이션 시작
+                playMotion(0);
+                
+            } catch (error) {
+                updateStatus(`❌ 오류: ${error.message}`);
+                console.error('Live2D 로드 실패:', error);
+            }
+        }
+        
+        // 애니메이션 재생
+        function playMotion(index) {
+            if (!model) {
+                updateStatus('❌ 모델이 로드되지 않음');
+                return;
+            }
+            
+            try {
+                model.motion(index, 0, PIXI.live2d.MotionPriority.NORMAL);
+                updateStatus(`▶️ 애니메이션 ${index} 재생 중...`);
+            } catch (error) {
+                updateStatus(`❌ 애니메이션 재생 실패: ${error.message}`);
+            }
+        }
+        
+        // 랜덤 애니메이션
+        function playRandomMotion() {
+            if (!model) return;
+            const maxIndex = model.internalModel.motionManager.definitions.length - 1;
+            const randomIndex = Math.floor(Math.random() * maxIndex);
+            playMotion(randomIndex);
+        }
+        
+        // 상태 업데이트
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = message;
+            console.log('[Live2D]', message);
+        }
+        
+        // 초기화 시작
+        window.addEventListener('DOMContentLoaded', () => {
+            initLive2D();
+        });
+    </script>
+</body>
+</html>

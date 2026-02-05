@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS Engine - Windows 다운로드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-4xl mx-auto py-16 px-4">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-download text-blue-600 mr-3"></i>
+                NEXUS Engine for Windows
+            </h1>
+            <p class="text-xl text-gray-600">
+                세리아 AI 캐릭터 비서의 백엔드 엔진
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-12">
+            <!-- Setup.exe -->
+            <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-blue-500">
+                <div class="text-center mb-4">
+                    <i class="fas fa-box-archive text-5xl text-blue-600 mb-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-900">Setup.exe</h3>
+                    <p class="text-gray-600 mt-2">GUI 설치 프로그램 (권장)</p>
+                </div>
+                <ul class="space-y-2 mb-6 text-sm text-gray-700">
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>클릭만으로 자동 설치</li>
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>Windows 서비스 자동 등록</li>
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>방화벽 규칙 자동 추가</li>
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>약 50MB, 5분 소요</li>
+                </ul>
+                <a href="/downloads/windows/NEXUS-Engine-Windows-x64-Setup.exe" 
+                   class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                    <i class="fas fa-download mr-2"></i>다운로드
+                </a>
+            </div>
+
+            <!-- PowerShell Script -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="text-center mb-4">
+                    <i class="fas fa-terminal text-5xl text-purple-600 mb-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-900">PowerShell</h3>
+                    <p class="text-gray-600 mt-2">자동 설치 스크립트</p>
+                </div>
+                <ul class="space-y-2 mb-6 text-sm text-gray-700">
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>Python 자동 설치</li>
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>의존성 자동 설치</li>
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>서비스 자동 등록</li>
+                    <li><i class="fas fa-check text-green-600 mr-2"></i>개발자에게 권장</li>
+                </ul>
+                <button onclick="copyScript()" 
+                        class="block w-full bg-purple-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
+                    <i class="fas fa-copy mr-2"></i>스크립트 복사
+                </button>
+            </div>
+        </div>
+
+        <!-- System Requirements -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-laptop text-blue-600 mr-2"></i>시스템 요구사항
+            </h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-2">운영체제</h4>
+                    <p class="text-sm text-gray-600">Windows 10/11 (64-bit)</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-2">메모리</h4>
+                    <p class="text-sm text-gray-600">최소 4GB RAM (권장 8GB)</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-2">저장 공간</h4>
+                    <p class="text-sm text-gray-600">최소 5GB 여유 공간</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-rocket text-blue-600 mr-2"></i>빠른 시작
+            </h3>
+            <ol class="space-y-3 text-sm text-gray-700">
+                <li><span class="font-semibold">1.</span> 위 방법 중 하나로 설치</li>
+                <li><span class="font-semibold">2.</span> API 키 설정 (.env 파일 수정)</li>
+                <li><span class="font-semibold">3.</span> 브라우저에서 <code class="bg-white px-2 py-1 rounded">http://localhost:7100</code> 접속</li>
+                <li><span class="font-semibold">4.</span> 프론트엔드(<a href="https://nexus-3bm.pages.dev" class="text-blue-600 underline">nexus-3bm.pages.dev</a>)와 연결</li>
+            </ol>
+        </div>
+
+        <!-- Links -->
+        <div class="mt-8 text-center space-x-4">
+            <a href="INSTALLATION_GUIDE.md" class="text-blue-600 hover:underline">
+                <i class="fas fa-book mr-1"></i>설치 가이드
+            </a>
+            <a href="BUILD_INSTRUCTIONS.md" class="text-blue-600 hover:underline">
+                <i class="fas fa-code mr-1"></i>빌드 방법
+            </a>
+            <a href="https://github.com/multipia-creator/nexus-on" class="text-blue-600 hover:underline">
+                <i class="fab fa-github mr-1"></i>GitHub
+            </a>
+        </div>
+    </div>
+
+    <script>
+    function copyScript() {
+        const script = "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://nexus-3bm.pages.dev/downloads/windows/bootstrap.ps1'))";
+        navigator.clipboard.writeText(script).then(() => {
+            alert('✅ 스크립트가 클립보드에 복사되었습니다!\n\nPowerShell(관리자)에서 붙여넣기(Ctrl+V)하세요.');
+        });
+    }
+    </script>
+</body>
+</html>

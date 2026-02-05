@@ -39,8 +39,7 @@ app.get('/downloads/windows', (c) => {
 })
 
 app.get('/downloads/windows/', (c) => {
-  return c.html(/* HTML */ `
-    <!DOCTYPE html>
+  const html = `<!DOCTYPE html>
     <html lang="ko">
     <head>
         <meta charset="UTF-8">
@@ -150,8 +149,8 @@ app.get('/downloads/windows/', (c) => {
         }
         </script>
     </body>
-    </html>
-  `)
+    </html>`
+  return c.html(html)
 })
 
 // Landing Page (완벽 포팅 완료)

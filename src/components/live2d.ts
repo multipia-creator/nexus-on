@@ -21,8 +21,8 @@ export function renderLive2DComponent(pageState: Live2DState = 'idle'): string {
     <!-- Live2D Cubism Core -->
     <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
     
-    <!-- pixi-live2d-display (LOCAL) -->
-    <script src="/static/js/pixi-live2d-display.min.js"></script>
+    <!-- pixi-live2d-display (CDN with Cubism 4 support) -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.5.0/dist/index.min.js"></script></script>
 
     <!-- Live2D Manager -->
     <script src="/static/js/live2d-loader.js"></script>
